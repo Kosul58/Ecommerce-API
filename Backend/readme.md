@@ -1,0 +1,2 @@
+verifytoken
+authorize role
