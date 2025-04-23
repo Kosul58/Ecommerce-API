@@ -8,6 +8,7 @@ import {
   BaseOrder,
   DeliveryOrder,
   ReturnOrder,
+  OrderProductStatus,
 } from "../common/types/orderType";
 
 interface OrderDocument extends Document {
@@ -31,6 +32,11 @@ const OrderProductSchema = new Schema<OrderProduct>({
   price: { type: Number, required: true },
   quantity: { type: Number, required: true },
   active: { type: Boolean, required: true },
+  status: {
+    type: String,
+    enum: Object.values(OrderProductStatus),
+    required: true,
+  },
 });
 
 const OrderSchema = new Schema<OrderDocument>({

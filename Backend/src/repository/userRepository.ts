@@ -1,6 +1,21 @@
 import { UpdateUser, User } from "../common/types/userType.js";
 import { getCurrentDateTimeStamp, comparePassword } from "../utils/utils.js";
 import UserSchema from "../models/User.js";
+export interface IUserRepository {
+  usernameExists(username: string, excludeId?: string): Promise<boolean>;
+  emailExists(email: string, excludeId?: string): Promise<boolean>;
+  signIn(username: string, email: string): Promise<User | undefined>;
+  updateSigninInfo(username: string, email: string): Promise<User | undefined>;
+  signUp(user: User): Promise<User>;
+  getUser(userid: string): Promise<User | null>;
+  deleteUser(userid: string): Promise<User | null>;
+  updateUserInfo(
+    userid: string,
+    update: UpdateUser
+  ): Promise<User | null | undefined>;
+  updatePassword(userid: string, password: string): Promise<void>;
+  updateEmail(userid: string, email: string): Promise<void>;
+}
 
 class UserRepository {
   public async usernameExists(username: string, excludeId?: string) {

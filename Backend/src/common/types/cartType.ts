@@ -10,6 +10,7 @@ export interface CartProduct {
   quantity: number;
   description?: string;
   category?: string;
+  price?: number;
 }
 
 export interface UpdateCart {

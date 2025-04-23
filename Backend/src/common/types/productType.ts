@@ -17,6 +17,7 @@ export interface Product {
   name: string;
   price: number;
   inventory: number;
+  sellerid: string;
   description?: string;
   category?: string;
   createdAt?: string;
@@ -27,7 +28,7 @@ export interface AddProduct {
   name: string;
   price: number;
   inventory: number;
-  sellerid?: string;
+  sellerid: string;
   description?: string;
   category?: string;
 }

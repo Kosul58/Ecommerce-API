@@ -54,7 +54,12 @@ class ProductController {
   public addProduct: RequestHandler = async (req, res) => {
     const productData: AddProduct = req.body;
     try {
-      if (!productData.name || !productData.price || !productData.inventory) {
+      if (
+        !productData.name ||
+        !productData.price ||
+        !productData.inventory ||
+        !productData.sellerid
+      ) {
         res.status(400).json({ message: "Enter all fields", response: [] });
         return;
       }

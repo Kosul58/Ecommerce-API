@@ -15,6 +15,13 @@ export enum OrderType {
   REPLACE = "Replace",
 }
 
+export enum OrderProductStatus {
+  REQUESTED = "Requested",
+  REJECTED = "Rejected",
+  ACCEPTED = "Accepted",
+  READY = "Ready",
+}
+
 export enum DeliveryStatus {
   PENDING = "Pending",
   CONFIRMED = "Confirmed",
@@ -42,6 +49,7 @@ export interface OrderProduct {
   price: number;
   quantity: number;
   active: boolean;
+  status: OrderProductStatus;
 }
 
 export interface BaseOrder {

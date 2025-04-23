@@ -1,4 +1,4 @@
-import { Request, Response, NextFunction, RequestHandler } from "express";
+import { RequestHandler } from "express";
 
 class VerifyRole {
   public verify(...allowedRoles: string[]): RequestHandler {

@@ -1,6 +1,3 @@
-import { getCurrentDateTimeStamp } from "../utils/utils.js";
-
-import { Cart, CartProduct } from "../common/types/cartType.js";
 import {
   Order,
   OrderType,
@@ -8,7 +5,7 @@ import {
   ReturnStatus,
   DeliveryOrder,
   ReturnOrder,
-  OrderProduct,
+  OrderProductStatus,
 } from "../common/types/orderType.js";
 import OrderSchema from "../models/Order.js";
 
@@ -57,6 +54,7 @@ class OrderRepository {
       const uncanceledProducts = order.items.filter(
         (p) => p.productid !== productid
       );
+
       if (uncanceledProducts.length === 0) {
         order.status = DeliveryStatus.CANCELED;
       }
@@ -99,6 +97,31 @@ class OrderRepository {
       throw err;
     }
   }
+  public async updateProductStatus(
+    orderid: string,
+    userid: string,
+    productid: string,
+    status: OrderProductStatus
+  ) {
+    try {
+      const order = await OrderSchema.findById(orderid);
+      if (!order) return "noorder";
+      const product = order.items.find(
+        (i) => i.productid === productid && i.status !== "Rejected"
+      );
+      if (product) {
+        product.status = status;
+      } else {
+        return "noproduct";
+      }
+      order.markModified("items");
+      return order.save();
+    } catch (err) {
+      console.log("Failed to update order status", err);
+      throw err;
+    }
+  }
+
   public async returnOrder(
     orderid: string,
     userid: string,

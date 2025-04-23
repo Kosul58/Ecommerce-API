@@ -13,7 +13,17 @@ router.get(
 );
 router.post("/signup/:role", userController.signUp);
 router.post("/signin", userController.signIn);
-router.delete("/:userid", userController.deleteUser);
-router.put("/:userid", userController.updateUserInfo);
+router.delete(
+  "/:userid",
+  verifyToken.verify,
+  verifyRole.verify("Admin", "User"),
+  userController.deleteUser
+);
+router.put(
+  "/:userid",
+  verifyToken.verify,
+  verifyRole.verify("User"),
+  userController.updateUserInfo
+);
 
 export default router;

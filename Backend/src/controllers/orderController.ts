@@ -2,6 +2,7 @@ import { RequestHandler } from "express";
 import orderServices from "../services/orderServices.js";
 
 class OrderController {
+  //view all the order of a user
   public viewOrders: RequestHandler = async (req, res) => {
     const { userid } = req.params;
     try {
@@ -189,6 +190,37 @@ class OrderController {
         return;
       }
       res.status(200).json({ message: "Return successful", response: result });
+    } catch (err) {
+      console.error("Failed to process ", err);
+      res.status(500).json({ message: "Server error" });
+    }
+  };
+
+  public updateProductStatus: RequestHandler = async (req, res) => {
+    const { orderid, userid, productid, status } = req.body;
+    try {
+      if (!orderid || !userid || !productid || !status) {
+        res.status(400).json({ message: "Enter all fields" });
+        return;
+      }
+      const result = await orderServices.updateProductStatus(
+        orderid,
+        userid,
+        productid,
+        status
+      );
+
+      if (result === "noproduct") {
+        res.status(400).json({ message: "Product not in the order" });
+      }
+      if (!result) {
+        res.status(400).json({ message: "Product status update unsuccessful" });
+        return;
+      }
+      res.status(200).json({
+        message: "Product status update successful",
+        response: result,
+      });
     } catch (err) {
       console.error("Failed to process ", err);
       res.status(500).json({ message: "Server error" });

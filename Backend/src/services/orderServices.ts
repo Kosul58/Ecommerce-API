@@ -1,6 +1,7 @@
 import apiOrderRepository from "../repository/orderRepository.js";
 import {
   DeliveryStatus,
+  OrderProductStatus,
   OrderType,
   ReturnStatus,
 } from "../common/types/orderType.js";
@@ -13,6 +14,7 @@ import {
 import cartServices from "./cartServices.js";
 import productServices from "./productServices.js";
 import { CartProduct } from "../common/types/cartType.js";
+import { Product } from "../common/types/productType.js";
 
 class OrderServices {
   private generateOrder(
@@ -54,6 +56,18 @@ class OrderServices {
     throw new Error("Invalid order type");
   }
 
+  private generateOrderProduct(product: CartProduct): OrderProduct {
+    return {
+      productid: product.productid,
+      sellerid: product.sellerid ?? "",
+      name: product.name,
+      price: Number(product.price),
+      quantity: product.quantity,
+      active: true,
+      status: OrderProductStatus.REQUESTED,
+    };
+  }
+
   private calcTotal(items: OrderProduct[]): number {
     return items.reduce((a, p) => a + p.price * p.quantity, 0);
   }
@@ -85,14 +99,7 @@ class OrderServices {
         return "noproduct";
       }
       const order = this.generateOrder(userid, OrderType.DELIVERY);
-      const productItem: OrderProduct = {
-        productid: product.productid,
-        sellerid: product.sellerid || "",
-        name: product.name,
-        price: product.price,
-        quantity: product.quantity,
-        active: true,
-      };
+      const productItem = this.generateOrderProduct(product as CartProduct);
       order.items.push(productItem);
       order.total = this.calcTotal(order.items);
       const data = await apiOrderRepository.addOrder(order);
@@ -125,14 +132,9 @@ class OrderServices {
       const order = this.generateOrder(userid, OrderType.DELIVERY);
 
       for (let product of filteredProducts) {
-        const productItem: OrderProduct = {
-          productid: product.productid,
-          sellerid: product.sellerid || "",
-          name: product.name,
-          price: product.price,
-          quantity: product.quantity,
-          active: true,
-        };
+        const productItem: OrderProduct = this.generateOrderProduct(
+          product as CartProduct
+        );
         order.items.push(productItem);
       }
 
@@ -181,6 +183,38 @@ class OrderServices {
       await productServices.modifyInventory(productid, quantity, target);
     }
   }
+  public async updateProductStatus(
+    orderid: string,
+    userid: string,
+    productid: string,
+    status: string
+  ) {
+    try {
+      if (
+        !Object.values(OrderProductStatus).includes(
+          status as OrderProductStatus
+        )
+      ) {
+        throw new Error("Invalid status value provided.");
+      }
+
+      // const order = await this.getOrder(userid);
+      const newStatus = status as OrderProductStatus;
+      const data = await apiOrderRepository.updateProductStatus(
+        orderid,
+        userid,
+        productid,
+        newStatus
+      );
+      if (typeof data === "object" && status === "Rejected") {
+        await this.cancelOrder(orderid, userid, productid);
+      }
+      return data;
+    } catch (err) {
+      console.log("Failed to update order status", err);
+      throw err;
+    }
+  }
   public async cancelOrders(orderid: string, userid: string) {
     try {
       const data = await apiOrderRepository.cancelOrders(orderid, userid);
@@ -222,6 +256,7 @@ class OrderServices {
       throw err;
     }
   }
+
   public async returnOrder(
     orderid: string,
     userid: string,

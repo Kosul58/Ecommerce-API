@@ -25,6 +25,7 @@ class ProductServices {
     }
     return {
       name,
+      sellerid: productData.sellerid,
       price: Number(price),
       inventory: Number(inventory),
       description,

@@ -6,12 +6,11 @@ import productRoutes from "./productRoutes.js";
 import categoryRoutes from "./categoryRoutes.js";
 import userRouter from "./userRoutes.js";
 import verifyToken from "../middleware/verifyToken.js";
-import verifyRole from "../middleware/verifyRole.js";
 const router = express.Router();
 
 router.use("/order", verifyToken.verify, orderRoutes);
 router.use("/cart", verifyToken.verify, cartRoutes);
-router.use("/product", verifyToken.verify, productRoutes);
+router.use("/product", productRoutes);
 router.use("/category", verifyToken.verify, categoryRoutes);
 router.use("/user", userRouter);
 

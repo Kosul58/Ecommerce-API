@@ -1,6 +1,5 @@
 import { Cart, CartProduct, UpdateCart } from "../common/types/cartType.js";
 import { Product } from "../common/types/productType.js";
-
 import CartSchema from "../models/Cart.js";
 
 class CartRepository {
