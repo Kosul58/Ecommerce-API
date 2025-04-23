@@ -1,6 +1,6 @@
 import { Category, UpdateCategory } from "../common/types/categoryType.js";
 import { getCurrentDateTimeStamp } from "../utils/utils.js";
-import CategorySchema from "../models/Category.js";
+import CategorySchema from "../models/category.js";
 
 class CategoryRepository {
   public async createCategory(category: Category) {

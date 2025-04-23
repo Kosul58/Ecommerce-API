@@ -1,6 +1,6 @@
 import { UpdateUser, User } from "../common/types/userType.js";
 import { getCurrentDateTimeStamp, comparePassword } from "../utils/utils.js";
-import UserSchema from "../models/User.js";
+import UserSchema from "../models/user.js";
 export interface IUserRepository {
   usernameExists(username: string, excludeId?: string): Promise<boolean>;
   emailExists(email: string, excludeId?: string): Promise<boolean>;

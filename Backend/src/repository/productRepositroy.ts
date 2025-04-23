@@ -1,6 +1,6 @@
 import { Product, ProductOptions } from "../common/types/productType.js";
 
-import ProductSchema from "../models/Product.js";
+import ProductSchema from "../models/product.js";
 import { getCurrentDateTimeStamp } from "../utils/utils.js";
 class ProductRepository {
   public async getProducts() {
