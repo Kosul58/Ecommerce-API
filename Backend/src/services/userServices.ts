@@ -1,3 +1,4 @@
+import { inject, injectable } from "tsyringe";
 import {
   AddUser,
   UpdateUser,
@@ -5,12 +6,13 @@ import {
   UserRole,
 } from "../common/types/userType.js";
 import { encryptPassword } from "../utils/utils.js";
-import userRepository from "../repository/userRepository.js";
 import AuthServices from "./authServices.js";
 import cartServices from "./cartServices.js";
 import { comparePassword } from "../utils/utils.js";
-
-class UserServices {
+import UserRepository from "../repository/userRepository.js";
+@injectable()
+export default class UserServices {
+  constructor(@inject(UserRepository) private userRepository: UserRepository) {}
   private async generateUser(user: AddUser, userRole: string): Promise<User> {
     const encryptedPassword = await encryptPassword(user.password);
     if (userRole === "admin") {
@@ -56,17 +58,22 @@ class UserServices {
   public async signUp(user: AddUser, role: string) {
     try {
       const [usernameTaken, emailTaken] = await Promise.all([
-        userRepository.usernameExists(user.username),
-        userRepository.emailExists(user.email),
+        this.userRepository.usernameExists(user.username),
+        this.userRepository.emailExists(user.email),
       ]);
 
       if (usernameTaken || emailTaken) return null;
       const newUser = await this.generateUser(user, role);
-      const result = await userRepository.signUp(newUser);
+      const result = await this.userRepository.signUp(newUser);
       if (result) {
         await cartServices.createCart(result._id.toString());
       }
-      const token = AuthServices.generateToken(user.username, user.email, role);
+      const token = AuthServices.generateToken(
+        result._id.toString(),
+        user.username,
+        user.email,
+        result.role
+      );
       return { result, token };
     } catch (err) {
       console.log("Failed to register user", err);
@@ -80,13 +87,18 @@ class UserServices {
 
   public async signIn(username: string, email: string, password: string) {
     try {
-      const result = await userRepository.signIn(username, email);
+      const result = await this.userRepository.signIn(username, email);
       let token;
       if (result) {
         const check = await this.passwordCheck(password, result.password);
         if (!check) return { result: null, token: null };
-        await userRepository.updateSigninInfo(username, email);
-        token = AuthServices.generateToken(username, email, result.role);
+        await this.userRepository.updateSigninInfo(username, email);
+        token = AuthServices.generateToken(
+          result._id.toString(),
+          username,
+          email,
+          result.role
+        );
       }
       return { result, token };
     } catch (err) {
@@ -97,7 +109,7 @@ class UserServices {
 
   public async getUser(userid: string) {
     try {
-      return await userRepository.getUser(userid);
+      return await this.userRepository.getUser(userid);
     } catch (err) {
       console.log("Failed to get user", err);
       throw err;
@@ -106,7 +118,7 @@ class UserServices {
 
   public async deleteUser(userid: string) {
     try {
-      const data = await userRepository.deleteUser(userid);
+      const data = await this.userRepository.deleteUser(userid);
       if (data) {
         await cartServices.deleteCart(userid);
       }
@@ -123,13 +135,13 @@ class UserServices {
         Object.entries(update).filter(([_, value]) => value !== undefined)
       ) as Partial<UpdateUser>;
       if (updateFields.username) {
-        const usernameTaken = await userRepository.usernameExists(
+        const usernameTaken = await this.userRepository.usernameExists(
           updateFields.username,
           userid
         );
         if (usernameTaken) return null;
       }
-      return await userRepository.updateUserInfo(userid, updateFields);
+      return await this.userRepository.updateUserInfo(userid, updateFields);
     } catch (err) {
       console.log("Failed to update user info", err);
       throw err;
@@ -138,6 +150,7 @@ class UserServices {
 
   public async updatePassword() {
     try {
+      // Implement password update logic if necessary
     } catch (err) {
       console.log("Failed to update password", err);
       throw err;
@@ -146,11 +159,10 @@ class UserServices {
 
   public async updateEmail() {
     try {
+      // Implement email update logic if necessary
     } catch (err) {
       console.log("Failed to update email", err);
       throw err;
     }
   }
 }
-
-export default new UserServices();

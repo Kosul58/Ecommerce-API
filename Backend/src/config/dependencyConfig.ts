@@ -1,0 +1,24 @@
+import { container } from "tsyringe";
+import UserRepository from "../repository/userRepository.js";
+import MongoDb from "../config/mongoConfig.js";
+import UserServices from "../services/userServices.js";
+import UserController from "../controllers/userController.js";
+import CategoryService from "../services/categoryServices.js";
+import CategoryRepository from "../repository/categoryRepository.js";
+import CategoryController from "../controllers/categoryController.js";
+import ProductController from "../controllers/productController.js";
+import ProductServices from "../services/productServices.js";
+import ProductRepository from "../repository/productRepositroy.js";
+
+container.register(CategoryController, { useClass: CategoryController });
+container.register(CategoryService, { useClass: CategoryService });
+container.register(CategoryRepository, { useClass: CategoryRepository });
+container.register(ProductController, { useClass: ProductController });
+container.register(ProductServices, { useClass: ProductServices });
+container.register(ProductRepository, { useClass: ProductRepository });
+container.register(UserRepository, { useClass: UserRepository });
+container.register(UserServices, { useClass: UserServices });
+container.register(UserController, { useClass: UserController });
+container.register(MongoDb, { useClass: MongoDb });
+// const isRegistered = container.isRegistered(UserController);
+// console.log(isRegistered);

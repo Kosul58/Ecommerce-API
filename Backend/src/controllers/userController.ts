@@ -1,8 +1,12 @@
-import { AddUser, UpdateUser } from "../common/types/userType.js";
-import userServices from "../services/userServices.js";
 import { RequestHandler } from "express";
+import { injectable, inject } from "tsyringe";
+import { AddUser, UpdateUser } from "../common/types/userType.js";
+import { IUserServices } from "../common/types/classInterfaces.js";
+import UserServices from "../services/userServices.js";
+@injectable()
+export default class UserController {
+  constructor(@inject(UserServices) private userServices: IUserServices) {}
 
-class UserController {
   public signUp: RequestHandler = async (req, res) => {
     const user: AddUser = req.body;
     const { role } = req.params;
@@ -19,13 +23,15 @@ class UserController {
           .json({ message: "Please provide all required user info" });
         return;
       }
-      const data = await userServices.signUp(user, role);
+
+      const data = await this.userServices.signUp(user, role);
       if (!data) {
         res
           .status(409)
           .json({ message: "Sign up failed. User Already Exists" });
         return;
       }
+
       const { result, token } = data;
       res.status(201).json({
         message: "User registered successfully",
@@ -46,11 +52,13 @@ class UserController {
           .json({ message: "Please provide username, email, and password" });
         return;
       }
-      const { result, token } = await userServices.signIn(
+
+      const { result, token } = await this.userServices.signIn(
         username,
         email,
         password
       );
+
       if (result === undefined) {
         res.status(404).json({ message: "Signin failed. User not found" });
         return;
@@ -58,9 +66,10 @@ class UserController {
       if (result === null) {
         res
           .status(400)
-          .json({ message: "Signin failed. Password do not match" });
+          .json({ message: "Signin failed. Password does not match" });
         return;
       }
+
       res
         .status(200)
         .json({ message: "Signin successful", response: { result, token } });
@@ -78,11 +87,12 @@ class UserController {
         return;
       }
 
-      const result = await userServices.deleteUser(userid);
+      const result = await this.userServices.deleteUser(userid);
       if (!result) {
         res.status(404).json({ message: "User not found" });
         return;
       }
+
       res
         .status(200)
         .json({ message: "User deleted successfully", response: result });
@@ -110,7 +120,7 @@ class UserController {
         return;
       }
 
-      const result = await userServices.updateUserInfo(userid, update);
+      const result = await this.userServices.updateUserInfo(userid, update);
       if (result === undefined) {
         res.status(404).json({ message: "User not found" });
         return;
@@ -118,7 +128,7 @@ class UserController {
       if (result === null) {
         res
           .status(400)
-          .json({ message: "Another user with same Username already exists" });
+          .json({ message: "Another user with the same username exists" });
         return;
       }
 
@@ -138,20 +148,19 @@ class UserController {
         res.status(400).json({ message: "User ID is required" });
         return;
       }
-      const result = await userServices.getUser(userid);
+
+      const result = await this.userServices.getUser(userid);
       if (!result) {
         res.status(404).json({ message: "User not found" });
         return;
       }
+
       res
         .status(200)
         .json({ message: "User search successful", response: result });
-      return;
     } catch (err) {
       console.error("Search user error:", err);
       res.status(500).json({ message: "Unexpected error during search" });
     }
   };
 }
-
-export default new UserController();

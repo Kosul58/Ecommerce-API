@@ -1,11 +1,15 @@
-import productService from "../services/productServices.js";
 import { AddProduct, UpdateProdcut } from "../common/types/productType.js";
 import { RequestHandler } from "express";
-
-class ProductController {
+import { inject, injectable } from "tsyringe";
+import ProductServices from "../services/productServices.js";
+@injectable()
+export default class ProductController {
+  constructor(
+    @inject(ProductServices) private prodcutService: ProductServices
+  ) {}
   public getProducts: RequestHandler = async (req, res) => {
     try {
-      const response = await productService.getProducts();
+      const response = await this.prodcutService.getProducts();
       if (!response || response.length === 0) {
         res.status(404).json({ message: "No Products found", response: [] });
         return;
@@ -30,7 +34,7 @@ class ProductController {
         res.status(400).json({ message: "Provide ProductID", response: [] });
         return;
       }
-      const data = await productService.getProductById(id);
+      const data = await this.prodcutService.getProductById(id);
       if (!data || Object.keys(data).length === 0) {
         res.status(404).json({
           message: "No matching product found",
@@ -63,7 +67,7 @@ class ProductController {
         res.status(400).json({ message: "Enter all fields", response: [] });
         return;
       }
-      const result = await productService.addProduct(productData);
+      const result = await this.prodcutService.addProduct(productData);
       if (result === null) {
         res.status(409).json({
           message: "Product Already Exists",
@@ -98,7 +102,7 @@ class ProductController {
         res.status(400).json({ message: "Empty products array", response: [] });
         return;
       }
-      const data = await productService.addProducts(products);
+      const data = await this.prodcutService.addProducts(products);
       if (!data || data.length > 0) {
         res.status(201).json({
           message: "Batch addition of products successful",
@@ -127,7 +131,7 @@ class ProductController {
         res.status(400).json({ message: "Enter all fields", response: [] });
         return;
       }
-      const result = await productService.updateProduct(id, update);
+      const result = await this.prodcutService.updateProduct(id, update);
       if (
         (result && Object.keys(result).length > 0) ||
         (Array.isArray(result) && result.length > 0)
@@ -158,7 +162,7 @@ class ProductController {
         res.status(400).json({ message: "Product ID required", response: [] });
         return;
       }
-      const result = await productService.deleteProduct(id);
+      const result = await this.prodcutService.deleteProduct(id);
       if (!result) {
         res.status(404).json({
           message: "Product deletion unsuccessful",
@@ -189,7 +193,7 @@ class ProductController {
           .json({ message: "Provide all required fields", response: [] });
         return;
       }
-      const result = await productService.modifyInventory(
+      const result = await this.prodcutService.modifyInventory(
         id,
         quantity,
         modification
@@ -214,5 +218,3 @@ class ProductController {
     }
   };
 }
-
-export default new ProductController();

@@ -1,14 +1,17 @@
 import { Category, UpdateCategory } from "../common/types/categoryType.js";
 import { getCurrentDateTimeStamp } from "../utils/utils.js";
-import CategorySchema from "../models/Category.js";
+import CategorySchema from "../models/category.js";
+import { inject, injectable } from "tsyringe";
+import MongoDb from "../config/mongoConfig.js";
 
-class CategoryRepository {
+@injectable()
+export default class CategoryRepository {
+  constructor(@inject(MongoDb) private mongoDb: MongoDb) {}
   public async createCategory(category: Category) {
     try {
       category.createdAt = getCurrentDateTimeStamp();
       const newCategory = new CategorySchema(category);
-      await newCategory.save();
-      return newCategory;
+      return await this.mongoDb.save(newCategory);
     } catch (err) {
       console.log("Failed to create a category", err);
       throw err;
@@ -17,7 +20,7 @@ class CategoryRepository {
 
   public async readCategories() {
     try {
-      return await CategorySchema.find();
+      return await this.mongoDb.find(CategorySchema, {});
     } catch (err) {
       console.log("Failed to read the categories", err);
       throw err;
@@ -26,7 +29,7 @@ class CategoryRepository {
 
   public async readCategory(categoryid: string) {
     try {
-      return await CategorySchema.findById(categoryid);
+      return await this.mongoDb.findById(CategorySchema, categoryid);
     } catch (err) {
       console.log("Failed to read a category", err);
       throw err;
@@ -36,12 +39,12 @@ class CategoryRepository {
   public async updateCategory(categoryid: string, update: UpdateCategory) {
     try {
       update.updatedAt = getCurrentDateTimeStamp();
-      const updatedCategory = await CategorySchema.findByIdAndUpdate(
+      const updatedCategory = await this.mongoDb.findByIdAndUpdate(
+        CategorySchema,
         categoryid,
         { $set: update },
         { new: true }
       );
-
       if (!updatedCategory) return undefined;
       return updatedCategory;
     } catch (err) {
@@ -52,7 +55,10 @@ class CategoryRepository {
 
   public async deleteCategory(categoryid: string) {
     try {
-      const deleted = await CategorySchema.findByIdAndDelete(categoryid);
+      const deleted = await this.mongoDb.findByIdAndDelete(
+        CategorySchema,
+        categoryid
+      );
       if (!deleted) return null; // Not found
       return deleted;
     } catch (err) {
@@ -61,5 +67,3 @@ class CategoryRepository {
     }
   }
 }
-
-export default new CategoryRepository();

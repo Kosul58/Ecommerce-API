@@ -3,9 +3,13 @@ import {
   UpdateCategory,
 } from "../common/types/categoryType.js";
 import { RequestHandler } from "express";
-import categoryServices from "../services/categoryServices.js";
-
-class CategoryController {
+import { inject, injectable } from "tsyringe";
+import CategoryService from "../services/categoryServices.js";
+@injectable()
+export default class CategoryController {
+  constructor(
+    @inject(CategoryService) private categoryServices: CategoryService
+  ) {}
   // Create Category
   public createCategory: RequestHandler = async (req, res) => {
     const category: CategoryOption = req.body;
@@ -16,7 +20,7 @@ class CategoryController {
           .json({ message: "Name and description field required" });
         return;
       }
-      const result = await categoryServices.createCategory(category);
+      const result = await this.categoryServices.createCategory(category);
       if (result === "catexists") {
         res.status(400).json({
           message: "Category already exists",
@@ -46,7 +50,7 @@ class CategoryController {
   // Read All Categories
   public readCategories: RequestHandler = async (req, res) => {
     try {
-      const result = await categoryServices.readCategories();
+      const result = await this.categoryServices.readCategories();
       if (!result || result.length === 0) {
         res.status(404).json({
           message: "Categories read unsuccessful",
@@ -74,7 +78,7 @@ class CategoryController {
         return;
       }
 
-      const result = await categoryServices.readCategory(id);
+      const result = await this.categoryServices.readCategory(id);
       if (!result || Object.keys(result).length < 1) {
         res.status(404).json({
           message: "Category read unsuccessful",
@@ -102,7 +106,7 @@ class CategoryController {
         res.status(400).json({ message: "Enter all required fields" });
         return;
       }
-      const result = await categoryServices.updateCategory(id, update);
+      const result = await this.categoryServices.updateCategory(id, update);
       if (result === undefined) {
         res.status(404).json({
           message: "Category not found",
@@ -148,7 +152,7 @@ class CategoryController {
         res.status(400).json({ message: "Enter all required fields" });
         return;
       }
-      const result = await categoryServices.deleteCategory(id);
+      const result = await this.categoryServices.deleteCategory(id);
       if (!result) {
         res.status(404).json({
           message: "Category not found",
@@ -173,5 +177,3 @@ class CategoryController {
     }
   };
 }
-
-export default new CategoryController();

@@ -4,11 +4,13 @@ dotenv.config();
 
 class AuthServices {
   public generateToken = (
+    id: string,
     username: string,
     email: string,
     role: any
   ): string => {
-    const payload = { username, email, role };
+    const payload = { id, username, email, role };
+    console.log(payload);
     const secretKey = process.env.JWT_SECRET_KEY;
     if (!secretKey) {
       throw new Error(

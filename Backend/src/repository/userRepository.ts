@@ -1,50 +1,42 @@
+import { inject, injectable } from "tsyringe";
 import { UpdateUser, User } from "../common/types/userType.js";
-import { getCurrentDateTimeStamp, comparePassword } from "../utils/utils.js";
-import UserSchema from "../models/User.js";
-export interface IUserRepository {
-  usernameExists(username: string, excludeId?: string): Promise<boolean>;
-  emailExists(email: string, excludeId?: string): Promise<boolean>;
-  signIn(username: string, email: string): Promise<User | undefined>;
-  updateSigninInfo(username: string, email: string): Promise<User | undefined>;
-  signUp(user: User): Promise<User>;
-  getUser(userid: string): Promise<User | null>;
-  deleteUser(userid: string): Promise<User | null>;
-  updateUserInfo(
-    userid: string,
-    update: UpdateUser
-  ): Promise<User | null | undefined>;
-  updatePassword(userid: string, password: string): Promise<void>;
-  updateEmail(userid: string, email: string): Promise<void>;
-}
+import { getCurrentDateTimeStamp } from "../utils/utils.js";
+import MongoDb from "../config/mongoConfig.js";
+import UserSchema from "../models/user.js";
 
-class UserRepository {
+@injectable()
+export default class UserRepository {
+  constructor(@inject(MongoDb) private mongoDb: MongoDb) {}
+
   public async usernameExists(username: string, excludeId?: string) {
-    const user = await UserSchema.findOne({ username });
-    return user && user._id.toString() !== excludeId;
+    const user = await this.mongoDb.findOne(UserSchema, { username });
+    return user && user["_id"].toString() !== excludeId;
   }
+
   public async emailExists(email: string, excludeId?: string) {
-    const user = await UserSchema.findOne({ email });
-    return user && user._id.toString() !== excludeId;
+    const user = await this.mongoDb.findOne(UserSchema, { email });
+    return user && user["_id"].toString() !== excludeId;
   }
 
   public async signIn(username: string, email: string) {
     try {
-      const user = await UserSchema.findOne({ username, email });
+      const user = await this.mongoDb.findOne(UserSchema, { username, email });
       if (!user) return undefined;
       user.lastLogin = getCurrentDateTimeStamp();
-      await user.save();
+      await this.mongoDb.save(user);
       return user;
     } catch (err) {
       console.log("Failed to sign in user", err);
       throw err;
     }
   }
+
   public async updateSigninInfo(username: string, email: string) {
     try {
-      const user = await UserSchema.findOne({ username, email });
+      const user = await this.mongoDb.findOne(UserSchema, { username, email });
       if (!user) return undefined;
       user.lastLogin = getCurrentDateTimeStamp();
-      await user.save();
+      await this.mongoDb.save(user);
       return user;
     } catch (err) {
       console.log("Failed to update user signin", err);
@@ -59,8 +51,7 @@ class UserRepository {
         createdAt: getCurrentDateTimeStamp(),
         lastLogin: getCurrentDateTimeStamp(),
       });
-      await newUser.save();
-      return newUser;
+      return await this.mongoDb.save(newUser);
     } catch (err) {
       console.log("Failed to register user", err);
       throw err;
@@ -69,7 +60,7 @@ class UserRepository {
 
   public async getUser(userid: string) {
     try {
-      return await UserSchema.findById(userid);
+      return await this.mongoDb.findById(UserSchema, userid);
     } catch (err) {
       console.log("Failed to fetch user", err);
       throw err;
@@ -78,7 +69,7 @@ class UserRepository {
 
   public async deleteUser(userid: string) {
     try {
-      return await UserSchema.findByIdAndDelete(userid);
+      return await this.mongoDb.findByIdAndDelete(UserSchema, userid);
     } catch (err) {
       console.log("Failed to remove user", err);
       throw err;
@@ -87,21 +78,23 @@ class UserRepository {
 
   public async updateUserInfo(userid: string, update: UpdateUser) {
     try {
-      const user = await UserSchema.findByIdAndUpdate(
+      return await this.mongoDb.findByIdAndUpdate(
+        UserSchema,
         userid,
         { $set: update },
         { new: true }
       );
-      return user || undefined;
     } catch (err) {
       console.log("Failed to update user info", err);
       throw err;
     }
   }
 
-  public async updatePassword(userid: string, password: string) {}
+  public async updatePassword(userid: string, password: string) {
+    // TODO: implement logic
+  }
 
-  public async updateEmail(userid: string, email: string) {}
+  public async updateEmail(userid: string, email: string) {
+    // TODO: implement logic
+  }
 }
-
-export default new UserRepository();

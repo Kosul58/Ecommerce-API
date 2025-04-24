@@ -1,10 +1,12 @@
 // routes/userRoutes.ts
 import express from "express";
-import userController from "../controllers/userController.js";
 import verifyRole from "../middleware/verifyRole.js";
 import verifyToken from "../middleware/verifyToken.js";
-const router = express.Router();
+import UserController from "../controllers/userController.js";
+import { container } from "tsyringe";
 
+const userController = container.resolve(UserController);
+const router = express.Router();
 router.get(
   "/:userid",
   verifyToken.verify,
