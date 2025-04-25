@@ -1,6 +1,6 @@
-import { Product, ProductOptions } from "../common/types/productType.js";
+import { Product, UpdateProdcut } from "../common/types/productType.js";
 import { injectable } from "tsyringe";
-import ProductSchema from "../models/product.js";
+import ProductSchema from "../models/Product.js";
 import mongoose from "mongoose";
 
 @injectable()
@@ -75,7 +75,7 @@ export default class ProductRepository {
     }
   }
 
-  public async updateProduct(productid: string, update: ProductOptions) {
+  public async updateProduct(productid: string, update: UpdateProdcut) {
     try {
       return await ProductSchema.findByIdAndUpdate(
         productid,
