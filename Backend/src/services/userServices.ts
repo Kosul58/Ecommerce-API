@@ -1,72 +1,62 @@
+import { inject, injectable } from "tsyringe";
 import {
   AddUser,
   UpdateUser,
   User,
   UserRole,
 } from "../common/types/userType.js";
-import { encryptPassword } from "../utils/utils.js";
-import userRepository from "../repository/userRepository.js";
 import AuthServices from "./authServices.js";
-import cartServices from "./cartServices.js";
-import { comparePassword } from "../utils/utils.js";
+import CartService from "./cartServices.js";
+import UserRepository from "../repository/userRepository.js";
+import Utills from "../utils/utils.js";
 
-class UserServices {
-  private async generateUser(user: AddUser, userRole: string): Promise<User> {
-    const encryptedPassword = await encryptPassword(user.password);
-    if (userRole === "admin") {
-      return {
-        userid: "",
-        firstname: user.firstname,
-        lastname: user.lastname,
-        username: user.username,
-        email: user.email,
-        password: encryptedPassword,
-        createdAt: "",
-        lastLogin: "",
-        role: UserRole.ADMIN,
-      };
-    } else if (userRole === "seller") {
-      return {
-        userid: "",
-        firstname: user.firstname,
-        lastname: user.lastname,
-        username: user.username,
-        email: user.email,
-        password: encryptedPassword,
-        createdAt: "",
-        lastLogin: "",
-        role: UserRole.SELLER,
-      };
-    } else if (userRole === "user") {
-      return {
-        userid: "",
-        firstname: user.firstname,
-        lastname: user.lastname,
-        username: user.username,
-        email: user.email,
-        password: encryptedPassword,
-        createdAt: "",
-        lastLogin: "",
-        role: UserRole.USER,
-      };
+@injectable()
+export default class UserServices {
+  constructor(
+    @inject(UserRepository) private userRepository: UserRepository,
+    @inject(CartService) private cartService: CartService,
+    @inject(AuthServices) private authService: AuthServices,
+    @inject(Utills) private utils: Utills
+  ) {}
+  private async generateUser(user: AddUser, role: string): Promise<User> {
+    const encryptedPassword = await this.utils.encryptPassword(user.password);
+    let userRole;
+    if (role === "User") {
+      userRole = UserRole.USER;
+    } else {
+      userRole = UserRole.ADMIN;
     }
-    throw new Error("Invalid role");
+    return {
+      firstname: user.firstname,
+      lastname: user.lastname,
+      username: user.username,
+      email: user.email,
+      password: encryptedPassword,
+      phone: user.phone,
+      address: user.address,
+      role: userRole,
+    };
   }
 
   public async signUp(user: AddUser, role: string) {
     try {
-      const [usernameTaken, emailTaken] = await Promise.all([
-        userRepository.usernameExists(user.username),
-        userRepository.emailExists(user.email),
+      const [usernameTaken, emailTaken, phoneTaken] = await Promise.all([
+        this.userRepository.findUserName(user.username),
+        this.userRepository.findEmail(user.email),
+        this.userRepository.findPhoneNumber(user.phone),
       ]);
-
-      if (usernameTaken || emailTaken) return null;
+      if (usernameTaken || emailTaken || phoneTaken) return null;
       const newUser = await this.generateUser(user, role);
-      const result = await userRepository.signUp(newUser);
-      if (result) {
-        await cartServices.createCart(result._id.toString());
+      const result = await this.userRepository.signUp(newUser);
+      if (result && result.role === "User") {
+        await this.cartService.createCart(result._id.toString());
       }
-      const token = AuthServices.generateToken(user.username, user.email, role);
+      const token = this.authService.generateToken(
+        result._id.toString(),
+        user.username,
+        user.email,
+        result.role
+      );
       return { result, token };
     } catch (err) {
       console.log("Failed to register user", err);
@@ -74,19 +64,22 @@ class UserServices {
     }
   }
 
-  private async passwordCheck(password: string, encryptedPassword: string) {
-    return await comparePassword(password, encryptedPassword);
-  }
-
   public async signIn(username: string, email: string, password: string) {
     try {
-      const result = await userRepository.signIn(username, email);
+      const result = await this.userRepository.signIn(username, email);
       let token;
       if (result) {
-        const check = await this.passwordCheck(password, result.password);
-        if (!check) return { result: null, token: null };
-        await userRepository.updateSigninInfo(username, email);
-        token = AuthServices.generateToken(username, email, result.role);
+        const check = await this.utils.comparePassword(
+          password,
+          result.password
+        );
+        if (!check) return { result: "incorrectpwd" };
+        token = this.authService.generateToken(
+          result._id.toString(),
+          username,
+          email,
+          result.role
+        );
       }
       return { result, token };
     } catch (err) {
@@ -97,18 +90,25 @@ class UserServices {
 
   public async getUser(userid: string) {
     try {
-      return await userRepository.getUser(userid);
+      return await this.userRepository.findUser(userid);
     } catch (err) {
       console.log("Failed to get user", err);
+      throw err;
+    }
+  }
+  public async getUsers() {
+    try {
+      return await this.userRepository.findUsers();
+    } catch (err) {
       throw err;
     }
   }
 
   public async deleteUser(userid: string) {
     try {
-      const data = await userRepository.deleteUser(userid);
+      const data = await this.userRepository.deleteUser(userid);
       if (data) {
-        await cartServices.deleteCart(userid);
+        await this.cartService.deleteCart(userid);
       }
       return data;
     } catch (err) {
@@ -123,13 +123,20 @@ class UserServices {
         Object.entries(update).filter(([_, value]) => value !== undefined)
       ) as Partial<UpdateUser>;
       if (updateFields.username) {
-        const usernameTaken = await userRepository.usernameExists(
+        const usernameTaken = await this.userRepository.findUserName(
           updateFields.username,
           userid
         );
         if (usernameTaken) return null;
       }
-      return await userRepository.updateUserInfo(userid, updateFields);
+      if (updateFields.phone) {
+        const usernameTaken = await this.userRepository.findPhoneNumber(
+          updateFields.phone,
+          userid
+        );
+        if (usernameTaken) return null;
+      }
+      return await this.userRepository.updateUser(userid, updateFields);
     } catch (err) {
       console.log("Failed to update user info", err);
       throw err;
@@ -152,5 +159,3 @@ class UserServices {
     }
   }
 }
-
-export default new UserServices();

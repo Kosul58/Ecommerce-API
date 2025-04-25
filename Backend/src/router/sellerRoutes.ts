@@ -1,0 +1,59 @@
+// routes/userRoutes.ts
+import express from "express";
+import verifyRole from "../middleware/verifyRole.js";
+import verifyToken from "../middleware/verifyToken.js";
+import { container } from "tsyringe";
+import SellerController from "../controllers/sellerController.js";
+import productRoutes from "./productRoutes.js";
+import orderRoutes from "./orderRoutes.js";
+import DataValidation from "../middleware/validateData.js";
+import { idSchema } from "../schemas/userSchema.js";
+import {
+  signInSchema,
+  signUpSchema,
+  updateSchema,
+} from "../schemas/sellerSchema.js";
+const sellerController = container.resolve(SellerController);
+const dataValidation = container.resolve(DataValidation);
+const sellerRoutes = express.Router();
+sellerRoutes.use("/product", productRoutes);
+sellerRoutes.use("/order", orderRoutes);
+sellerRoutes.get(
+  "/",
+  verifyToken.verify,
+  verifyRole.verify("Admin", "Seller"),
+  dataValidation.validateTokenData(idSchema),
+  sellerController.getSeller
+);
+sellerRoutes.get(
+  "/sellers",
+  verifyToken.verify,
+  verifyRole.verify("Admin"),
+  sellerController.getSellers
+);
+sellerRoutes.post(
+  "/signup",
+  dataValidation.validateBody(signUpSchema),
+  sellerController.signUp
+);
+sellerRoutes.post(
+  "/signin",
+  dataValidation.validateBody(signInSchema),
+  sellerController.signIn
+);
+sellerRoutes.put(
+  "/",
+  verifyToken.verify,
+  verifyRole.verify("Seller", "Admin"),
+  dataValidation.validateBody(updateSchema),
+  sellerController.updateSeller
+);
+sellerRoutes.delete(
+  "/",
+  verifyToken.verify,
+  verifyRole.verify("Admin", "Seller"),
+  dataValidation.validateTokenData(idSchema),
+  sellerController.deleteSeller
+);
+
+export default sellerRoutes;

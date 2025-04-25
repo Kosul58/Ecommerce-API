@@ -1,8 +1,9 @@
-import { Cart, CartProduct, UpdateCart } from "../common/types/cartType.js";
-import { Product } from "../common/types/productType.js";
-import CartSchema from "../models/Cart.js";
+import { Cart, CartProduct } from "../common/types/cartType.js";
+import CartSchema from "../models/cart.js";
+import { injectable } from "tsyringe";
 
-class CartRepository {
+@injectable()
+export default class CartRepository {
   public async getProducts() {
     try {
       return await CartSchema.find();
@@ -110,14 +111,14 @@ class CartRepository {
   public async updateProduct(
     userid: string,
     productid: string,
-    update: UpdateCart
+    quantity: number
   ) {
     try {
       const cart = await CartSchema.findOne({ userid });
       if (!cart) return "nocart";
       const product = cart.products.find((p) => p.productid === productid);
       if (!product) return "noproduct";
-      product.quantity = update.quantity;
+      product.quantity = quantity;
       return await cart.save();
     } catch (err) {
       console.log("Failed to update a product in the cart", err);
@@ -129,7 +130,10 @@ class CartRepository {
     try {
       const cart = await CartSchema.findOne({ userid });
       if (!cart) return undefined;
-      return cart.products;
+      return cart.products.map((p) => ({
+        productid: p.productid,
+        quantity: p.quantity,
+      }));
     } catch (err) {
       console.log(
         "Failed to calculate total price of products in the cart of a user",
@@ -148,5 +152,3 @@ class CartRepository {
     }
   }
 }
-
-export default new CartRepository();

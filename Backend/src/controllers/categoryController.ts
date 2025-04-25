@@ -3,20 +3,24 @@ import {
   UpdateCategory,
 } from "../common/types/categoryType.js";
 import { RequestHandler } from "express";
-import categoryServices from "../services/categoryServices.js";
-
-class CategoryController {
+import { inject, injectable } from "tsyringe";
+import CategoryService from "../services/categoryServices.js";
+@injectable()
+export default class CategoryController {
+  constructor(
+    @inject(CategoryService) private categoryServices: CategoryService
+  ) {}
   // Create Category
   public createCategory: RequestHandler = async (req, res) => {
     const category: CategoryOption = req.body;
     try {
-      if (!category.name || !category.description) {
-        res
-          .status(400)
-          .json({ message: "Name and description field required" });
-        return;
-      }
-      const result = await categoryServices.createCategory(category);
+      // if (!category.name || !category.description) {
+      //   res
+      //     .status(400)
+      //     .json({ message: "Name and description field required" });
+      //   return;
+      // }
+      const result = await this.categoryServices.createCategory(category);
       if (result === "catexists") {
         res.status(400).json({
           message: "Category already exists",
@@ -46,7 +50,7 @@ class CategoryController {
   // Read All Categories
   public readCategories: RequestHandler = async (req, res) => {
     try {
-      const result = await categoryServices.readCategories();
+      const result = await this.categoryServices.readCategories();
       if (!result || result.length === 0) {
         res.status(404).json({
           message: "Categories read unsuccessful",
@@ -67,14 +71,14 @@ class CategoryController {
 
   // Read Single Category
   public readCategory: RequestHandler = async (req, res) => {
-    const { id } = req.params;
+    const { categoryid } = req.params;
     try {
-      if (!id) {
-        res.status(400).json({ message: "Category id required" });
-        return;
-      }
+      // if (!categoryid) {
+      //   res.status(400).json({ message: "Category categoryid required" });
+      //   return;
+      // }
 
-      const result = await categoryServices.readCategory(id);
+      const result = await this.categoryServices.readCategory(categoryid);
       if (!result || Object.keys(result).length < 1) {
         res.status(404).json({
           message: "Category read unsuccessful",
@@ -95,14 +99,17 @@ class CategoryController {
 
   // Update Category
   public updateCategory: RequestHandler = async (req, res) => {
-    const { id } = req.params;
+    const { categoryid } = req.params;
     const update: UpdateCategory = req.body;
     try {
-      if (!id || Object.keys(update).length < 1) {
-        res.status(400).json({ message: "Enter all required fields" });
-        return;
-      }
-      const result = await categoryServices.updateCategory(id, update);
+      // if (!categoryid || Object.keys(update).length < 1) {
+      //   res.status(400).json({ message: "Enter all required fields" });
+      //   return;
+      // }
+      const result = await this.categoryServices.updateCategory(
+        categoryid,
+        update
+      );
       if (result === undefined) {
         res.status(404).json({
           message: "Category not found",
@@ -142,13 +149,13 @@ class CategoryController {
 
   // Delete Category
   public deleteCategory: RequestHandler = async (req, res) => {
-    const { id } = req.params;
+    const { categoryid } = req.params;
     try {
-      if (!id) {
-        res.status(400).json({ message: "Enter all required fields" });
-        return;
-      }
-      const result = await categoryServices.deleteCategory(id);
+      // if (!categoryid) {
+      //   res.status(400).json({ message: "Enter all required fields" });
+      //   return;
+      // }
+      const result = await this.categoryServices.deleteCategory(categoryid);
       if (!result) {
         res.status(404).json({
           message: "Category not found",
@@ -173,5 +180,3 @@ class CategoryController {
     }
   };
 }
-
-export default new CategoryController();

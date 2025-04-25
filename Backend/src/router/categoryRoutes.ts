@@ -1,39 +1,54 @@
 import express from "express";
 import CategoryController from "../controllers/categoryController.js";
 import verifyRole from "../middleware/verifyRole.js";
+import { container } from "tsyringe";
+import DataValidation from "../middleware/validateData.js";
+import {
+  categoryParamsSchema,
+  createSchema,
+  updateSchema,
+} from "../schemas/catagorySchema.js";
 const categoryRoutes = express.Router();
 
+const categoryController = container.resolve(CategoryController);
+
+const dataValidation = container.resolve(DataValidation);
 // Create category
 categoryRoutes.post(
   "/",
   verifyRole.verify("Seller", "Admin"),
-  CategoryController.createCategory
+  dataValidation.validateBody(createSchema),
+  categoryController.createCategory
 );
 
 // Read category
 categoryRoutes.get(
   "/",
   verifyRole.verify("Seller", "Admin"),
-  CategoryController.readCategories
+  categoryController.readCategories
 );
 categoryRoutes.get(
-  "/:id",
+  "/:categoryid",
   verifyRole.verify("Seller", "Admin"),
-  CategoryController.readCategory
+  dataValidation.validateParams(categoryParamsSchema),
+  categoryController.readCategory
 );
 
 // Update category
 categoryRoutes.put(
-  "/:id",
+  "/:categoryid",
   verifyRole.verify("Seller", "Admin"),
-  CategoryController.updateCategory
+  dataValidation.validateParams(categoryParamsSchema),
+  dataValidation.validateBody(updateSchema),
+  categoryController.updateCategory
 );
 
 // Delete category
 categoryRoutes.delete(
-  "/:id",
+  "/:categoryid",
   verifyRole.verify("Seller", "Admin"),
-  CategoryController.deleteCategory
+  dataValidation.validateParams(categoryParamsSchema),
+  categoryController.deleteCategory
 );
 
 export default categoryRoutes;

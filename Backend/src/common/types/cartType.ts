@@ -10,13 +10,4 @@ export interface CartProduct {
   quantity: number;
   description?: string;
   category?: string;
-  price?: number;
-}
-
-export interface UpdateCart {
-  // name?: string;
-  price?: number;
-  quantity: number;
-  description?: string;
-  category?: string;
 }

@@ -5,8 +5,9 @@ export interface Category {
   description?: string;
   parentId: string;
   isActive: boolean;
-  createdAt: string;
-  updatedAt: string;
+  createdAt?: string;
+  updatedAt?: string;
+  timestamp?: Date;
 }
 
 //type required to update category

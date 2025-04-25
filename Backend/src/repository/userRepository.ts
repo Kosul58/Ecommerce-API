@@ -1,29 +1,22 @@
+import { inject, injectable } from "tsyringe";
 import { UpdateUser, User } from "../common/types/userType.js";
-import { getCurrentDateTimeStamp, comparePassword } from "../utils/utils.js";
+import MongoDb from "../config/mongoConfig.js";
 import UserSchema from "../models/user.js";
-export interface IUserRepository {
-  usernameExists(username: string, excludeId?: string): Promise<boolean>;
-  emailExists(email: string, excludeId?: string): Promise<boolean>;
-  signIn(username: string, email: string): Promise<User | undefined>;
-  updateSigninInfo(username: string, email: string): Promise<User | undefined>;
-  signUp(user: User): Promise<User>;
-  getUser(userid: string): Promise<User | null>;
-  deleteUser(userid: string): Promise<User | null>;
-  updateUserInfo(
-    userid: string,
-    update: UpdateUser
-  ): Promise<User | null | undefined>;
-  updatePassword(userid: string, password: string): Promise<void>;
-  updateEmail(userid: string, email: string): Promise<void>;
-}
 
-class UserRepository {
-  public async usernameExists(username: string, excludeId?: string) {
+@injectable()
+export default class UserRepository {
+  public async findUserName(username: string, excludeId?: string) {
     const user = await UserSchema.findOne({ username });
     return user && user._id.toString() !== excludeId;
   }
-  public async emailExists(email: string, excludeId?: string) {
+
+  public async findEmail(email: string, excludeId?: string) {
     const user = await UserSchema.findOne({ email });
+    return user && user._id.toString() !== excludeId;
+  }
+
+  public async findPhoneNumber(phone: number, excludeId?: string) {
+    const user = await UserSchema.findOne({ phone });
     return user && user._id.toString() !== excludeId;
   }
 
@@ -31,34 +24,16 @@ class UserRepository {
     try {
       const user = await UserSchema.findOne({ username, email });
       if (!user) return undefined;
-      user.lastLogin = getCurrentDateTimeStamp();
-      await user.save();
-      return user;
+      return await user.save();
     } catch (err) {
       console.log("Failed to sign in user", err);
-      throw err;
-    }
-  }
-  public async updateSigninInfo(username: string, email: string) {
-    try {
-      const user = await UserSchema.findOne({ username, email });
-      if (!user) return undefined;
-      user.lastLogin = getCurrentDateTimeStamp();
-      await user.save();
-      return user;
-    } catch (err) {
-      console.log("Failed to update user signin", err);
       throw err;
     }
   }
 
   public async signUp(user: User) {
     try {
-      const newUser = new UserSchema({
-        ...user,
-        createdAt: getCurrentDateTimeStamp(),
-        lastLogin: getCurrentDateTimeStamp(),
-      });
+      const newUser = new UserSchema(user);
       await newUser.save();
       return newUser;
     } catch (err) {
@@ -67,11 +42,19 @@ class UserRepository {
     }
   }
 
-  public async getUser(userid: string) {
+  public async findUser(userid: string) {
     try {
       return await UserSchema.findById(userid);
     } catch (err) {
       console.log("Failed to fetch user", err);
+      throw err;
+    }
+  }
+  public async findUsers() {
+    try {
+      return await UserSchema.find();
+    } catch (err) {
+      console.log("Failed to fetch users", err);
       throw err;
     }
   }
@@ -85,14 +68,14 @@ class UserRepository {
     }
   }
 
-  public async updateUserInfo(userid: string, update: UpdateUser) {
+  public async updateUser(userid: string, update: UpdateUser) {
     try {
       const user = await UserSchema.findByIdAndUpdate(
         userid,
         { $set: update },
         { new: true }
       );
-      return user || undefined;
+      return user;
     } catch (err) {
       console.log("Failed to update user info", err);
       throw err;
@@ -103,5 +86,3 @@ class UserRepository {
 
   public async updateEmail(userid: string, email: string) {}
 }
-
-export default new UserRepository();

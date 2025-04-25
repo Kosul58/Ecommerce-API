@@ -3,21 +3,22 @@ import {
   CategoryOption,
   UpdateCategory,
 } from "../common/types/categoryType.js";
-import apiCategoryRepository from "../repository/categoryRepository.js";
+import CategoryRepository from "../repository/categoryRepository.js";
+import { inject, injectable } from "tsyringe";
 
-class CategoryService {
+@injectable()
+export default class CategoryService {
+  constructor(
+    @inject(CategoryRepository) private categoryRepository: CategoryRepository
+  ) {}
   private generateCategory(category: CategoryOption): Category {
-    const { name, description = "", parentId = "" } = category;
     return {
-      name,
-      description,
-      parentId,
+      name: category.name,
+      description: category.description || "",
+      parentId: category.parentId || "",
       isActive: true,
-      createdAt: "",
-      updatedAt: "",
     };
   }
-
   private async checkCategory(name: string) {
     try {
       const categories = await this.readCategories();
@@ -33,31 +34,28 @@ class CategoryService {
         return "catexists";
       }
       const newCategory = this.generateCategory(category);
-      return await apiCategoryRepository.createCategory(newCategory);
+      return await this.categoryRepository.createCategory(newCategory);
     } catch (err) {
       console.log("Failed to create a category", err);
       throw err;
     }
   }
-
   public async readCategories() {
     try {
-      return await apiCategoryRepository.readCategories();
+      return await this.categoryRepository.readCategories();
     } catch (err) {
       console.log("Failed to read categories", err);
       throw err;
     }
   }
-
   public async readCategory(categoryid: string) {
     try {
-      return await apiCategoryRepository.readCategory(categoryid);
+      return await this.categoryRepository.readCategory(categoryid);
     } catch (err) {
       console.log("Failed to read a category", err);
       throw err;
     }
   }
-
   public async updateCategory(categoryid: string, update: UpdateCategory) {
     try {
       const updateFields = Object.fromEntries(
@@ -73,7 +71,7 @@ class CategoryService {
         const check = await this.readCategory(update.parentId);
         if (!check) return "noparent";
       }
-      return await apiCategoryRepository.updateCategory(
+      return await this.categoryRepository.updateCategory(
         categoryid,
         updateFields
       );
@@ -82,15 +80,12 @@ class CategoryService {
       throw err;
     }
   }
-
   public async deleteCategory(categoryid: string) {
     try {
-      return await apiCategoryRepository.deleteCategory(categoryid);
+      return await this.categoryRepository.deleteCategory(categoryid);
     } catch (err) {
       console.log("Failed to delete category", err);
       throw err;
     }
   }
 }
-
-export default new CategoryService();

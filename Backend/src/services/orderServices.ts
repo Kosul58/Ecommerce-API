@@ -1,31 +1,32 @@
-import apiOrderRepository from "../repository/orderRepository.js";
 import {
+  DeliveryOrder,
+  ReturnOrder,
+  OrderProduct,
   DeliveryStatus,
   OrderProductStatus,
   OrderType,
   ReturnStatus,
 } from "../common/types/orderType.js";
-import { getCurrentDateTimeStamp } from "../utils/utils.js";
-import {
-  DeliveryOrder,
-  ReturnOrder,
-  OrderProduct,
-} from "../common/types/orderType.js";
-import cartServices from "./cartServices.js";
-import productServices from "./productServices.js";
+import CartService from "./cartServices.js";
+import ProductServices from "./productServices.js";
 import { CartProduct } from "../common/types/cartType.js";
-import { Product } from "../common/types/productType.js";
+import { inject, injectable } from "tsyringe";
+import OrderRepository from "../repository/orderRepository.js";
 
-class OrderServices {
+@injectable()
+export default class OrderService {
+  constructor(
+    @inject(ProductServices) private productService: ProductServices,
+    @inject(CartService) private cartService: CartService,
+    @inject(OrderRepository) private orderRepository: OrderRepository
+  ) {}
   private generateOrder(
     userid: string,
     type: OrderType
   ): DeliveryOrder | ReturnOrder {
-    const timestamp = getCurrentDateTimeStamp();
     if (type === OrderType.DELIVERY) {
       return {
         userid,
-        timestamp,
         status: DeliveryStatus.PENDING,
         items: [],
         total: 0,
@@ -35,7 +36,6 @@ class OrderServices {
     } else if (type === OrderType.REFUND) {
       return {
         userid,
-        timestamp,
         status: ReturnStatus.REQUESTED,
         items: [],
         total: 0,
@@ -45,7 +45,6 @@ class OrderServices {
     } else if (type === OrderType.REPLACE) {
       return {
         userid,
-        timestamp,
         status: ReturnStatus.REQUESTED,
         items: [],
         total: 0,
@@ -56,12 +55,17 @@ class OrderServices {
     throw new Error("Invalid order type");
   }
 
-  private generateOrderProduct(product: CartProduct): OrderProduct {
+  private async generateOrderProduct(
+    product: CartProduct
+  ): Promise<OrderProduct> {
+    const searchProduct = await this.productService.getProductById(
+      product.productid
+    );
     return {
       productid: product.productid,
-      sellerid: product.sellerid ?? "",
+      sellerid: product.sellerid,
       name: product.name,
-      price: Number(product.price),
+      price: Number(searchProduct?.price),
       quantity: product.quantity,
       active: true,
       status: OrderProductStatus.REQUESTED,
@@ -74,9 +78,16 @@ class OrderServices {
 
   public async getOrder(userid: string) {
     try {
-      return await apiOrderRepository.getOrder(userid);
+      return await this.orderRepository.getOrder(userid);
     } catch (err) {
       console.log("Failed to get order data", err);
+      throw err;
+    }
+  }
+  public async getOrders() {
+    try {
+      return await this.orderRepository.getOrders();
+    } catch (err) {
       throw err;
     }
   }
@@ -85,7 +96,7 @@ class OrderServices {
     if (!items || items.length === 0) return;
     const productIds = items.map((p) => p.productid);
     try {
-      await cartServices.removeProducts(userid, productIds);
+      await this.cartService.removeProducts(userid, productIds);
     } catch (err) {
       console.log("Failed to remove products from cart", err);
       throw err;
@@ -94,15 +105,17 @@ class OrderServices {
 
   public async addOrder(userid: string, productid: string) {
     try {
-      const product = await cartServices.getProductById(productid, userid);
+      const product = await this.cartService.getProductById(productid, userid);
       if (!product) {
         return "noproduct";
       }
       const order = this.generateOrder(userid, OrderType.DELIVERY);
-      const productItem = this.generateOrderProduct(product as CartProduct);
+      const productItem = await this.generateOrderProduct(
+        product as CartProduct
+      );
       order.items.push(productItem);
       order.total = this.calcTotal(order.items);
-      const data = await apiOrderRepository.addOrder(order);
+      const data = await this.orderRepository.addOrder(order);
       await this.manageCart(data.items, userid);
       await this.manageInventory([product] as CartProduct[], "decrease");
       return data;
@@ -114,7 +127,7 @@ class OrderServices {
 
   public async addOrders(userid: string, products: string[]) {
     try {
-      const searchProducts = await cartServices.getProduct(userid);
+      const searchProducts = await this.cartService.getProduct(userid);
       if (
         !searchProducts ||
         (Array.isArray(searchProducts.products) &&
@@ -132,7 +145,7 @@ class OrderServices {
       const order = this.generateOrder(userid, OrderType.DELIVERY);
 
       for (let product of filteredProducts) {
-        const productItem: OrderProduct = this.generateOrderProduct(
+        const productItem: OrderProduct = await this.generateOrderProduct(
           product as CartProduct
         );
         order.items.push(productItem);
@@ -140,13 +153,42 @@ class OrderServices {
 
       order.total = this.calcTotal(order.items);
 
-      const data = await apiOrderRepository.addOrders(order);
+      const data = await this.orderRepository.addOrders(order);
 
       await this.manageCart(filteredProducts as CartProduct[], userid);
       await this.manageInventory(filteredProducts as CartProduct[], "decrease");
       return data;
     } catch (err) {
       console.log("Failed to add order of multiple products", err);
+      throw err;
+    }
+  }
+
+  public async orderedProducts(id: string) {
+    try {
+      const orders = await this.getOrders();
+      if (orders.length === 0) return null;
+      const sellerProducts = [];
+
+      for (const order of orders) {
+        const matchingItems = order.items.filter(
+          (item: OrderProduct) => item.sellerid === id
+        );
+        for (const item of matchingItems) {
+          sellerProducts.push({
+            orderid: order._id,
+            userid: order.userid,
+            productid: item.productid,
+            name: item.name,
+            price: item.price,
+            quantity: item.quantity,
+            status: item.status,
+          });
+        }
+      }
+
+      return sellerProducts;
+    } catch (err) {
       throw err;
     }
   }
@@ -163,8 +205,20 @@ class OrderServices {
       ) {
         throw new Error("Invalid status value provided.");
       }
+      const order = await this.orderRepository.getOrderById(orderid);
+      if (order) {
+        if (order.status === "Delivered" || order.status === "Canceled") {
+          return null;
+        } else if (status === "Confirmed") {
+          const products = order.items.filter((p) => p.status === "Accepted");
+          if (products.length !== order.items.length) return null;
+        } else if (status === "Processing") {
+          const products = order.items.filter((p) => p.status === "Ready");
+          if (products.length !== order.items.length) return null;
+        }
+      }
       const newStatus = status as DeliveryStatus | ReturnStatus;
-      return await apiOrderRepository.updateOrderStatus(
+      return await this.orderRepository.updateOrderStatus(
         orderid,
         userid,
         newStatus
@@ -174,18 +228,9 @@ class OrderServices {
       throw err;
     }
   }
-
-  private async manageInventory(
-    items: CartProduct[],
-    target: "increase" | "decrease"
-  ) {
-    for (let { productid, quantity } of items) {
-      await productServices.modifyInventory(productid, quantity, target);
-    }
-  }
   public async updateProductStatus(
     orderid: string,
-    userid: string,
+    sellerid: string,
     productid: string,
     status: string
   ) {
@@ -197,17 +242,19 @@ class OrderServices {
       ) {
         throw new Error("Invalid status value provided.");
       }
-
-      // const order = await this.getOrder(userid);
       const newStatus = status as OrderProductStatus;
-      const data = await apiOrderRepository.updateProductStatus(
+      const order = await this.orderRepository.getOrderById(orderid);
+      if (order) {
+        const product = order.items.find((p) => p.productid === productid);
+        if (product && product.sellerid !== sellerid) return null;
+      }
+      const data = await this.orderRepository.updateProductStatus(
         orderid,
-        userid,
         productid,
         newStatus
       );
       if (typeof data === "object" && status === "Rejected") {
-        await this.cancelOrder(orderid, userid, productid);
+        await this.cancelOrder(orderid, productid);
       }
       return data;
     } catch (err) {
@@ -215,9 +262,18 @@ class OrderServices {
       throw err;
     }
   }
-  public async cancelOrders(orderid: string, userid: string) {
+  private async manageInventory(
+    items: CartProduct[],
+    target: "increase" | "decrease"
+  ) {
+    for (let { productid, quantity } of items) {
+      await this.productService.modifyInventory(productid, quantity, target);
+    }
+  }
+
+  public async cancelOrders(orderid: string) {
     try {
-      const data = await apiOrderRepository.cancelOrders(orderid, userid);
+      const data = await this.orderRepository.cancelOrders(orderid);
       if (
         data &&
         typeof data === "object" &&
@@ -234,14 +290,9 @@ class OrderServices {
     }
   }
 
-  public async cancelOrder(orderid: string, userid: string, productid: string) {
+  public async cancelOrder(orderid: string, productid: string) {
     try {
-      const result = await apiOrderRepository.cancelOrder(
-        orderid,
-        userid,
-        productid
-      );
-
+      const result = await this.orderRepository.cancelOrder(orderid, productid);
       if (result && typeof result === "object" && "items" in result) {
         const removed = result.items.find(
           (item: any) => item.productid === productid
@@ -265,7 +316,7 @@ class OrderServices {
   ) {
     try {
       if (type === "REFUND") {
-        const product = await apiOrderRepository.returnOrder(
+        const product = await this.orderRepository.returnOrder(
           orderid,
           userid,
           productid,
@@ -273,7 +324,7 @@ class OrderServices {
         );
         return { orderid, userid, product };
       } else {
-        const product = await apiOrderRepository.returnOrder(
+        const product = await this.orderRepository.returnOrder(
           orderid,
           userid,
           productid,
@@ -288,5 +339,3 @@ class OrderServices {
   public async replaceOrder(userid: string, productid: string) {}
   public async refundOrder(userid: string, productid: string) {}
 }
-
-export default new OrderServices();

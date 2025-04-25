@@ -20,7 +20,6 @@ class VerifyToken {
           throw new Error("JWT_SECRET_KEY is not defined");
         }
         const decoded = jwt.verify(token, secret);
-        console.log(decoded);
         req.user = decoded;
         next();
       } catch (err) {

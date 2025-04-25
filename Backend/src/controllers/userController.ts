@@ -1,25 +1,26 @@
-import { AddUser, UpdateUser } from "../common/types/userType.js";
-import userServices from "../services/userServices.js";
 import { RequestHandler } from "express";
-
-class UserController {
+import { injectable, inject } from "tsyringe";
+import { AddUser, UpdateUser } from "../common/types/userType.js";
+import UserServices from "../services/userServices.js";
+@injectable()
+export default class UserController {
+  constructor(@inject(UserServices) private userServices: UserServices) {}
   public signUp: RequestHandler = async (req, res) => {
     const user: AddUser = req.body;
-    const { role } = req.params;
     try {
-      if (
-        !user.firstname ||
-        !user.lastname ||
-        !user.username ||
-        !user.email ||
-        !user.password
-      ) {
-        res
-          .status(400)
-          .json({ message: "Please provide all required user info" });
-        return;
-      }
-      const data = await userServices.signUp(user, role);
+      // if (
+      //   !user.firstname ||
+      //   !user.lastname ||
+      //   !user.username ||
+      //   !user.email ||
+      //   !user.password
+      // ) {
+      //   res
+      //     .status(400)
+      //     .json({ message: "Please provide all required user info" });
+      //   return;
+      // }
+      const data = await this.userServices.signUp(user, "User");
       if (!data) {
         res
           .status(409)
@@ -40,13 +41,13 @@ class UserController {
   public signIn: RequestHandler = async (req, res) => {
     const { username, email, password } = req.body;
     try {
-      if (!username || !email || !password) {
-        res
-          .status(400)
-          .json({ message: "Please provide username, email, and password" });
-        return;
-      }
-      const { result, token } = await userServices.signIn(
+      // if (!username || !email || !password) {
+      //   res
+      //     .status(400)
+      //     .json({ message: "Please provide username, email, and password" });
+      //   return;
+      // }
+      const { result, token } = await this.userServices.signIn(
         username,
         email,
         password
@@ -55,10 +56,10 @@ class UserController {
         res.status(404).json({ message: "Signin failed. User not found" });
         return;
       }
-      if (result === null) {
+      if (result === "incorrectpwd") {
         res
           .status(400)
-          .json({ message: "Signin failed. Password do not match" });
+          .json({ message: "Signin failed. Password does not match" });
         return;
       }
       res
@@ -71,18 +72,19 @@ class UserController {
   };
 
   public deleteUser: RequestHandler = async (req, res) => {
-    const { userid } = req.params;
+    const userid = req.user.id || req.body.userid;
     try {
-      if (!userid) {
-        res.status(400).json({ message: "User ID required" });
-        return;
-      }
+      // if (!userid) {
+      //   res.status(400).json({ message: "User ID required" });
+      //   return;
+      // }
 
-      const result = await userServices.deleteUser(userid);
+      const result = await this.userServices.deleteUser(userid);
       if (!result) {
         res.status(404).json({ message: "User not found" });
         return;
       }
+
       res
         .status(200)
         .json({ message: "User deleted successfully", response: result });
@@ -95,22 +97,22 @@ class UserController {
   };
 
   public updateUserInfo: RequestHandler = async (req, res) => {
-    const { userid } = req.params;
+    const userid = req.user.id;
     const update: UpdateUser = req.body;
     try {
-      if (!userid) {
-        res.status(400).json({ message: "User ID is required" });
-        return;
-      }
+      // if (!userid) {
+      //   res.status(400).json({ message: "User ID is required" });
+      //   return;
+      // }
 
-      if (Object.keys(update).length === 0) {
-        res
-          .status(400)
-          .json({ message: "Provide at least one field to update" });
-        return;
-      }
+      // if (Object.keys(update).length === 0) {
+      //   res
+      //     .status(400)
+      //     .json({ message: "Provide at least one field to update" });
+      //   return;
+      // }
 
-      const result = await userServices.updateUserInfo(userid, update);
+      const result = await this.userServices.updateUserInfo(userid, update);
       if (result === undefined) {
         res.status(404).json({ message: "User not found" });
         return;
@@ -118,7 +120,7 @@ class UserController {
       if (result === null) {
         res
           .status(400)
-          .json({ message: "Another user with same Username already exists" });
+          .json({ message: "Another user with the same username exists" });
         return;
       }
 
@@ -132,26 +134,42 @@ class UserController {
   };
 
   public getUser: RequestHandler = async (req, res) => {
-    const { userid } = req.params;
+    const userid = req.user.id;
     try {
-      if (!userid) {
-        res.status(400).json({ message: "User ID is required" });
-        return;
-      }
-      const result = await userServices.getUser(userid);
+      // if (!userid) {
+      //   res.status(400).json({ message: "User ID is required" });
+      //   return;
+      // }
+
+      const result = await this.userServices.getUser(userid);
       if (!result) {
         res.status(404).json({ message: "User not found" });
         return;
       }
+
       res
         .status(200)
         .json({ message: "User search successful", response: result });
-      return;
     } catch (err) {
       console.error("Search user error:", err);
       res.status(500).json({ message: "Unexpected error during search" });
     }
   };
+  public getUsers: RequestHandler = async (req, res) => {
+    try {
+      const result = await this.userServices.getUsers();
+      if (!result) {
+        res.status(404).json({ message: "Users not found" });
+        return;
+      }
+      res
+        .status(200)
+        .json({ message: "Users search successful", response: result });
+      return;
+    } catch (err) {
+      console.error("Search users error:", err);
+      res.status(500).json({ message: "Unexpected error during search" });
+      return;
+    }
+  };
 }
-
-export default new UserController();

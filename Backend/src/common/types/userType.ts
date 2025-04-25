@@ -5,8 +5,11 @@ export interface User {
   username: string;
   email: string;
   password: string;
-  createdAt: string;
-  lastLogin: string;
+  timestamp?: Date;
+  createdAt?: string;
+  lastLogin?: string;
+  phone: number;
+  address: string;
   role: UserRole;
 }
 
@@ -22,23 +25,14 @@ export interface AddUser {
   username: string;
   email: string;
   password: string;
-  role: UserRole;
+  phone: number;
+  address: string;
 }
 
 export interface UpdateUser {
   firstname?: string;
   lastname?: string;
   username?: string;
-}
-
-export interface UserParser {
-  userid?: string;
-  firstname?: string;
-  lastname?: string;
-  username?: string;
-  email?: string;
-  password?: string;
-  createdAt?: string;
-  lastLogin?: string;
-  role?: string;
+  phone?: number;
+  address?: string;
 }

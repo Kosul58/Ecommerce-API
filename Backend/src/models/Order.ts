@@ -15,35 +15,45 @@ interface OrderDocument extends Document {
   userid: string;
   items: OrderProduct[];
   total: number;
-  timestamp: string;
+  timestamp?: Date;
   type: OrderType;
   status: DeliveryStatus | ReturnStatus;
   deliveryTime?: string;
   returnTime?: string;
 }
 
-const OrderProductSchema = new Schema<OrderProduct>({
-  productid: { type: String, required: true },
-  sellerid: {
-    type: String,
-    required: true,
-  },
-  name: { type: String, required: true },
-  price: { type: Number, required: true },
-  quantity: { type: Number, required: true },
-  active: { type: Boolean, required: true },
-  status: {
-    type: String,
-    enum: Object.values(OrderProductStatus),
-    required: true,
-  },
-});
+const OrderProductSchema = new Schema<OrderProduct>(
+  {
+    productid: { type: String, required: true },
+    sellerid: {
+      type: String,
+      required: true,
+    },
+    name: { type: String, required: true },
+    price: { type: Number, required: true },
+    quantity: { type: Number, required: true },
+    active: { type: Boolean, required: true },
+    status: {
+      type: String,
+      enum: Object.values(OrderProductStatus),
+      required: true,
+    },
+  }
+  // ,
+  // {
+  //   _id: false,
+  // }
+);
 
 const OrderSchema = new Schema<OrderDocument>({
   userid: { type: String, required: true },
   items: { type: [OrderProductSchema], required: true },
   total: { type: Number, required: true },
-  timestamp: { type: String, required: true },
+  timestamp: {
+    type: Date,
+    required: true,
+    default: Date.now,
+  },
   type: {
     type: String,
     enum: Object.values(OrderType),

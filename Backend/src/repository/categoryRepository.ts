@@ -1,14 +1,13 @@
 import { Category, UpdateCategory } from "../common/types/categoryType.js";
-import { getCurrentDateTimeStamp } from "../utils/utils.js";
 import CategorySchema from "../models/category.js";
+import { injectable } from "tsyringe";
 
-class CategoryRepository {
+@injectable()
+export default class CategoryRepository {
   public async createCategory(category: Category) {
     try {
-      category.createdAt = getCurrentDateTimeStamp();
       const newCategory = new CategorySchema(category);
-      await newCategory.save();
-      return newCategory;
+      return await newCategory.save();
     } catch (err) {
       console.log("Failed to create a category", err);
       throw err;
@@ -35,13 +34,11 @@ class CategoryRepository {
 
   public async updateCategory(categoryid: string, update: UpdateCategory) {
     try {
-      update.updatedAt = getCurrentDateTimeStamp();
       const updatedCategory = await CategorySchema.findByIdAndUpdate(
         categoryid,
         { $set: update },
         { new: true }
       );
-
       if (!updatedCategory) return undefined;
       return updatedCategory;
     } catch (err) {
@@ -53,7 +50,7 @@ class CategoryRepository {
   public async deleteCategory(categoryid: string) {
     try {
       const deleted = await CategorySchema.findByIdAndDelete(categoryid);
-      if (!deleted) return null; // Not found
+      if (!deleted) return null;
       return deleted;
     } catch (err) {
       console.log("Failed to delete category", err);
@@ -61,5 +58,3 @@ class CategoryRepository {
     }
   }
 }
-
-export default new CategoryRepository();

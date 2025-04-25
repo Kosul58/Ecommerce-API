@@ -1,8 +1,10 @@
 import { Product, ProductOptions } from "../common/types/productType.js";
-
+import { injectable } from "tsyringe";
 import ProductSchema from "../models/product.js";
-import { getCurrentDateTimeStamp } from "../utils/utils.js";
-class ProductRepository {
+import mongoose from "mongoose";
+
+@injectable()
+export default class ProductRepository {
   public async getProducts() {
     try {
       return await ProductSchema.find();
@@ -11,6 +13,12 @@ class ProductRepository {
       throw err;
     }
   }
+  public async getProduct(id: string) {
+    try {
+      return await ProductSchema.find({ sellerid: id });
+    } catch (err) {}
+  }
+
   public async getProductById(productid: string) {
     try {
       return await ProductSchema.findById(productid);
@@ -19,37 +27,39 @@ class ProductRepository {
       throw err;
     }
   }
+
   public async checkProduct(product: Product) {
     try {
-      return await ProductSchema.find({
+      return await ProductSchema.findOne({
         name: product.name,
         price: product.price,
+        sellerid: product.sellerid,
       });
     } catch (err) {
-      console.log("Failed to add a product to database", err);
+      console.log("Failed to check product", err);
       throw err;
     }
   }
+
   public async checkProducts(products: Product[]) {
     try {
-      const existingProducts = await ProductSchema.find({
+      return await ProductSchema.find({
         $and: products.map((p) => ({
           name: p.name,
           price: p.price,
+          sellerid: p.sellerid,
         })),
       });
-      const existingSet = new Set(
-        existingProducts.map((p) => `${p.name}-${p.price}`)
-      );
-      return products.filter((p) => !existingSet.has(`${p.name}-${p.price}`));
     } catch (err) {
+      console.log("Failed to check multiple products", err);
       throw err;
     }
   }
+
   public async addProduct(product: Product) {
     try {
-      const newProduct = new ProductSchema(product);
-      return await newProduct.save();
+      const doc = new ProductSchema(product);
+      return await doc.save();
     } catch (err) {
       console.log("Failed to add a product to database", err);
       throw err;
@@ -58,14 +68,7 @@ class ProductRepository {
 
   public async addProducts(products: Product[]) {
     try {
-      for (let product of products) {
-        product.createdAt = getCurrentDateTimeStamp();
-      }
-      if (products.length > 0) {
-        return await ProductSchema.insertMany(products);
-      } else {
-        return null;
-      }
+      return await ProductSchema.insertMany(products);
     } catch (err) {
       console.error("Failed to add products to the database", err);
       throw err;
@@ -84,11 +87,23 @@ class ProductRepository {
       throw err;
     }
   }
+
   public async deleteProduct(productid: string) {
     try {
       return await ProductSchema.findByIdAndDelete(productid);
     } catch (err) {
       console.log("Failed to remove a product", err);
+      throw err;
+    }
+  }
+
+  public async deleteProducts(ids: string[]) {
+    try {
+      const objectIds = ids.map((id) => new mongoose.Types.ObjectId(id));
+      return await ProductSchema.deleteMany({
+        _id: { $in: objectIds },
+      });
+    } catch (err) {
       throw err;
     }
   }
@@ -100,25 +115,20 @@ class ProductRepository {
   ) {
     try {
       const product = await ProductSchema.findById(id);
-      if (!product) {
-        return undefined;
-      }
-      let newInventory = product.inventory;
+      if (!product) return undefined;
+
+      let newInventory = product.inventory ?? 0;
       if (operation === "increase") {
         newInventory += quantity;
       } else {
-        // if (product.inventory < quantity) {
-        //   return null;
-        // }
         newInventory -= quantity;
       }
+
       product.inventory = newInventory;
       return await product.save();
     } catch (err) {
-      console.log("Failed to decrease product inventory", err);
+      console.log("Failed to update inventory", err);
       throw err;
     }
   }
 }
-
-export default new ProductRepository();

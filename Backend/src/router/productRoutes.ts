@@ -2,48 +2,78 @@ import express from "express";
 import ProductController from "../controllers/productController.js";
 import verifyRole from "../middleware/verifyRole.js";
 import verifyToken from "../middleware/verifyToken.js";
+import { container } from "tsyringe";
+import DataValidation from "../middleware/validateData.js";
+import { idSchema } from "../schemas/userSchema.js";
+import { modifySchema, productParamsSchema } from "../schemas/productSchema.js";
 const productRoutes = express.Router();
 
+const productController = container.resolve(ProductController);
+const dataValidation = container.resolve(DataValidation);
 // Create product
 productRoutes.post(
   "/",
   verifyToken.verify,
-  verifyRole.verify("Admin", "Seller"),
-  ProductController.addProduct
+  verifyRole.verify("Seller"),
+  dataValidation.validateTokenData(idSchema),
+  productController.addProduct
 );
 productRoutes.post(
   "/addbatch",
   verifyToken.verify,
-  verifyRole.verify("Admin", "Seller"),
-  ProductController.addProducts
+  verifyRole.verify("Seller"),
+  dataValidation.validateTokenData(idSchema),
+  productController.addProducts
 );
 
 // Read product(s)
-productRoutes.get("/", ProductController.getProducts);
-productRoutes.get("/:id", ProductController.getProductById);
+productRoutes.get("/", productController.getProducts);
+productRoutes.get(
+  "/myproduct",
+  verifyToken.verify,
+  verifyRole.verify("Seller"),
+  dataValidation.validateTokenData(idSchema),
+  productController.getProduct
+);
+productRoutes.get("/:productid", productController.getProductById);
 
 // Update product
 productRoutes.put(
-  "/:id",
+  "/:productid",
   verifyToken.verify,
-  verifyRole.verify("Admin", "Seller"),
-  ProductController.updateProduct
+  verifyRole.verify("Seller"),
+  dataValidation.validateTokenData(idSchema),
+  dataValidation.validateParams(productParamsSchema),
+  productController.updateProduct
 );
 
 // Delete product
 productRoutes.delete(
-  "/:id",
+  "/all",
   verifyToken.verify,
   verifyRole.verify("Admin", "Seller"),
-  ProductController.deleteProduct
+  dataValidation.validateTokenData(idSchema),
+  productController.deleteProducts
+);
+
+productRoutes.delete(
+  "/:productid",
+  verifyToken.verify,
+  verifyRole.verify("Admin", "Seller"),
+  dataValidation.validateTokenData(idSchema),
+  dataValidation.validateParams(productParamsSchema),
+  productController.deleteProduct
 );
 
 // Modify inventory
 productRoutes.put(
-  "/modify/:id",
+  "/modify/:productid",
   verifyToken.verify,
-  verifyRole.verify("Admin", "Seller"),
-  ProductController.modifyInventory
+  verifyRole.verify("Seller"),
+  dataValidation.validateTokenData(idSchema),
+  dataValidation.validateParams(productParamsSchema),
+  dataValidation.validateBody(modifySchema),
+  productController.modifyInventory
 );
 
 export default productRoutes;
