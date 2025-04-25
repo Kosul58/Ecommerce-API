@@ -22,14 +22,17 @@ export default class ProductServices {
     }
   }
 
-  private async createProduct(productData: AddProduct): Promise<Product> {
+  private async createProduct(
+    productData: AddProduct,
+    sellerid: string
+  ): Promise<Product> {
     const { name, price, inventory, description, category } = productData;
     if (category) {
       await this.categoryManager(category);
     }
     return {
       name,
-      sellerid: productData.sellerid,
+      sellerid,
       price: Number(price),
       inventory: Number(inventory),
       description,
@@ -46,6 +49,15 @@ export default class ProductServices {
     }
   }
 
+  public async getProduct(id: string) {
+    try {
+      return await this.productRepositroy.getProduct(id);
+    } catch (err) {
+      console.log("Failed to get the data of all products of a seller", err);
+      throw err;
+    }
+  }
+
   public async getProductById(productid: string) {
     try {
       return await this.productRepositroy.getProductById(productid);
@@ -58,12 +70,15 @@ export default class ProductServices {
     }
   }
 
-  public async addProduct(product: AddProduct) {
+  public async addProduct(product: AddProduct, sellerid: string) {
     try {
-      const check = await this.productRepositroy.checkProduct(product);
-      if (check.length > 0) return null;
-
-      const newProduct: Product = await this.createProduct(product);
+      const check = await this.productRepositroy.checkProduct({
+        ...product,
+        sellerid,
+      });
+      console.log(check);
+      if (check && Object.keys(check).length > 0) return null;
+      const newProduct: Product = await this.createProduct(product, sellerid);
       return await this.productRepositroy.addProduct(newProduct);
     } catch (err) {
       console.log("Failed to add a new product", err);
@@ -71,18 +86,23 @@ export default class ProductServices {
     }
   }
 
-  public async addProducts(products: AddProduct[]) {
+  public async addProducts(products: AddProduct[], sellerid: string) {
     try {
-      const filteredProducts = await this.productRepositroy.checkProducts(
+      //check if prodcuts already exists in db
+      const searchedProducts = await this.productRepositroy.checkProducts(
         products
       );
+      const existingSet = new Set(
+        searchedProducts.map((p: any) => `${p.name}-${p.price}`)
+      );
+      const filteredProducts = products.filter(
+        (p) => !existingSet.has(`${p.name}-${p.price}`)
+      );
       const productList: Product[] = [];
-
       for (const product of filteredProducts) {
-        const newProduct = await this.createProduct(product);
+        const newProduct = await this.createProduct(product, sellerid);
         productList.push(newProduct);
       }
-
       return await this.productRepositroy.addProducts(productList);
     } catch (err) {
       console.log("Failed to add a batch of new products", err);
@@ -90,16 +110,22 @@ export default class ProductServices {
     }
   }
 
-  public async updateProduct(productid: string, update: UpdateProdcut) {
+  public async updateProduct(
+    productid: string,
+    sellerid: string,
+    update: UpdateProdcut
+  ) {
     try {
       const updateFields = Object.fromEntries(
         Object.entries(update).filter(([_, value]) => value !== undefined)
       ) as Partial<UpdateProdcut>;
-
+      const prodcut = await this.getProductById(productid);
+      if (!prodcut || prodcut.sellerid !== sellerid) {
+        return null;
+      }
       if (update.category) {
         await this.categoryManager(update.category);
       }
-
       return await this.productRepositroy.updateProduct(
         productid,
         updateFields
@@ -110,11 +136,27 @@ export default class ProductServices {
     }
   }
 
-  public async deleteProduct(productid: string) {
+  public async deleteProduct(productid: string, sellerid: string) {
     try {
+      const prodcut = await this.getProductById(productid);
+      if (!prodcut || prodcut.sellerid !== sellerid) {
+        return null;
+      }
       return await this.productRepositroy.deleteProduct(productid);
     } catch (err) {
       console.log("Failed to delete a product", err);
+      throw err;
+    }
+  }
+
+  public async deleteProducts(id: string) {
+    try {
+      const products = await this.getProduct(id);
+      if (!products || products.length === 0) return "noproducts";
+      const deleteIds = products.map((p) => p._id.toString());
+      return await this.productRepositroy.deleteProducts(deleteIds);
+    } catch (err) {
+      console.log("Failed to delete products", err);
       throw err;
     }
   }
@@ -125,6 +167,11 @@ export default class ProductServices {
     modification: "increase" | "decrease"
   ) {
     try {
+      const product = await this.getProductById(id);
+      if (!product) return "noproduct";
+      if (modification === "decrease" && product.inventory < quantity) {
+        return "insufiicientinventory";
+      }
       return await this.productRepositroy.manageInventory(
         id,
         quantity,

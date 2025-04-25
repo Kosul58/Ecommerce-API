@@ -1,44 +1,58 @@
 import express from "express";
 import OrderController from "../controllers/orderController.js";
 import verifyRole from "../middleware/verifyRole.js";
+import { container } from "tsyringe";
 const orderRoutes = express.Router();
+
+const orderController = container.resolve(OrderController);
+
+orderRoutes.get(
+  "/",
+  verifyRole.verify("Seller"),
+  orderController.orderedProducts
+);
 
 orderRoutes.get(
   "/:userid",
   verifyRole.verify("Admin", "User"),
-  OrderController.viewOrders
+  orderController.viewUserOrders
+);
+orderRoutes.get(
+  "/orders",
+  verifyRole.verify("Admin"),
+  orderController.viewWholeOrders
 );
 
-orderRoutes.post("/", verifyRole.verify("User"), OrderController.createOrder);
+orderRoutes.post("/", verifyRole.verify("User"), orderController.createOrder);
 
 orderRoutes.post(
   "/createOrders",
   verifyRole.verify("User"),
-  OrderController.createOrders
+  orderController.createOrders
 );
 
 orderRoutes.put(
   "/",
   verifyRole.verify("Admin"),
-  OrderController.updateOrderStatus
+  orderController.updateOrderStatus
 );
 
 orderRoutes.put(
-  "/product",
+  "/orderproduct",
   verifyRole.verify("Seller"),
-  OrderController.updateProductStatus
+  orderController.updateProductStatus
 );
 
 orderRoutes.delete(
   "/cancelWhole",
   verifyRole.verify("User"),
-  OrderController.cancelWholeOrder
+  orderController.cancelWholeOrder
 );
 
 orderRoutes.delete(
   "/cancelSingle",
   verifyRole.verify("User"),
-  OrderController.cancelSingleOrder
+  orderController.cancelSingleOrder
 );
 
 export default orderRoutes;

@@ -19,21 +19,21 @@ categoryRoutes.get(
   categoryController.readCategories
 );
 categoryRoutes.get(
-  "/:id",
+  "/:categoryid",
   verifyRole.verify("Seller", "Admin"),
   categoryController.readCategory
 );
 
 // Update category
 categoryRoutes.put(
-  "/:id",
+  "/:categoryid",
   verifyRole.verify("Seller", "Admin"),
   categoryController.updateCategory
 );
 
 // Delete category
 categoryRoutes.delete(
-  "/:id",
+  "/:categoryid",
   verifyRole.verify("Seller", "Admin"),
   categoryController.deleteCategory
 );

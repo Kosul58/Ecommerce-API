@@ -11,31 +11,44 @@ const productController = container.resolve(ProductController);
 productRoutes.post(
   "/",
   verifyToken.verify,
-  verifyRole.verify("Admin", "Seller"),
+  verifyRole.verify("Seller"),
   productController.addProduct
 );
 productRoutes.post(
   "/addbatch",
   verifyToken.verify,
-  verifyRole.verify("Admin", "Seller"),
+  verifyRole.verify("Seller"),
   productController.addProducts
 );
 
 // Read product(s)
 productRoutes.get("/", productController.getProducts);
+productRoutes.get(
+  "/myproduct",
+  verifyToken.verify,
+  verifyRole.verify("Seller"),
+  productController.getProduct
+);
 productRoutes.get("/:id", productController.getProductById);
 
 // Update product
 productRoutes.put(
   "/:id",
   verifyToken.verify,
-  verifyRole.verify("Admin", "Seller"),
+  verifyRole.verify("Seller"),
   productController.updateProduct
 );
 
 // Delete product
 productRoutes.delete(
-  "/:id",
+  "/all",
+  verifyToken.verify,
+  verifyRole.verify("Admin", "Seller"),
+  productController.deleteProducts
+);
+
+productRoutes.delete(
+  "/:productid",
   verifyToken.verify,
   verifyRole.verify("Admin", "Seller"),
   productController.deleteProduct

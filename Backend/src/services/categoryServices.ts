@@ -11,19 +11,14 @@ export default class CategoryService {
   constructor(
     @inject(CategoryRepository) private categoryRepository: CategoryRepository
   ) {}
-
   private generateCategory(category: CategoryOption): Category {
-    const { name, description = "", parentId = "" } = category;
     return {
-      name,
-      description,
-      parentId,
+      name: category.name,
+      description: category.description || "",
+      parentId: category.parentId || "",
       isActive: true,
-      createdAt: "",
-      updatedAt: "",
     };
   }
-
   private async checkCategory(name: string) {
     try {
       const categories = await this.readCategories();
@@ -32,7 +27,6 @@ export default class CategoryService {
       throw err;
     }
   }
-
   public async createCategory(category: CategoryOption) {
     try {
       const isUnique = await this.checkCategory(category.name);
@@ -46,7 +40,6 @@ export default class CategoryService {
       throw err;
     }
   }
-
   public async readCategories() {
     try {
       return await this.categoryRepository.readCategories();
@@ -55,7 +48,6 @@ export default class CategoryService {
       throw err;
     }
   }
-
   public async readCategory(categoryid: string) {
     try {
       return await this.categoryRepository.readCategory(categoryid);
@@ -64,7 +56,6 @@ export default class CategoryService {
       throw err;
     }
   }
-
   public async updateCategory(categoryid: string, update: UpdateCategory) {
     try {
       const updateFields = Object.fromEntries(
@@ -89,7 +80,6 @@ export default class CategoryService {
       throw err;
     }
   }
-
   public async deleteCategory(categoryid: string) {
     try {
       return await this.categoryRepository.deleteCategory(categoryid);

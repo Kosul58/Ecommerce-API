@@ -3,7 +3,7 @@ import { CartProduct } from "./cartType.js";
 export interface Order {
   orderid?: string;
   userid: string;
-  timestamp: string;
+  timestamp?: Date;
   status: DeliveryStatus | ReturnStatus;
   items: CartProduct[];
   total: number;
@@ -56,7 +56,7 @@ export interface BaseOrder {
   userid: string;
   items: OrderProduct[];
   total: number;
-  timestamp: string;
+  timestamp?: Date;
 }
 
 export interface DeliveryOrder extends BaseOrder {

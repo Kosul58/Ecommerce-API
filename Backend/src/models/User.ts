@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import { UserRole } from "../common/types/userType";
 
 const userSchema = new mongoose.Schema({
   firstname: {
@@ -25,22 +26,21 @@ const userSchema = new mongoose.Schema({
   },
   phone: {
     type: Number,
-    default: 99,
+    required: true,
   },
   address: {
     type: String,
-    default: "",
-  },
-  createdAt: {
-    type: String,
     required: true,
   },
-  lastLogin: {
-    type: String,
+  timestamp: {
+    type: Date,
+    required: true,
+    default: Date.now,
   },
   role: {
     type: String,
     required: true,
+    default: UserRole.USER,
   },
 });
 

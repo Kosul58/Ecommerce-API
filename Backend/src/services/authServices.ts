@@ -1,8 +1,10 @@
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
 dotenv.config();
+import { injectable } from "tsyringe";
 
-class AuthServices {
+@injectable()
+export default class AuthServices {
   public generateToken = (
     id: string,
     username: string,
@@ -21,5 +23,3 @@ class AuthServices {
     return jwt.sign(payload, secretKey, options);
   };
 }
-
-export default new AuthServices();

@@ -20,6 +20,11 @@ const productSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  timestamp: {
+    type: Date,
+    required: true,
+    default: Date.now,
+  },
   inventory: {
     type: Number,
     required: true,

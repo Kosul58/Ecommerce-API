@@ -15,7 +15,7 @@ interface OrderDocument extends Document {
   userid: string;
   items: OrderProduct[];
   total: number;
-  timestamp: string;
+  timestamp?: Date;
   type: OrderType;
   status: DeliveryStatus | ReturnStatus;
   deliveryTime?: string;
@@ -43,7 +43,11 @@ const OrderSchema = new Schema<OrderDocument>({
   userid: { type: String, required: true },
   items: { type: [OrderProductSchema], required: true },
   total: { type: Number, required: true },
-  timestamp: { type: String, required: true },
+  timestamp: {
+    type: Date,
+    required: true,
+    default: Date.now,
+  },
   type: {
     type: String,
     enum: Object.values(OrderType),

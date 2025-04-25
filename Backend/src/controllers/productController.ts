@@ -27,6 +27,26 @@ export default class ProductController {
     }
   };
 
+  public getProduct: RequestHandler = async (req, res) => {
+    const sellerid = req.user.id;
+    try {
+      if (!sellerid) {
+        res.status(400).json({ message: "Failed to get id" });
+      }
+
+      const result = await this.prodcutService.getProduct(sellerid);
+      if (!result || result.length === 0) {
+        res
+          .status(400)
+          .json({ message: "Failed to search products. No products found" });
+        return;
+      }
+      res.status(200).json({ message: "Search successfull", response: result });
+    } catch (err) {
+      res.status(500).json({ message: "Internal server error" });
+    }
+  };
+
   public getProductById: RequestHandler = async (req, res) => {
     const { id } = req.params;
     try {
@@ -57,17 +77,17 @@ export default class ProductController {
 
   public addProduct: RequestHandler = async (req, res) => {
     const productData: AddProduct = req.body;
+    const sellerid: string = req.user.id;
     try {
-      if (
-        !productData.name ||
-        !productData.price ||
-        !productData.inventory ||
-        !productData.sellerid
-      ) {
+      if (!productData.name || !productData.price || !productData.inventory) {
         res.status(400).json({ message: "Enter all fields", response: [] });
         return;
       }
-      const result = await this.prodcutService.addProduct(productData);
+      const result = await this.prodcutService.addProduct(
+        productData,
+        sellerid
+      );
+
       if (result === null) {
         res.status(409).json({
           message: "Product Already Exists",
@@ -97,12 +117,15 @@ export default class ProductController {
 
   public addProducts: RequestHandler = async (req, res) => {
     const products: AddProduct[] = req.body;
+    const sellerid: string = req.user.id;
+
     try {
       if (products.length === 0) {
         res.status(400).json({ message: "Empty products array", response: [] });
         return;
       }
-      const data = await this.prodcutService.addProducts(products);
+      const data = await this.prodcutService.addProducts(products, sellerid);
+
       if (!data || data.length > 0) {
         res.status(201).json({
           message: "Batch addition of products successful",
@@ -125,13 +148,18 @@ export default class ProductController {
 
   public updateProduct: RequestHandler = async (req, res) => {
     const { id } = req.params;
+    const sellerid = req.user.id;
     const update: UpdateProdcut = req.body;
     try {
       if (!id || !update) {
         res.status(400).json({ message: "Enter all fields", response: [] });
         return;
       }
-      const result = await this.prodcutService.updateProduct(id, update);
+      const result = await this.prodcutService.updateProduct(
+        id,
+        sellerid,
+        update
+      );
       if (
         (result && Object.keys(result).length > 0) ||
         (Array.isArray(result) && result.length > 0)
@@ -156,13 +184,17 @@ export default class ProductController {
   };
 
   public deleteProduct: RequestHandler = async (req, res) => {
-    const { id } = req.params;
+    const { productid } = req.params;
+    const sellerid = req.user.id;
     try {
-      if (!id) {
+      if (!productid) {
         res.status(400).json({ message: "Product ID required", response: [] });
         return;
       }
-      const result = await this.prodcutService.deleteProduct(id);
+      const result = await this.prodcutService.deleteProduct(
+        productid,
+        sellerid
+      );
       if (!result) {
         res.status(404).json({
           message: "Product deletion unsuccessful",
@@ -183,6 +215,26 @@ export default class ProductController {
     }
   };
 
+  public deleteProducts: RequestHandler = async (req, res) => {
+    const id = req.user.id || req.body.sellerid;
+    try {
+      if (!id) {
+        res.status(400).json({ message: "Failed to get id" });
+        return;
+      }
+      const result = await this.prodcutService.deleteProducts(id);
+      if (!result) {
+        res.status(400).json({ message: "Failed to delete products" });
+        return;
+      }
+      res.status(200).json({ message: "Products deleted successfully" });
+      return;
+    } catch (err) {
+      res.status(500).json({ message: "Internal server error" });
+      return;
+    }
+  };
+
   public modifyInventory: RequestHandler = async (req, res) => {
     const { id } = req.params;
     const { quantity, modification } = req.body;
@@ -198,7 +250,10 @@ export default class ProductController {
         quantity,
         modification
       );
-      if (result === undefined) {
+      if (result === "insufiicientinventory") {
+        res.status(404).json({ message: "Insufficient inventory" });
+      }
+      if (result === "noproduct" || result === undefined) {
         res.status(404).json({
           message: "No product found",
           response: [],

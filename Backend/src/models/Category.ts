@@ -9,6 +9,7 @@ const categorySchema = new mongoose.Schema({
   description: {
     type: String,
     default: "",
+    reuired: true,
   },
   parentId: {
     type: String,
@@ -18,13 +19,10 @@ const categorySchema = new mongoose.Schema({
     type: Boolean,
     default: true,
   },
-  createdAt: {
-    type: String,
+  timestamp: {
+    type: Date,
+    default: Date.now,
     required: true,
-  },
-  updatedAt: {
-    type: String,
-    default: "",
   },
 });
 

@@ -1,54 +1,52 @@
 import express from "express";
 import CartController from "../controllers/cartController.js";
 import verifyRole from "../middleware/verifyRole.js";
+import { container } from "tsyringe";
 const cartRoutes = express.Router();
 
+const cartController = container.resolve(CartController);
 // Create cart item
 cartRoutes.post(
   "/",
   verifyRole.verify("User", "Admin"),
-  CartController.addProduct
+  cartController.addProduct
 );
+
+// Calculate total cart price for a user
+cartRoutes.get("/total", verifyRole.verify("User"), cartController.calcTotal);
 
 // View all carts (for all users)
 cartRoutes.get(
   "/",
   verifyRole.verify("User", "Admin"),
-  CartController.viewCartProducts
+  cartController.viewCartProducts
 );
 
 // View all products in a user's cart
-cartRoutes.get("/:userid", verifyRole.verify("User"), CartController.viewCart);
+cartRoutes.get("/:userid", verifyRole.verify("User"), cartController.viewCart);
 
 // View specific product in a user's cart
 cartRoutes.get(
   "/:userid/:productid",
   verifyRole.verify("User"),
-  CartController.viewCartProduct
+  cartController.viewCartProduct
 );
 
 // Update product in cart
-cartRoutes.put("/", verifyRole.verify("User"), CartController.updateProduct);
+cartRoutes.put("/", verifyRole.verify("User"), cartController.updateProduct);
 
 // Delete specific product from cart
 cartRoutes.delete(
   "/:userid/:productid",
   verifyRole.verify("User"),
-  CartController.removeProduct
+  cartController.removeProduct
 );
 
 // Delete multiple products from a user's cart
 cartRoutes.delete(
   "/",
   verifyRole.verify("User"),
-  CartController.removeProducts
-);
-
-// Calculate total cart price for a user
-cartRoutes.get(
-  "/total/:id",
-  verifyRole.verify("User"),
-  CartController.calcTotal
+  cartController.removeProducts
 );
 
 export default cartRoutes;

@@ -1,15 +1,13 @@
 import { RequestHandler } from "express";
 import { injectable, inject } from "tsyringe";
 import { AddUser, UpdateUser } from "../common/types/userType.js";
-import { IUserServices } from "../common/types/classInterfaces.js";
 import UserServices from "../services/userServices.js";
 @injectable()
 export default class UserController {
-  constructor(@inject(UserServices) private userServices: IUserServices) {}
-
+  constructor(@inject(UserServices) private userServices: UserServices) {}
   public signUp: RequestHandler = async (req, res) => {
     const user: AddUser = req.body;
-    const { role } = req.params;
+    const role: string = req.body.role;
     try {
       if (
         !user.firstname ||
@@ -23,7 +21,6 @@ export default class UserController {
           .json({ message: "Please provide all required user info" });
         return;
       }
-
       const data = await this.userServices.signUp(user, role);
       if (!data) {
         res
@@ -31,7 +28,6 @@ export default class UserController {
           .json({ message: "Sign up failed. User Already Exists" });
         return;
       }
-
       const { result, token } = data;
       res.status(201).json({
         message: "User registered successfully",
@@ -52,24 +48,21 @@ export default class UserController {
           .json({ message: "Please provide username, email, and password" });
         return;
       }
-
       const { result, token } = await this.userServices.signIn(
         username,
         email,
         password
       );
-
       if (result === undefined) {
         res.status(404).json({ message: "Signin failed. User not found" });
         return;
       }
-      if (result === null) {
+      if (result === "incorrectpwd") {
         res
           .status(400)
           .json({ message: "Signin failed. Password does not match" });
         return;
       }
-
       res
         .status(200)
         .json({ message: "Signin successful", response: { result, token } });
@@ -80,7 +73,7 @@ export default class UserController {
   };
 
   public deleteUser: RequestHandler = async (req, res) => {
-    const { userid } = req.params;
+    const userid = req.user.id || req.body.userid;
     try {
       if (!userid) {
         res.status(400).json({ message: "User ID required" });
@@ -105,7 +98,7 @@ export default class UserController {
   };
 
   public updateUserInfo: RequestHandler = async (req, res) => {
-    const { userid } = req.params;
+    const userid = req.user.id;
     const update: UpdateUser = req.body;
     try {
       if (!userid) {
@@ -142,7 +135,7 @@ export default class UserController {
   };
 
   public getUser: RequestHandler = async (req, res) => {
-    const { userid } = req.params;
+    const userid = req.user.id;
     try {
       if (!userid) {
         res.status(400).json({ message: "User ID is required" });
@@ -161,6 +154,24 @@ export default class UserController {
     } catch (err) {
       console.error("Search user error:", err);
       res.status(500).json({ message: "Unexpected error during search" });
+    }
+  };
+  public getUsers: RequestHandler = async (req, res) => {
+    try {
+      const result = await this.userServices.getUsers();
+      if (!result) {
+        res.status(404).json({ message: "Users not found" });
+        return;
+      }
+
+      res
+        .status(200)
+        .json({ message: "Users search successful", response: result });
+      return;
+    } catch (err) {
+      console.error("Search users error:", err);
+      res.status(500).json({ message: "Unexpected error during search" });
+      return;
     }
   };
 }

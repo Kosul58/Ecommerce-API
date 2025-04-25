@@ -7,17 +7,32 @@ import {
   ReturnOrder,
   OrderProductStatus,
 } from "../common/types/orderType.js";
-import OrderSchema from "../models/Order.js";
+import OrderSchema from "../models/order.js";
+import { injectable } from "tsyringe";
 
-class OrderRepository {
+@injectable()
+export default class OrderRepository {
+  public async getOrders() {
+    try {
+      return await OrderSchema.find();
+    } catch (err) {
+      throw err;
+    }
+  }
   public async getOrder(userid: string) {
     try {
       const orders = await OrderSchema.find({ userid });
       if (!orders || orders.length === 0) return "noorder";
-      // const activeItems = orders.flatMap((order) =>
-      //   order.items.filter((item) => item.active === true)
-      // );
       return orders;
+    } catch (err) {
+      console.log("Failed to search orders of user", err);
+      throw err;
+    }
+  }
+  public async getOrderById(orderid: string) {
+    try {
+      const order = await OrderSchema.findById(orderid);
+      return order;
     } catch (err) {
       console.log("Failed to search orders of user", err);
       throw err;
@@ -41,20 +56,18 @@ class OrderRepository {
       throw err;
     }
   }
-  public async cancelOrder(orderid: string, userid: string, productid: string) {
+  public async cancelOrder(orderid: string, productid: string) {
     try {
-      const order = await OrderSchema.findOne({ _id: orderid, userid });
+      const order = await OrderSchema.findOne({ _id: orderid });
       if (!order) return "noorder";
 
       const product = order.items.find((p: any) => p.productid === productid);
 
       if (!product) return "noproduct";
       product.active = false;
-
       const uncanceledProducts = order.items.filter(
         (p) => p.productid !== productid
       );
-
       if (uncanceledProducts.length === 0) {
         order.status = DeliveryStatus.CANCELED;
       }
@@ -65,9 +78,9 @@ class OrderRepository {
       throw err;
     }
   }
-  public async cancelOrders(orderid: string, userid: string) {
+  public async cancelOrders(orderid: string) {
     try {
-      const order = await OrderSchema.findOne({ _id: orderid, userid });
+      const order = await OrderSchema.findOne({ _id: orderid });
       if (!order) return "noorder";
       order.items.forEach((item: any) => {
         item.active = false;
@@ -99,7 +112,6 @@ class OrderRepository {
   }
   public async updateProductStatus(
     orderid: string,
-    userid: string,
     productid: string,
     status: OrderProductStatus
   ) {
@@ -107,7 +119,10 @@ class OrderRepository {
       const order = await OrderSchema.findById(orderid);
       if (!order) return "noorder";
       const product = order.items.find(
-        (i) => i.productid === productid && i.status !== "Rejected"
+        (i) =>
+          i.productid === productid &&
+          i.active === true &&
+          i.status !== "Rejected"
       );
       if (product) {
         product.status = status;
@@ -139,5 +154,3 @@ class OrderRepository {
     }
   }
 }
-
-export default new OrderRepository();

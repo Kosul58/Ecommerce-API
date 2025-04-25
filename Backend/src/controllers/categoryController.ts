@@ -71,14 +71,14 @@ export default class CategoryController {
 
   // Read Single Category
   public readCategory: RequestHandler = async (req, res) => {
-    const { id } = req.params;
+    const { categoryid } = req.params;
     try {
-      if (!id) {
-        res.status(400).json({ message: "Category id required" });
+      if (!categoryid) {
+        res.status(400).json({ message: "Category categoryid required" });
         return;
       }
 
-      const result = await this.categoryServices.readCategory(id);
+      const result = await this.categoryServices.readCategory(categoryid);
       if (!result || Object.keys(result).length < 1) {
         res.status(404).json({
           message: "Category read unsuccessful",
@@ -99,14 +99,17 @@ export default class CategoryController {
 
   // Update Category
   public updateCategory: RequestHandler = async (req, res) => {
-    const { id } = req.params;
+    const { categoryid } = req.params;
     const update: UpdateCategory = req.body;
     try {
-      if (!id || Object.keys(update).length < 1) {
+      if (!categoryid || Object.keys(update).length < 1) {
         res.status(400).json({ message: "Enter all required fields" });
         return;
       }
-      const result = await this.categoryServices.updateCategory(id, update);
+      const result = await this.categoryServices.updateCategory(
+        categoryid,
+        update
+      );
       if (result === undefined) {
         res.status(404).json({
           message: "Category not found",
@@ -146,13 +149,13 @@ export default class CategoryController {
 
   // Delete Category
   public deleteCategory: RequestHandler = async (req, res) => {
-    const { id } = req.params;
+    const { categoryid } = req.params;
     try {
-      if (!id) {
+      if (!categoryid) {
         res.status(400).json({ message: "Enter all required fields" });
         return;
       }
-      const result = await this.categoryServices.deleteCategory(id);
+      const result = await this.categoryServices.deleteCategory(categoryid);
       if (!result) {
         res.status(404).json({
           message: "Category not found",

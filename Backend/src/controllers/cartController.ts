@@ -1,12 +1,14 @@
 import { RequestHandler } from "express";
-import cartServices from "../services/cartServices.js";
 import { UpdateCart } from "../common/types/cartType.js";
-
-class CartController {
+import { inject, injectable } from "tsyringe";
+import CartService from "../services/cartServices.js";
+@injectable()
+export default class CartController {
+  constructor(@inject(CartService) private cartService: CartService) {}
   // View all cart products
   public viewCartProducts: RequestHandler = async (req, res) => {
     try {
-      const result = await cartServices.getProducts();
+      const result = await this.cartService.getProducts();
       if (!result || result.length === 0) {
         res
           .status(404)
@@ -27,7 +29,7 @@ class CartController {
   public viewCartProduct: RequestHandler = async (req, res) => {
     const { productid, userid } = req.params;
     try {
-      const result = await cartServices.getProductById(productid, userid);
+      const result = await this.cartService.getProductById(productid, userid);
       if (!result || Object.keys(result).length === 0) {
         res
           .status(404)
@@ -48,7 +50,7 @@ class CartController {
   public viewCart: RequestHandler = async (req, res) => {
     const { userid } = req.params;
     try {
-      const result = await cartServices.getProduct(userid);
+      const result = await this.cartService.getProduct(userid);
       console.log(result);
       if (!result || Object.keys(result).length === 0) {
         res
@@ -74,7 +76,11 @@ class CartController {
         res.status(400).json({ message: "Provide all fields", response: [] });
         return;
       }
-      const result = await cartServices.addProduct(userid, productid, quantity);
+      const result = await this.cartService.addProduct(
+        userid,
+        productid,
+        quantity
+      );
       if (result === "noproduct") {
         res
           .status(404)
@@ -115,7 +121,7 @@ class CartController {
           .json({ message: "User ID and Product ID required", response: [] });
         return;
       }
-      const result = await cartServices.removeProduct(userid, productid);
+      const result = await this.cartService.removeProduct(userid, productid);
       if (result === "nocart") {
         res
           .status(404)
@@ -146,7 +152,7 @@ class CartController {
           .json({ message: "User ID and product list required", response: [] });
         return;
       }
-      const result = await cartServices.removeProducts(userid, products);
+      const result = await this.cartService.removeProducts(userid, products);
       if (result === "nocart") {
         res.status(404).json({ message: "No cart found" });
         return;
@@ -177,7 +183,7 @@ class CartController {
         res.status(400).json({ message: "Enter all fields", response: [] });
         return;
       }
-      const result = await cartServices.updateProduct(
+      const result = await this.cartService.updateProduct(
         userid,
         productid,
         update
@@ -210,13 +216,13 @@ class CartController {
 
   // Calculate the total price of the cart
   public calcTotal: RequestHandler = async (req, res) => {
-    const { id } = req.params;
+    const userid = req.user.id;
     try {
-      if (!id) {
-        res.status(400).json({ message: "Enter user ID", response: [] });
+      if (!userid) {
+        res.status(400).json({ message: "Cannot find user ID", response: [] });
         return;
       }
-      const result = await cartServices.cartTotal(id);
+      const result = await this.cartService.cartTotal(userid);
       if (!result) {
         res
           .status(500)
@@ -234,5 +240,3 @@ class CartController {
     }
   };
 }
-
-export default new CartController();

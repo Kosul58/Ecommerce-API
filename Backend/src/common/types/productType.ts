@@ -22,6 +22,7 @@ export interface Product {
   category?: string;
   createdAt?: string;
   updatedAt?: string;
+  timestamp?: Date;
 }
 
 export interface AddProduct {

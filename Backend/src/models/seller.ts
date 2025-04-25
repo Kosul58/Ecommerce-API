@@ -1,11 +1,8 @@
 import mongoose from "mongoose";
+import { UserRole } from "../common/types/userType";
 
 const sellerSchema = new mongoose.Schema({
   shopname: {
-    type: String,
-    required: true,
-  },
-  ownername: {
     type: String,
     required: true,
   },
@@ -25,22 +22,21 @@ const sellerSchema = new mongoose.Schema({
   },
   phone: {
     type: Number,
-    default: 99,
+    required: true,
   },
   address: {
     type: String,
-    default: "",
-  },
-  createdAt: {
-    type: String,
     required: true,
   },
-  lastLogin: {
-    type: String,
+  timestamp: {
+    type: Date,
+    required: true,
+    default: Date.now,
   },
   role: {
     type: String,
     required: true,
+    default: UserRole.SELLER,
   },
 });
 

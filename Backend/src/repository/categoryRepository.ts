@@ -1,17 +1,13 @@
 import { Category, UpdateCategory } from "../common/types/categoryType.js";
-import { getCurrentDateTimeStamp } from "../utils/utils.js";
 import CategorySchema from "../models/category.js";
-import { inject, injectable } from "tsyringe";
-import MongoDb from "../config/mongoConfig.js";
+import { injectable } from "tsyringe";
 
 @injectable()
 export default class CategoryRepository {
-  constructor(@inject(MongoDb) private mongoDb: MongoDb) {}
   public async createCategory(category: Category) {
     try {
-      category.createdAt = getCurrentDateTimeStamp();
       const newCategory = new CategorySchema(category);
-      return await this.mongoDb.save(newCategory);
+      return await newCategory.save();
     } catch (err) {
       console.log("Failed to create a category", err);
       throw err;
@@ -20,7 +16,7 @@ export default class CategoryRepository {
 
   public async readCategories() {
     try {
-      return await this.mongoDb.find(CategorySchema, {});
+      return await CategorySchema.find();
     } catch (err) {
       console.log("Failed to read the categories", err);
       throw err;
@@ -29,7 +25,7 @@ export default class CategoryRepository {
 
   public async readCategory(categoryid: string) {
     try {
-      return await this.mongoDb.findById(CategorySchema, categoryid);
+      return await CategorySchema.findById(categoryid);
     } catch (err) {
       console.log("Failed to read a category", err);
       throw err;
@@ -38,9 +34,7 @@ export default class CategoryRepository {
 
   public async updateCategory(categoryid: string, update: UpdateCategory) {
     try {
-      update.updatedAt = getCurrentDateTimeStamp();
-      const updatedCategory = await this.mongoDb.findByIdAndUpdate(
-        CategorySchema,
+      const updatedCategory = await CategorySchema.findByIdAndUpdate(
         categoryid,
         { $set: update },
         { new: true }
@@ -55,11 +49,8 @@ export default class CategoryRepository {
 
   public async deleteCategory(categoryid: string) {
     try {
-      const deleted = await this.mongoDb.findByIdAndDelete(
-        CategorySchema,
-        categoryid
-      );
-      if (!deleted) return null; // Not found
+      const deleted = await CategorySchema.findByIdAndDelete(categoryid);
+      if (!deleted) return null;
       return deleted;
     } catch (err) {
       console.log("Failed to delete category", err);
