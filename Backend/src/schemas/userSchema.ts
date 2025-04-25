@@ -28,4 +28,9 @@ export const updateSchema = Joi.object({
 
 export const idSchema = Joi.object({
   id: Joi.string().min(15).required(),
+  username: Joi.string().optional(),
+  email: Joi.string().optional(),
+  role: Joi.string().optional(),
+  iat: Joi.optional(),
+  exp: Joi.optional(),
 });

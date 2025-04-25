@@ -76,7 +76,6 @@ export default class ProductServices {
         ...product,
         sellerid,
       });
-      console.log(check);
       if (check && Object.keys(check).length > 0) return null;
       const newProduct: Product = await this.createProduct(product, sellerid);
       return await this.productRepositroy.addProduct(newProduct);
