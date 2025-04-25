@@ -7,21 +7,20 @@ export default class UserController {
   constructor(@inject(UserServices) private userServices: UserServices) {}
   public signUp: RequestHandler = async (req, res) => {
     const user: AddUser = req.body;
-    const role: string = req.body.role;
     try {
-      if (
-        !user.firstname ||
-        !user.lastname ||
-        !user.username ||
-        !user.email ||
-        !user.password
-      ) {
-        res
-          .status(400)
-          .json({ message: "Please provide all required user info" });
-        return;
-      }
-      const data = await this.userServices.signUp(user, role);
+      // if (
+      //   !user.firstname ||
+      //   !user.lastname ||
+      //   !user.username ||
+      //   !user.email ||
+      //   !user.password
+      // ) {
+      //   res
+      //     .status(400)
+      //     .json({ message: "Please provide all required user info" });
+      //   return;
+      // }
+      const data = await this.userServices.signUp(user, "User");
       if (!data) {
         res
           .status(409)
@@ -42,12 +41,12 @@ export default class UserController {
   public signIn: RequestHandler = async (req, res) => {
     const { username, email, password } = req.body;
     try {
-      if (!username || !email || !password) {
-        res
-          .status(400)
-          .json({ message: "Please provide username, email, and password" });
-        return;
-      }
+      // if (!username || !email || !password) {
+      //   res
+      //     .status(400)
+      //     .json({ message: "Please provide username, email, and password" });
+      //   return;
+      // }
       const { result, token } = await this.userServices.signIn(
         username,
         email,
@@ -75,10 +74,10 @@ export default class UserController {
   public deleteUser: RequestHandler = async (req, res) => {
     const userid = req.user.id || req.body.userid;
     try {
-      if (!userid) {
-        res.status(400).json({ message: "User ID required" });
-        return;
-      }
+      // if (!userid) {
+      //   res.status(400).json({ message: "User ID required" });
+      //   return;
+      // }
 
       const result = await this.userServices.deleteUser(userid);
       if (!result) {
@@ -101,17 +100,17 @@ export default class UserController {
     const userid = req.user.id;
     const update: UpdateUser = req.body;
     try {
-      if (!userid) {
-        res.status(400).json({ message: "User ID is required" });
-        return;
-      }
+      // if (!userid) {
+      //   res.status(400).json({ message: "User ID is required" });
+      //   return;
+      // }
 
-      if (Object.keys(update).length === 0) {
-        res
-          .status(400)
-          .json({ message: "Provide at least one field to update" });
-        return;
-      }
+      // if (Object.keys(update).length === 0) {
+      //   res
+      //     .status(400)
+      //     .json({ message: "Provide at least one field to update" });
+      //   return;
+      // }
 
       const result = await this.userServices.updateUserInfo(userid, update);
       if (result === undefined) {
@@ -137,10 +136,10 @@ export default class UserController {
   public getUser: RequestHandler = async (req, res) => {
     const userid = req.user.id;
     try {
-      if (!userid) {
-        res.status(400).json({ message: "User ID is required" });
-        return;
-      }
+      // if (!userid) {
+      //   res.status(400).json({ message: "User ID is required" });
+      //   return;
+      // }
 
       const result = await this.userServices.getUser(userid);
       if (!result) {
@@ -163,7 +162,6 @@ export default class UserController {
         res.status(404).json({ message: "Users not found" });
         return;
       }
-
       res
         .status(200)
         .json({ message: "Users search successful", response: result });

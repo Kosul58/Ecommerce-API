@@ -3,21 +3,26 @@ import ProductController from "../controllers/productController.js";
 import verifyRole from "../middleware/verifyRole.js";
 import verifyToken from "../middleware/verifyToken.js";
 import { container } from "tsyringe";
+import DataValidation from "../middleware/validateData.js";
+import { idSchema } from "../schemas/userSchema.js";
+import { modifySchema, productParamsSchema } from "../schemas/productSchema.js";
 const productRoutes = express.Router();
 
 const productController = container.resolve(ProductController);
-
+const dataValidation = container.resolve(DataValidation);
 // Create product
 productRoutes.post(
   "/",
   verifyToken.verify,
   verifyRole.verify("Seller"),
+  dataValidation.validateTokenData(idSchema),
   productController.addProduct
 );
 productRoutes.post(
   "/addbatch",
   verifyToken.verify,
   verifyRole.verify("Seller"),
+  dataValidation.validateTokenData(idSchema),
   productController.addProducts
 );
 
@@ -27,15 +32,18 @@ productRoutes.get(
   "/myproduct",
   verifyToken.verify,
   verifyRole.verify("Seller"),
+  dataValidation.validateTokenData(idSchema),
   productController.getProduct
 );
-productRoutes.get("/:id", productController.getProductById);
+productRoutes.get("/:productid", productController.getProductById);
 
 // Update product
 productRoutes.put(
-  "/:id",
+  "/:productid",
   verifyToken.verify,
   verifyRole.verify("Seller"),
+  dataValidation.validateTokenData(idSchema),
+  dataValidation.validateParams(productParamsSchema),
   productController.updateProduct
 );
 
@@ -44,6 +52,7 @@ productRoutes.delete(
   "/all",
   verifyToken.verify,
   verifyRole.verify("Admin", "Seller"),
+  dataValidation.validateTokenData(idSchema),
   productController.deleteProducts
 );
 
@@ -51,14 +60,19 @@ productRoutes.delete(
   "/:productid",
   verifyToken.verify,
   verifyRole.verify("Admin", "Seller"),
+  dataValidation.validateTokenData(idSchema),
+  dataValidation.validateParams(productParamsSchema),
   productController.deleteProduct
 );
 
 // Modify inventory
 productRoutes.put(
-  "/modify/:id",
+  "/modify/:productid",
   verifyToken.verify,
-  verifyRole.verify("Admin", "Seller"),
+  verifyRole.verify("Seller"),
+  dataValidation.validateTokenData(idSchema),
+  dataValidation.validateParams(productParamsSchema),
+  dataValidation.validateBody(modifySchema),
   productController.modifyInventory
 );
 

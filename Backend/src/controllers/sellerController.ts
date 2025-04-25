@@ -9,10 +9,10 @@ export default class SellerController {
   public getSeller: RequestHandler = async (req, res) => {
     const sellerid = req.user.id;
     try {
-      if (!sellerid) {
-        res.status(400).json({ message: "Seller ID required" });
-        return;
-      }
+      // if (!sellerid) {
+      //   res.status(400).json({ message: "Seller ID required" });
+      //   return;
+      // }
       const seller = await this.sellerServices.getSeller(sellerid);
       if (!seller) {
         res.status(404).json({ message: "No seller found" });
@@ -42,17 +42,17 @@ export default class SellerController {
   public signUp: RequestHandler = async (req, res) => {
     const seller: AddSeller = req.body;
     try {
-      if (
-        !seller.shopname ||
-        !seller.username ||
-        !seller.email ||
-        !seller.password
-      ) {
-        res
-          .status(400)
-          .json({ message: "Please provide all required seller info" });
-        return;
-      }
+      // if (
+      //   !seller.shopname ||
+      //   !seller.username ||
+      //   !seller.email ||
+      //   !seller.password
+      // ) {
+      //   res
+      //     .status(400)
+      //     .json({ message: "Please provide all required seller info" });
+      //   return;
+      // }
       const { result, token } = await this.sellerServices.signUp(
         seller,
         "Seller"
@@ -74,12 +74,12 @@ export default class SellerController {
   public signIn: RequestHandler = async (req, res) => {
     const { username, email, password } = req.body;
     try {
-      if (!username || !email || !password) {
-        res
-          .status(400)
-          .json({ message: "Please provide username, email, and password" });
-        return;
-      }
+      // if (!username || !email || !password) {
+      //   res
+      //     .status(400)
+      //     .json({ message: "Please provide username, email, and password" });
+      //   return;
+      // }
       const { result, token } = await this.sellerServices.signIn(
         username,
         email,
@@ -138,10 +138,10 @@ export default class SellerController {
   public deleteSeller: RequestHandler = async (req, res) => {
     const sellerid = req.user.id;
     try {
-      if (!sellerid) {
-        res.status(400).json({ message: "Seller ID required" });
-        return;
-      }
+      // if (!sellerid) {
+      //   res.status(400).json({ message: "Seller ID required" });
+      //   return;
+      // }
       const result = await this.sellerServices.deleteSeller(sellerid);
       if (!result) {
         res.status(400).json({ message: "Failed to delete seller" });

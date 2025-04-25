@@ -1,15 +1,11 @@
 import { Request, Response, NextFunction } from "express";
-import {
-  signUpSchema,
-  signInSchema,
-  updateUserSchema,
-  idSchema,
-} from "../schemas/userSchema.js";
+
 import Joi from "joi";
 import { injectable } from "tsyringe";
+
 @injectable()
 export default class DataValidation {
-  private validateBody(schema: Joi.ObjectSchema) {
+  public validateBody(schema: Joi.ObjectSchema) {
     return (req: Request, res: Response, next: NextFunction) => {
       const { error } = schema.validate(req.body, { abortEarly: false });
       if (error) {
@@ -22,7 +18,7 @@ export default class DataValidation {
       next();
     };
   }
-  private validateUser(schema: Joi.ObjectSchema) {
+  public validateTokenData(schema: Joi.ObjectSchema) {
     return (req: Request, res: Response, next: NextFunction) => {
       const { error } = schema.validate(req.user, { abortEarly: false });
       if (error) {
@@ -35,8 +31,7 @@ export default class DataValidation {
       next();
     };
   }
-
-  private validateParams(schema: Joi.ObjectSchema) {
+  public validateParams(schema: Joi.ObjectSchema) {
     return (req: Request, res: Response, next: NextFunction) => {
       const { error } = schema.validate(req.params, { abortEarly: false });
       if (error) {
@@ -48,17 +43,5 @@ export default class DataValidation {
       }
       next();
     };
-  }
-  public signUpValidation() {
-    return this.validateBody(signUpSchema);
-  }
-  public signInValidation() {
-    return this.validateBody(signInSchema);
-  }
-  public updateUserValidation() {
-    return this.validateBody(updateUserSchema);
-  }
-  public userValidation() {
-    return this.validateUser(idSchema);
   }
 }

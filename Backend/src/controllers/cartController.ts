@@ -1,5 +1,4 @@
 import { RequestHandler } from "express";
-import { UpdateCart } from "../common/types/cartType.js";
 import { inject, injectable } from "tsyringe";
 import CartService from "../services/cartServices.js";
 @injectable()
@@ -72,10 +71,10 @@ export default class CartController {
   public addProduct: RequestHandler = async (req, res) => {
     const { userid, productid, quantity } = req.body;
     try {
-      if (!userid || !productid || !quantity) {
-        res.status(400).json({ message: "Provide all fields", response: [] });
-        return;
-      }
+      // if (!userid || !productid || !quantity) {
+      //   res.status(400).json({ message: "Provide all fields", response: [] });
+      //   return;
+      // }
       const result = await this.cartService.addProduct(
         userid,
         productid,
@@ -115,12 +114,12 @@ export default class CartController {
   public removeProduct: RequestHandler = async (req, res) => {
     const { userid, productid } = req.params;
     try {
-      if (!userid || !productid) {
-        res
-          .status(400)
-          .json({ message: "User ID and Product ID required", response: [] });
-        return;
-      }
+      // if (!userid || !productid) {
+      //   res
+      //     .status(400)
+      //     .json({ message: "User ID and Product ID required", response: [] });
+      //   return;
+      // }
       const result = await this.cartService.removeProduct(userid, productid);
       if (result === "nocart") {
         res
@@ -146,12 +145,12 @@ export default class CartController {
   public removeProducts: RequestHandler = async (req, res) => {
     const { userid, products } = req.body;
     try {
-      if (!userid || !products || products.length === 0) {
-        res
-          .status(400)
-          .json({ message: "User ID and product list required", response: [] });
-        return;
-      }
+      // if (!userid || !products || products.length === 0) {
+      //   res
+      //     .status(400)
+      //     .json({ message: "User ID and product list required", response: [] });
+      //   return;
+      // }
       const result = await this.cartService.removeProducts(userid, products);
       if (result === "nocart") {
         res.status(404).json({ message: "No cart found" });
@@ -173,20 +172,20 @@ export default class CartController {
 
   // Update a product in the cart
   public updateProduct: RequestHandler = async (req, res) => {
-    const { userid, productid, update } = req.body as {
+    const { userid, productid, quantity } = req.body as {
       userid: string;
       productid: string;
-      update: UpdateCart;
+      quantity: number;
     };
     try {
-      if (!userid || !productid || !update?.quantity) {
-        res.status(400).json({ message: "Enter all fields", response: [] });
-        return;
-      }
+      // if (!userid || !productid || !quantity) {
+      //   res.status(400).json({ message: "Enter all fields", response: [] });
+      //   return;
+      // }
       const result = await this.cartService.updateProduct(
         userid,
         productid,
-        update
+        quantity
       );
       if (result === "nocart") {
         res.status(400).json({ message: "No cart found" });
@@ -218,10 +217,10 @@ export default class CartController {
   public calcTotal: RequestHandler = async (req, res) => {
     const userid = req.user.id;
     try {
-      if (!userid) {
-        res.status(400).json({ message: "Cannot find user ID", response: [] });
-        return;
-      }
+      // if (!userid) {
+      //   res.status(400).json({ message: "Cannot find user ID", response: [] });
+      //   return;
+      // }
       const result = await this.cartService.cartTotal(userid);
       if (!result) {
         res

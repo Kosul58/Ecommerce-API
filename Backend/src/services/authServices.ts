@@ -12,7 +12,6 @@ export default class AuthServices {
     role: any
   ): string => {
     const payload = { id, username, email, role };
-    console.log(payload);
     const secretKey = process.env.JWT_SECRET_KEY;
     if (!secretKey) {
       throw new Error(

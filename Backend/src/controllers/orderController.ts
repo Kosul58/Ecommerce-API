@@ -43,10 +43,10 @@ export default class OrderController {
   public createOrder: RequestHandler = async (req, res) => {
     const { userid, productid } = req.body;
     try {
-      if (!userid) {
-        res.status(400).json({ message: "Userid required", response: [] });
-        return;
-      }
+      // if (!userid) {
+      //   res.status(400).json({ message: "Userid required", response: [] });
+      //   return;
+      // }
       const result = await this.orderService.addOrder(userid, productid);
       if (result === "noproduct") {
         res.status(404).json({ message: "No Product found" });
@@ -70,13 +70,13 @@ export default class OrderController {
   public createOrders: RequestHandler = async (req, res) => {
     const { userid, products } = req.body;
     try {
-      if (!userid || products.length < 1) {
-        res.status(400).json({
-          message: "Userid and products array required",
-          response: [],
-        });
-        return;
-      }
+      // if (!userid || products.length < 1) {
+      //   res.status(400).json({
+      //     message: "Userid and products array required",
+      //     response: [],
+      //   });
+      //   return;
+      // }
       const result = await this.orderService.addOrders(userid, products);
       if (!result || Object.keys(result).length === 0) {
         res
@@ -102,10 +102,10 @@ export default class OrderController {
   public orderedProducts: RequestHandler = async (req, res) => {
     const id = req.user.id;
     try {
-      if (!id) {
-        res.status(400).json({ message: "Failed to get id" });
-        return;
-      }
+      // if (!id) {
+      //   res.status(400).json({ message: "Failed to get id" });
+      //   return;
+      // }
       const result = await this.orderService.orderedProducts(id);
       if (!result) {
         res.status(400).json({ message: "No products found" });
@@ -119,10 +119,10 @@ export default class OrderController {
   public updateOrderStatus: RequestHandler = async (req, res) => {
     const { orderid, userid, status } = req.body;
     try {
-      if (!orderid || !userid || !status) {
-        res.status(400).json({ message: "Enter all fields", response: [] });
-        return;
-      }
+      // if (!orderid || !userid || !status) {
+      //   res.status(400).json({ message: "Enter all fields", response: [] });
+      //   return;
+      // }
       const result = await this.orderService.updateOrderStatus(
         orderid,
         userid,
@@ -150,10 +150,10 @@ export default class OrderController {
   public cancelWholeOrder: RequestHandler = async (req, res) => {
     const { orderid } = req.body;
     try {
-      if (!orderid) {
-        res.status(400).json({ message: "Enter all fields", response: [] });
-        return;
-      }
+      // if (!orderid) {
+      //   res.status(400).json({ message: "Enter all fields", response: [] });
+      //   return;
+      // }
       const result = await this.orderService.cancelOrders(orderid);
       if (!result || Object.keys(result).length === 0) {
         res
@@ -173,10 +173,10 @@ export default class OrderController {
   public cancelSingleOrder: RequestHandler = async (req, res) => {
     const { orderid, productid } = req.body;
     try {
-      if (!orderid || !productid) {
-        res.status(400).json({ message: "Enter all fields", response: [] });
-        return;
-      }
+      // if (!orderid || !productid) {
+      //   res.status(400).json({ message: "Enter all fields", response: [] });
+      //   return;
+      // }
       const result = await this.orderService.cancelOrder(orderid, productid);
       if (result === "noorder") {
         res.status(400).json({ message: "No order found" });
@@ -206,10 +206,10 @@ export default class OrderController {
   public returnOrder: RequestHandler = async (req, res) => {
     const { orderid, userid, productid, type } = req.body;
     try {
-      if (!orderid || !userid) {
-        res.status(400).json({ message: "Enter all fields" });
-        return;
-      }
+      // if (!orderid || !userid) {
+      //   res.status(400).json({ message: "Enter all fields" });
+      //   return;
+      // }
       const result = await this.orderService.returnOrder(
         orderid,
         userid,
@@ -231,10 +231,10 @@ export default class OrderController {
     const { orderid, productid, status } = req.body;
     const sellerid = req.user.id;
     try {
-      if (!orderid || !productid || !status) {
-        res.status(400).json({ message: "Enter all fields" });
-        return;
-      }
+      // if (!orderid || !productid || !status) {
+      //   res.status(400).json({ message: "Enter all fields" });
+      //   return;
+      // }
       const result = await this.orderService.updateProductStatus(
         orderid,
         sellerid,

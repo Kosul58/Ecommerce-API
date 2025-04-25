@@ -36,14 +36,3 @@ export interface UpdateUser {
   phone?: number;
   address?: string;
 }
-export interface UserParser {
-  userid?: string;
-  firstname?: string;
-  lastname?: string;
-  username?: string;
-  email?: string;
-  password?: string;
-  createdAt?: string;
-  lastLogin?: string;
-  role?: string;
-}

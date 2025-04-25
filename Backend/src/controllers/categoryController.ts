@@ -14,12 +14,12 @@ export default class CategoryController {
   public createCategory: RequestHandler = async (req, res) => {
     const category: CategoryOption = req.body;
     try {
-      if (!category.name || !category.description) {
-        res
-          .status(400)
-          .json({ message: "Name and description field required" });
-        return;
-      }
+      // if (!category.name || !category.description) {
+      //   res
+      //     .status(400)
+      //     .json({ message: "Name and description field required" });
+      //   return;
+      // }
       const result = await this.categoryServices.createCategory(category);
       if (result === "catexists") {
         res.status(400).json({
@@ -73,10 +73,10 @@ export default class CategoryController {
   public readCategory: RequestHandler = async (req, res) => {
     const { categoryid } = req.params;
     try {
-      if (!categoryid) {
-        res.status(400).json({ message: "Category categoryid required" });
-        return;
-      }
+      // if (!categoryid) {
+      //   res.status(400).json({ message: "Category categoryid required" });
+      //   return;
+      // }
 
       const result = await this.categoryServices.readCategory(categoryid);
       if (!result || Object.keys(result).length < 1) {
@@ -102,10 +102,10 @@ export default class CategoryController {
     const { categoryid } = req.params;
     const update: UpdateCategory = req.body;
     try {
-      if (!categoryid || Object.keys(update).length < 1) {
-        res.status(400).json({ message: "Enter all required fields" });
-        return;
-      }
+      // if (!categoryid || Object.keys(update).length < 1) {
+      //   res.status(400).json({ message: "Enter all required fields" });
+      //   return;
+      // }
       const result = await this.categoryServices.updateCategory(
         categoryid,
         update
@@ -151,10 +151,10 @@ export default class CategoryController {
   public deleteCategory: RequestHandler = async (req, res) => {
     const { categoryid } = req.params;
     try {
-      if (!categoryid) {
-        res.status(400).json({ message: "Enter all required fields" });
-        return;
-      }
+      // if (!categoryid) {
+      //   res.status(400).json({ message: "Enter all required fields" });
+      //   return;
+      // }
       const result = await this.categoryServices.deleteCategory(categoryid);
       if (!result) {
         res.status(404).json({

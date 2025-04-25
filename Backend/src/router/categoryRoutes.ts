@@ -2,13 +2,22 @@ import express from "express";
 import CategoryController from "../controllers/categoryController.js";
 import verifyRole from "../middleware/verifyRole.js";
 import { container } from "tsyringe";
+import DataValidation from "../middleware/validateData.js";
+import {
+  categoryParamsSchema,
+  createSchema,
+  updateSchema,
+} from "../schemas/catagorySchema.js";
 const categoryRoutes = express.Router();
 
 const categoryController = container.resolve(CategoryController);
+
+const dataValidation = container.resolve(DataValidation);
 // Create category
 categoryRoutes.post(
   "/",
   verifyRole.verify("Seller", "Admin"),
+  dataValidation.validateBody(createSchema),
   categoryController.createCategory
 );
 
@@ -21,6 +30,7 @@ categoryRoutes.get(
 categoryRoutes.get(
   "/:categoryid",
   verifyRole.verify("Seller", "Admin"),
+  dataValidation.validateParams(categoryParamsSchema),
   categoryController.readCategory
 );
 
@@ -28,6 +38,8 @@ categoryRoutes.get(
 categoryRoutes.put(
   "/:categoryid",
   verifyRole.verify("Seller", "Admin"),
+  dataValidation.validateParams(categoryParamsSchema),
+  dataValidation.validateBody(updateSchema),
   categoryController.updateCategory
 );
 
@@ -35,6 +47,7 @@ categoryRoutes.put(
 categoryRoutes.delete(
   "/:categoryid",
   verifyRole.verify("Seller", "Admin"),
+  dataValidation.validateParams(categoryParamsSchema),
   categoryController.deleteCategory
 );
 

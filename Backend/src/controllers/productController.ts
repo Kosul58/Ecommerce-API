@@ -30,9 +30,9 @@ export default class ProductController {
   public getProduct: RequestHandler = async (req, res) => {
     const sellerid = req.user.id;
     try {
-      if (!sellerid) {
-        res.status(400).json({ message: "Failed to get id" });
-      }
+      // if (!sellerid) {
+      //   res.status(400).json({ message: "Failed to get id" });
+      // }
 
       const result = await this.prodcutService.getProduct(sellerid);
       if (!result || result.length === 0) {
@@ -48,13 +48,13 @@ export default class ProductController {
   };
 
   public getProductById: RequestHandler = async (req, res) => {
-    const { id } = req.params;
+    const { productid } = req.params;
     try {
-      if (!id) {
-        res.status(400).json({ message: "Provide ProductID", response: [] });
-        return;
-      }
-      const data = await this.prodcutService.getProductById(id);
+      // if (!productid) {
+      //   res.status(400).json({ message: "Provide ProductID", response: [] });
+      //   return;
+      // }
+      const data = await this.prodcutService.getProductById(productid);
       if (!data || Object.keys(data).length === 0) {
         res.status(404).json({
           message: "No matching product found",
@@ -67,9 +67,9 @@ export default class ProductController {
         response: data,
       });
     } catch (err) {
-      console.error("Failed to get product by id", err);
+      console.error("Failed to get product by productid", err);
       res.status(500).json({
-        message: "Failed to get product by id",
+        message: "Failed to get product by productid",
         response: [],
       });
     }
@@ -79,10 +79,10 @@ export default class ProductController {
     const productData: AddProduct = req.body;
     const sellerid: string = req.user.id;
     try {
-      if (!productData.name || !productData.price || !productData.inventory) {
-        res.status(400).json({ message: "Enter all fields", response: [] });
-        return;
-      }
+      // if (!productData.name || !productData.price || !productData.inventory) {
+      //   res.status(400).json({ message: "Enter all fields", response: [] });
+      //   return;
+      // }
       const result = await this.prodcutService.addProduct(
         productData,
         sellerid
@@ -118,12 +118,11 @@ export default class ProductController {
   public addProducts: RequestHandler = async (req, res) => {
     const products: AddProduct[] = req.body;
     const sellerid: string = req.user.id;
-
     try {
-      if (products.length === 0) {
-        res.status(400).json({ message: "Empty products array", response: [] });
-        return;
-      }
+      // if (products.length === 0) {
+      //   res.status(400).json({ message: "Empty products array", response: [] });
+      //   return;
+      // }
       const data = await this.prodcutService.addProducts(products, sellerid);
 
       if (!data || data.length > 0) {
@@ -147,16 +146,16 @@ export default class ProductController {
   };
 
   public updateProduct: RequestHandler = async (req, res) => {
-    const { id } = req.params;
+    const { productid } = req.params;
     const sellerid = req.user.id;
     const update: UpdateProdcut = req.body;
     try {
-      if (!id || !update) {
-        res.status(400).json({ message: "Enter all fields", response: [] });
-        return;
-      }
+      // if (!productid || !update) {
+      //   res.status(400).json({ message: "Enter all fields", response: [] });
+      //   return;
+      // }
       const result = await this.prodcutService.updateProduct(
-        id,
+        productid,
         sellerid,
         update
       );
@@ -165,7 +164,7 @@ export default class ProductController {
         (Array.isArray(result) && result.length > 0)
       ) {
         res.status(200).json({
-          message: `Product with id ${id} updated successfully`,
+          message: `Product with id ${productid} updated successfully`,
           response: result,
         });
         return;
@@ -186,14 +185,16 @@ export default class ProductController {
   public deleteProduct: RequestHandler = async (req, res) => {
     const { productid } = req.params;
     const sellerid = req.user.id;
+    const role = req.user.role;
     try {
-      if (!productid) {
-        res.status(400).json({ message: "Product ID required", response: [] });
-        return;
-      }
+      // if (!productid) {
+      //   res.status(400).json({ message: "Product ID required", response: [] });
+      //   return;
+      // }
       const result = await this.prodcutService.deleteProduct(
         productid,
-        sellerid
+        sellerid,
+        role
       );
       if (!result) {
         res.status(404).json({
@@ -218,10 +219,10 @@ export default class ProductController {
   public deleteProducts: RequestHandler = async (req, res) => {
     const id = req.user.id || req.body.sellerid;
     try {
-      if (!id) {
-        res.status(400).json({ message: "Failed to get id" });
-        return;
-      }
+      // if (!id) {
+      //   res.status(400).json({ message: "Failed to get id" });
+      //   return;
+      // }
       const result = await this.prodcutService.deleteProducts(id);
       if (!result) {
         res.status(400).json({ message: "Failed to delete products" });
@@ -236,17 +237,17 @@ export default class ProductController {
   };
 
   public modifyInventory: RequestHandler = async (req, res) => {
-    const { id } = req.params;
+    const { productid } = req.params;
     const { quantity, modification } = req.body;
     try {
-      if (!id || !quantity || !modification) {
-        res
-          .status(400)
-          .json({ message: "Provide all required fields", response: [] });
-        return;
-      }
+      // if (!productid || !quantity || !modification) {
+      //   res
+      //     .status(400)
+      //     .json({ message: "Provide all required fields", response: [] });
+      //   return;
+      // }
       const result = await this.prodcutService.modifyInventory(
-        id,
+        productid,
         quantity,
         modification
       );

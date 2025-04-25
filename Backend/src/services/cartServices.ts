@@ -1,4 +1,4 @@
-import { CartProduct, UpdateCart } from "../common/types/cartType.js";
+import { CartProduct } from "../common/types/cartType.js";
 import { inject, injectable } from "tsyringe";
 import CartRepository from "../repository/cartRepository.js";
 import ProductServices from "./productServices.js";
@@ -93,13 +93,13 @@ export default class CartService {
     }
   }
 
-  public async updateProduct(uid: string, pid: string, update: UpdateCart) {
+  public async updateProduct(uid: string, pid: string, quantity: number) {
     try {
       const product =
         (await this.productServices.getProductById(pid)) ?? undefined;
       if (!product) return "noproduct";
-      if (product.inventory < update.quantity) return "insufficientinventory";
-      return await this.cartRepository.updateProduct(uid, pid, update);
+      if (product.inventory < quantity) return "insufficientinventory";
+      return await this.cartRepository.updateProduct(uid, pid, quantity);
     } catch (err) {
       console.log("Failed to update product in cart", err);
       throw err;

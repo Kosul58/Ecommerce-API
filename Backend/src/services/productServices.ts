@@ -136,11 +136,17 @@ export default class ProductServices {
     }
   }
 
-  public async deleteProduct(productid: string, sellerid: string) {
+  public async deleteProduct(
+    productid: string,
+    sellerid: string,
+    role: string
+  ) {
     try {
       const prodcut = await this.getProductById(productid);
       if (!prodcut || prodcut.sellerid !== sellerid) {
-        return null;
+        if (role !== "Admin") {
+          return null;
+        }
       }
       return await this.productRepositroy.deleteProduct(productid);
     } catch (err) {

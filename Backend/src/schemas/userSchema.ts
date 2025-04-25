@@ -8,11 +8,8 @@ export const signUpSchema = Joi.object({
   username: Joi.string().alphanum().min(3).max(30).required(),
   email: Joi.string().email().required(),
   password: Joi.string().min(2).required(),
-  phone: Joi.number().required(),
+  phone: Joi.number().min(1000000000).max(9999999999).required(),
   address: Joi.string().min(5).required(),
-  role: Joi.string()
-    .valid(...Object.values(UserRole))
-    .required(),
 });
 
 export const signInSchema = Joi.object({
@@ -21,7 +18,7 @@ export const signInSchema = Joi.object({
   password: Joi.string().min(2).required(),
 });
 
-export const updateUserSchema = Joi.object({
+export const updateSchema = Joi.object({
   firstname: Joi.string().min(2),
   lastname: Joi.string().min(2),
   username: Joi.string().alphanum().min(3).max(30),

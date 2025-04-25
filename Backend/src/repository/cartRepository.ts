@@ -1,4 +1,4 @@
-import { Cart, CartProduct, UpdateCart } from "../common/types/cartType.js";
+import { Cart, CartProduct } from "../common/types/cartType.js";
 import CartSchema from "../models/cart.js";
 import { injectable } from "tsyringe";
 
@@ -111,14 +111,14 @@ export default class CartRepository {
   public async updateProduct(
     userid: string,
     productid: string,
-    update: UpdateCart
+    quantity: number
   ) {
     try {
       const cart = await CartSchema.findOne({ userid });
       if (!cart) return "nocart";
       const product = cart.products.find((p) => p.productid === productid);
       if (!product) return "noproduct";
-      product.quantity = update.quantity;
+      product.quantity = quantity;
       return await cart.save();
     } catch (err) {
       console.log("Failed to update a product in the cart", err);
