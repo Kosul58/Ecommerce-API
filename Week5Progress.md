@@ -35,4 +35,5 @@
 
 -> implement response handler.
 -> learn about design patterns.
--> continue implementing SOLID principles and optimize code
+-> continue implementing SOLID principles
+-> optimize code
