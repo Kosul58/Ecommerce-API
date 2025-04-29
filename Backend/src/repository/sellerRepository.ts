@@ -17,6 +17,7 @@ export default class SellerRepository {
     const seller = await SellerSchema.findOne({ phone });
     return seller && seller._id.toString() !== excludeId;
   }
+
   public async findSeller(sellerid: string) {
     try {
       return await SellerSchema.findById(sellerid);
@@ -33,9 +34,7 @@ export default class SellerRepository {
   }
   public async signIn(username: string, email: string) {
     try {
-      const seller = await SellerSchema.findOne({ username, email });
-      if (!seller) return undefined;
-      return await seller.save();
+      return await SellerSchema.findOne({ username, email });
     } catch (err) {
       throw err;
     }
@@ -50,12 +49,11 @@ export default class SellerRepository {
   }
   public async updateSeller(sellerid: string, update: SellerUpadte) {
     try {
-      const seller = await SellerSchema.findByIdAndUpdate(
+      return await SellerSchema.findByIdAndUpdate(
         sellerid,
         { $set: update },
         { new: true }
       );
-      return seller || undefined;
     } catch (err) {
       throw err;
     }

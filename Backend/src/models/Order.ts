@@ -38,11 +38,10 @@ const OrderProductSchema = new Schema<OrderProduct>(
       enum: Object.values(OrderProductStatus),
       required: true,
     },
+  },
+  {
+    _id: false,
   }
-  // ,
-  // {
-  //   _id: false,
-  // }
 );
 
 const OrderSchema = new Schema<OrderDocument>({

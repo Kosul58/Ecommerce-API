@@ -19,11 +19,9 @@ export default class OrderRepository {
       throw err;
     }
   }
-  public async getOrder(userid: string) {
+  public async getUserOrders(userid: string) {
     try {
-      const orders = await OrderSchema.find({ userid });
-      if (!orders || orders.length === 0) return "noorder";
-      return orders;
+      return await OrderSchema.find({ userid });
     } catch (err) {
       console.log("Failed to search orders of user", err);
       throw err;
@@ -31,8 +29,7 @@ export default class OrderRepository {
   }
   public async getOrderById(orderid: string) {
     try {
-      const order = await OrderSchema.findById(orderid);
-      return order;
+      return await OrderSchema.findById(orderid);
     } catch (err) {
       console.log("Failed to search orders of user", err);
       throw err;
@@ -56,21 +53,13 @@ export default class OrderRepository {
       throw err;
     }
   }
-  public async cancelOrder(orderid: string, productid: string) {
+  public async cancelDeliveryOrder(orderid: string, productid: string) {
     try {
       const order = await OrderSchema.findOne({ _id: orderid });
-      if (!order) return "noorder";
-
+      if (!order) return;
       const product = order.items.find((p: any) => p.productid === productid);
-
-      if (!product) return "noproduct";
+      if (!product) return;
       product.active = false;
-      const uncanceledProducts = order.items.filter(
-        (p) => p.productid !== productid
-      );
-      if (uncanceledProducts.length === 0) {
-        order.status = DeliveryStatus.CANCELED;
-      }
       order.markModified("items");
       return await order.save();
     } catch (err) {
@@ -78,31 +67,28 @@ export default class OrderRepository {
       throw err;
     }
   }
-  public async cancelOrders(orderid: string) {
+  public async cancelDeliveryOrders(orderid: string) {
     try {
       const order = await OrderSchema.findOne({ _id: orderid });
-      if (!order) return "noorder";
+      if (!order) return;
       order.items.forEach((item: any) => {
         item.active = false;
       });
-      order.status = DeliveryStatus.CANCELED;
       order.markModified("items");
-      const result = await order.save();
-      const modifier = order.items;
-      return { result, modifier };
+      return await order.save();
     } catch (err) {
       console.log("Failed to remove a order", err);
       throw err;
     }
   }
+
   public async updateOrderStatus(
     orderid: string,
-    userid: string,
     status: DeliveryStatus | ReturnStatus
   ) {
     try {
       const order = await OrderSchema.findById(orderid);
-      if (!order) return "noorder";
+      if (!order) return;
       order.status = status;
       return order.save();
     } catch (err) {
@@ -117,7 +103,7 @@ export default class OrderRepository {
   ) {
     try {
       const order = await OrderSchema.findById(orderid);
-      if (!order) return "noorder";
+      if (!order) return;
       const product = order.items.find(
         (i) =>
           i.productid === productid &&
@@ -127,7 +113,7 @@ export default class OrderRepository {
       if (product) {
         product.status = status;
       } else {
-        return "noproduct";
+        return;
       }
       order.markModified("items");
       return order.save();

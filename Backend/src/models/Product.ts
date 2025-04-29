@@ -1,3 +1,4 @@
+import { required } from "joi";
 import mongoose from "mongoose";
 
 const productSchema = new mongoose.Schema({
@@ -15,6 +16,7 @@ const productSchema = new mongoose.Schema({
   },
   description: {
     type: String,
+    required: true,
   },
   category: {
     type: String,

@@ -1,6 +1,6 @@
 import { Product, UpdateProdcut } from "../common/types/productType.js";
 import { injectable } from "tsyringe";
-import ProductSchema from "../models/Product.js";
+import ProductSchema from "../models/product.js";
 import mongoose from "mongoose";
 
 @injectable()
@@ -13,7 +13,7 @@ export default class ProductRepository {
       throw err;
     }
   }
-  public async getProduct(id: string) {
+  public async getSellerProducts(id: string) {
     try {
       return await ProductSchema.find({ sellerid: id });
     } catch (err) {}
@@ -108,23 +108,11 @@ export default class ProductRepository {
     }
   }
 
-  public async manageInventory(
-    id: string,
-    quantity: number,
-    operation: "increase" | "decrease"
-  ) {
+  public async manageInventory(id: string, quantity: number) {
     try {
       const product = await ProductSchema.findById(id);
       if (!product) return undefined;
-
-      let newInventory = product.inventory ?? 0;
-      if (operation === "increase") {
-        newInventory += quantity;
-      } else {
-        newInventory -= quantity;
-      }
-
-      product.inventory = newInventory;
+      product.inventory = quantity;
       return await product.save();
     } catch (err) {
       console.log("Failed to update inventory", err);

@@ -4,20 +4,16 @@ import verifyRole from "../middleware/verifyRole.js";
 import verifyToken from "../middleware/verifyToken.js";
 import { container } from "tsyringe";
 import SellerController from "../controllers/sellerController.js";
-import productRoutes from "./productRoutes.js";
-import orderRoutes from "./orderRoutes.js";
 import DataValidation from "../middleware/validateData.js";
-import { idSchema } from "../schemas/userSchema.js";
+import { idSchema } from "../validation/userSchema.js";
 import {
   signInSchema,
   signUpSchema,
   updateSchema,
-} from "../schemas/sellerSchema.js";
+} from "../validation/sellerSchema.js";
 const sellerController = container.resolve(SellerController);
 const dataValidation = container.resolve(DataValidation);
 const sellerRoutes = express.Router();
-sellerRoutes.use("/product", productRoutes);
-sellerRoutes.use("/order", orderRoutes);
 sellerRoutes.get(
   "/",
   verifyToken.verify,

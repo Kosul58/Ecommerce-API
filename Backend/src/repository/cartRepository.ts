@@ -1,4 +1,4 @@
-import { Cart, CartProduct } from "../common/types/cartType.js";
+import { Cart, CartDocument, CartProduct } from "../common/types/cartType.js";
 import CartSchema from "../models/cart.js";
 import { injectable } from "tsyringe";
 
@@ -12,17 +12,7 @@ export default class CartRepository {
       throw err;
     }
   }
-  public async getProductById(productid: string, userid: string) {
-    try {
-      const cart = await CartSchema.findOne({ userid });
-      if (!cart) return undefined;
-      return cart.products.find((p) => p.productid === productid);
-    } catch (err) {
-      console.log("Failed to get product by id for a user from cart", err);
-      throw err;
-    }
-  }
-  public async getProduct(userid: string) {
+  public async getCart(userid: string) {
     try {
       return await CartSchema.findOne({ userid });
     } catch (err) {
@@ -39,109 +29,87 @@ export default class CartRepository {
       throw err;
     }
   }
-  public async addProduct(
-    userid: string,
-    product: CartProduct,
-    quantity: number,
-    inventory: number
-  ) {
+  public async saveCart(cart: CartDocument) {
     try {
-      let cart = await CartSchema.findOne({ userid });
-      if (!cart) {
-        return "nocart";
-      }
-
-      const existingProduct = cart.products.find(
-        (p) => p.productid.toString() === product.productid.toString()
-      );
-      if (!existingProduct) {
-        cart.products.push(product);
-      } else {
-        existingProduct.quantity += quantity;
-        if (existingProduct.quantity > inventory) {
-          return "insufficientinventory";
-        }
-      }
       cart.markModified("products");
-      await cart.save();
-      return cart;
+      return await cart.save();
     } catch (err) {
       console.log("Failed to add product to the cart of a user", err);
       throw err;
     }
   }
 
-  public async removeProduct(userid: string, productid: string) {
-    try {
-      const cart = await CartSchema.findOne({ userid });
-      if (!cart) return "nocart";
-      const productIndex = cart.products.findIndex(
-        (p) => p.productid === productid
-      );
-      if (productIndex < 0) return null;
-      cart.products.splice(productIndex, 1);
-      const result = await cart.save();
-      return result;
-    } catch (err) {
-      console.log("Failed to remove a product from the cart of a user", err);
-      throw err;
-    }
-  }
+  // public async removeProduct(userid: string, productid: string) {
+  //   try {
+  //     const cart = await CartSchema.findOne({ userid });
+  //     if (!cart) return "nocart";
+  //     const productIndex = cart.products.findIndex(
+  //       (p) => p.productid === productid
+  //     );
+  //     if (productIndex < 0) return null;
+  //     cart.products.splice(productIndex, 1);
+  //     const result = await cart.save();
+  //     return result;
+  //   } catch (err) {
+  //     console.log("Failed to remove a product from the cart of a user", err);
+  //     throw err;
+  //   }
+  // }
 
-  public async removeProducts(userid: string, products: string[]) {
-    try {
-      const cart = await CartSchema.findOne({ userid });
-      if (!cart) return "nocart";
-      for (let i = cart.products.length - 1; i >= 0; i--) {
-        if (products.includes(cart.products[i].productid.toString())) {
-          cart.products.splice(i, 1);
-        }
-      }
-      const result = await cart.save();
-      return result;
-    } catch (err) {
-      console.log(
-        "Failed to remove multiple products from the cart of a user",
-        err
-      );
-      throw err;
-    }
-  }
+  // public async removeProducts(userid: string, products: string[]) {
+  //   try {
+  //     const cart = await CartSchema.findOne({ userid });
+  //     if (!cart) return "nocart";
+  //     for (let i = cart.products.length - 1; i >= 0; i--) {
+  //       if (products.includes(cart.products[i].productid.toString())) {
+  //         cart.products.splice(i, 1);
+  //       }
+  //     }
+  //     const result = await cart.save();
+  //     return result;
+  //   } catch (err) {
+  //     console.log(
+  //       "Failed to remove multiple products from the cart of a user",
+  //       err
+  //     );
+  //     throw err;
+  //   }
+  // }
 
-  public async updateProduct(
-    userid: string,
-    productid: string,
-    quantity: number
-  ) {
-    try {
-      const cart = await CartSchema.findOne({ userid });
-      if (!cart) return "nocart";
-      const product = cart.products.find((p) => p.productid === productid);
-      if (!product) return "noproduct";
-      product.quantity = quantity;
-      return await cart.save();
-    } catch (err) {
-      console.log("Failed to update a product in the cart", err);
-      throw err;
-    }
-  }
+  // public async updateProduct(
+  //   userid: string,
+  //   productid: string,
+  //   quantity: number
+  // ) {
+  //   try {
+  //     const cart = await CartSchema.findOne({ userid });
+  //     if (!cart) return "nocart";
+  //     const product = cart.products.find((p) => p.productid === productid);
+  //     if (!product) return "noproduct";
+  //     product.quantity = quantity;
+  //     return await cart.save();
+  //   } catch (err) {
+  //     console.log("Failed to update a product in the cart", err);
+  //     throw err;
+  //   }
+  // }
 
-  public async totalCartPrice(userid: string) {
-    try {
-      const cart = await CartSchema.findOne({ userid });
-      if (!cart) return undefined;
-      return cart.products.map((p) => ({
-        productid: p.productid,
-        quantity: p.quantity,
-      }));
-    } catch (err) {
-      console.log(
-        "Failed to calculate total price of products in the cart of a user",
-        err
-      );
-      throw err;
-    }
-  }
+  // public async totalCartPrice(userid: string) {
+  //   try {
+  //     const cart = await CartSchema.findOne({ userid });
+  //     if (!cart) return undefined;
+  //     return cart.products.map((p) => ({
+  //       productid: p.productid,
+  //       quantity: p.quantity,
+  //     }));
+  //   } catch (err) {
+  //     console.log(
+  //       "Failed to calculate total price of products in the cart of a user",
+  //       err
+  //     );
+  //     throw err;
+  //   }
+  // }
 
   public async deleteCart(userid: string) {
     try {

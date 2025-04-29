@@ -3,6 +3,7 @@ import categoryService from "./categoryServices.js";
 import {
   AddProduct,
   Product,
+  ProductReturn,
   UpdateProdcut,
 } from "../common/types/productType.js";
 import ProductRepository from "../repository/productRepositroy.js";
@@ -14,14 +15,12 @@ export default class ProductServices {
     @inject(ProductRepository)
     private productRepositroy: ProductRepository
   ) {}
-
   private async categoryManager(name: string) {
     if (name) {
       const newCategory = { name, description: "", parentId: "" };
       await this.categoryService.createCategory(newCategory);
     }
   }
-
   private async createProduct(
     productData: AddProduct,
     sellerid: string
@@ -39,19 +38,44 @@ export default class ProductServices {
       category,
     };
   }
-
+  private returnProductData<
+    T extends {
+      _id: any;
+      name: string;
+      sellerid: string;
+      price: number;
+      description: string;
+      category: string;
+      inventory: number;
+    }
+  >(product: T): ProductReturn {
+    return {
+      id: product._id.toString(),
+      name: product.name,
+      sellerid: product.sellerid,
+      price: product.price,
+      description: product.description,
+      category: product.category,
+      inventory: product.inventory,
+    };
+  }
   public async getProducts() {
     try {
-      return await this.productRepositroy.getProducts();
+      const products = await this.productRepositroy.getProducts();
+      if (!products || products.length === 0) return null;
+      return products.map((p) => this.returnProductData(p));
     } catch (err) {
       console.log("Failed to get the data of all products", err);
       throw err;
     }
   }
 
-  public async getProduct(id: string) {
+  //to get the products of a seller
+  public async getSellerProducts(id: string) {
     try {
-      return await this.productRepositroy.getProduct(id);
+      const products = await this.productRepositroy.getSellerProducts(id);
+      if (!products || products.length === 0) return null;
+      return products.map((p) => this.returnProductData(p));
     } catch (err) {
       console.log("Failed to get the data of all products of a seller", err);
       throw err;
@@ -60,7 +84,9 @@ export default class ProductServices {
 
   public async getProductById(productid: string) {
     try {
-      return await this.productRepositroy.getProductById(productid);
+      const product = await this.productRepositroy.getProductById(productid);
+      if (!product) return null;
+      return this.returnProductData(product);
     } catch (err) {
       console.log(
         "Failed to get the data of a product based on productid",
@@ -76,9 +102,11 @@ export default class ProductServices {
         ...product,
         sellerid,
       });
-      if (check && Object.keys(check).length > 0) return null;
+      if (check && Object.keys(check).length > 0) return "productexists";
       const newProduct: Product = await this.createProduct(product, sellerid);
-      return await this.productRepositroy.addProduct(newProduct);
+      const result = await this.productRepositroy.addProduct(newProduct);
+      if (!result) return null;
+      return "success";
     } catch (err) {
       console.log("Failed to add a new product", err);
       throw err;
@@ -102,7 +130,9 @@ export default class ProductServices {
         const newProduct = await this.createProduct(product, sellerid);
         productList.push(newProduct);
       }
-      return await this.productRepositroy.addProducts(productList);
+      const result = await this.productRepositroy.addProducts(productList);
+      if (!result || result.length === 0) return null;
+      return "success";
     } catch (err) {
       console.log("Failed to add a batch of new products", err);
       throw err;
@@ -125,10 +155,12 @@ export default class ProductServices {
       if (update.category) {
         await this.categoryManager(update.category);
       }
-      return await this.productRepositroy.updateProduct(
+      const result = await this.productRepositroy.updateProduct(
         productid,
         updateFields
       );
+      if (!result) return null;
+      return "success";
     } catch (err) {
       console.log("Failed to update a product", err);
       throw err;
@@ -147,7 +179,9 @@ export default class ProductServices {
           return null;
         }
       }
-      return await this.productRepositroy.deleteProduct(productid);
+      const result = await this.productRepositroy.deleteProduct(productid);
+      if (!result || Object.keys(result).length === 0) return null;
+      return "success";
     } catch (err) {
       console.log("Failed to delete a product", err);
       throw err;
@@ -156,10 +190,12 @@ export default class ProductServices {
 
   public async deleteProducts(id: string) {
     try {
-      const products = await this.getProduct(id);
+      const products = await this.getSellerProducts(id);
       if (!products || products.length === 0) return "noproducts";
-      const deleteIds = products.map((p) => p._id.toString());
-      return await this.productRepositroy.deleteProducts(deleteIds);
+      const deleteIds = products.map((p) => p.id);
+      const result = await this.productRepositroy.deleteProducts(deleteIds);
+      if (!result || result.deletedCount === 0) return null;
+      return "success";
     } catch (err) {
       console.log("Failed to delete products", err);
       throw err;
@@ -172,16 +208,20 @@ export default class ProductServices {
     modification: "increase" | "decrease"
   ) {
     try {
-      const product = await this.getProductById(id);
+      const product = await this.productRepositroy.getProductById(id);
       if (!product) return "noproduct";
       if (modification === "decrease" && product.inventory < quantity) {
-        return "insufiicientinventory";
+        return "insufficientinventory";
       }
-      return await this.productRepositroy.manageInventory(
-        id,
-        quantity,
-        modification
-      );
+      let newInventory = product.inventory ?? 0;
+      if (modification === "increase") {
+        newInventory += quantity;
+      } else {
+        newInventory -= quantity;
+      }
+      const result = await this.productRepositroy.manageInventory(id, quantity);
+      if (!result || Object.keys(result).length === 0) return null;
+      return "success";
     } catch (err) {
       console.log("Failed to update the inventory of a product", err);
       throw err;

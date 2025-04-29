@@ -4,8 +4,11 @@ import verifyRole from "../middleware/verifyRole.js";
 import verifyToken from "../middleware/verifyToken.js";
 import { container } from "tsyringe";
 import DataValidation from "../middleware/validateData.js";
-import { idSchema } from "../schemas/userSchema.js";
-import { modifySchema, productParamsSchema } from "../schemas/productSchema.js";
+import { idSchema } from "../validation/userSchema.js";
+import {
+  modifySchema,
+  productParamsSchema,
+} from "../validation/productSchema.js";
 const productRoutes = express.Router();
 
 const productController = container.resolve(ProductController);
@@ -33,7 +36,7 @@ productRoutes.get(
   verifyToken.verify,
   verifyRole.verify("Seller"),
   dataValidation.validateTokenData(idSchema),
-  productController.getProduct
+  productController.getSellerProducts
 );
 productRoutes.get("/:productid", productController.getProductById);
 

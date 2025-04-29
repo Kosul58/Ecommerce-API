@@ -22,9 +22,7 @@ export default class UserRepository {
 
   public async signIn(username: string, email: string) {
     try {
-      const user = await UserSchema.findOne({ username, email });
-      if (!user) return undefined;
-      return await user.save();
+      return await UserSchema.findOne({ username, email });
     } catch (err) {
       console.log("Failed to sign in user", err);
       throw err;
@@ -34,14 +32,12 @@ export default class UserRepository {
   public async signUp(user: User) {
     try {
       const newUser = new UserSchema(user);
-      await newUser.save();
-      return newUser;
+      return newUser.save();
     } catch (err) {
       console.log("Failed to register user", err);
       throw err;
     }
   }
-
   public async findUser(userid: string) {
     try {
       return await UserSchema.findById(userid);
@@ -70,12 +66,11 @@ export default class UserRepository {
 
   public async updateUser(userid: string, update: UpdateUser) {
     try {
-      const user = await UserSchema.findByIdAndUpdate(
+      return await UserSchema.findByIdAndUpdate(
         userid,
         { $set: update },
         { new: true }
       );
-      return user;
     } catch (err) {
       console.log("Failed to update user info", err);
       throw err;

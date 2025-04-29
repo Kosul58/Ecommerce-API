@@ -19,6 +19,14 @@ export enum UserRole {
   SELLER = "Seller",
 }
 
+export interface UserReturn {
+  id: string;
+  username: string;
+  email: string;
+  phone: number;
+  address: string;
+}
+
 export interface AddUser {
   firstname: string;
   lastname: string;

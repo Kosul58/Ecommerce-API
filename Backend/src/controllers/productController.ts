@@ -2,76 +2,53 @@ import { AddProduct, UpdateProdcut } from "../common/types/productType.js";
 import { RequestHandler } from "express";
 import { inject, injectable } from "tsyringe";
 import ProductServices from "../services/productServices.js";
+import ResponseHandler from "../utils/apiResponse";
+
 @injectable()
 export default class ProductController {
   constructor(
-    @inject(ProductServices) private prodcutService: ProductServices
+    @inject(ProductServices) private productService: ProductServices,
+    @inject(ResponseHandler) private responseHandler: ResponseHandler
   ) {}
+
   public getProducts: RequestHandler = async (req, res) => {
     try {
-      const response = await this.prodcutService.getProducts();
-      if (!response || response.length === 0) {
-        res.status(404).json({ message: "No Products found", response: [] });
-        return;
+      const response = await this.productService.getProducts();
+      if (!response) {
+        return this.responseHandler.notFound(res, "No products found");
       }
-      res.status(200).json({
-        message: "Product search successful",
-        response,
-      });
+      return this.responseHandler.success(res, "Products found", response);
     } catch (err) {
       console.error("Failed to get products", err);
-      res.status(500).json({
-        message: "Product search Unsuccessful",
-        response: [],
-      });
+      return this.responseHandler.error(res, "Internal server error");
     }
   };
 
-  public getProduct: RequestHandler = async (req, res) => {
+  public getSellerProducts: RequestHandler = async (req, res) => {
     const sellerid = req.user.id;
     try {
-      // if (!sellerid) {
-      //   res.status(400).json({ message: "Failed to get id" });
-      // }
-
-      const result = await this.prodcutService.getProduct(sellerid);
-      if (!result || result.length === 0) {
-        res
-          .status(400)
-          .json({ message: "Failed to search products. No products found" });
-        return;
+      const result = await this.productService.getSellerProducts(sellerid);
+      if (!result) {
+        return this.responseHandler.notFound(res, "No products found");
       }
-      res.status(200).json({ message: "Search successfull", response: result });
+      return this.responseHandler.success(res, "Products found", result);
     } catch (err) {
-      res.status(500).json({ message: "Internal server error" });
+      console.error("Failed to get seller products", err);
+      return this.responseHandler.error(res, "Internal server error");
     }
   };
 
   public getProductById: RequestHandler = async (req, res) => {
     const { productid } = req.params;
     try {
-      // if (!productid) {
-      //   res.status(400).json({ message: "Provide ProductID", response: [] });
-      //   return;
-      // }
-      const data = await this.prodcutService.getProductById(productid);
-      if (!data || Object.keys(data).length === 0) {
-        res.status(404).json({
-          message: "No matching product found",
-          response: [],
-        });
-        return;
+      const data = await this.productService.getProductById(productid);
+      if (!data) {
+        return this.responseHandler.notFound(res, "Product not found");
       }
-      res.status(200).json({
-        message: "Product search successful",
-        response: data,
-      });
+      return this.responseHandler.success(res, "Product found", data);
     } catch (err) {
-      console.error("Failed to get product by productid", err);
-      res.status(500).json({
-        message: "Failed to get product by productid",
-        response: [],
-      });
+      console.error("Failed to get product by ID", err);
+      return this.responseHandler.error(res, "Internal server error");
     }
   };
 
@@ -79,39 +56,25 @@ export default class ProductController {
     const productData: AddProduct = req.body;
     const sellerid: string = req.user.id;
     try {
-      // if (!productData.name || !productData.price || !productData.inventory) {
-      //   res.status(400).json({ message: "Enter all fields", response: [] });
-      //   return;
-      // }
-      const result = await this.prodcutService.addProduct(
+      const result = await this.productService.addProduct(
         productData,
         sellerid
       );
 
-      if (result === null) {
-        res.status(409).json({
-          message: "Product Already Exists",
-          response: [],
-        });
-        return;
+      if (result === "productexists") {
+        return this.responseHandler.conflict(res, "Product already exists");
       }
       if (!result) {
-        res.status(400).json({
-          message: "Failed to add Product",
-          response: [],
-        });
-        return;
+        return this.responseHandler.error(res, "Failed to add product");
       }
-      res.status(201).json({
-        message: `Product with name ${productData.name} and price $${productData.price} added successfully.`,
-        response: result,
-      });
+      return this.responseHandler.created(
+        res,
+        `Product ${productData.name} added successfully`,
+        result
+      );
     } catch (err) {
       console.error("Failed to add product", err);
-      res.status(500).json({
-        message: "Failed to add product",
-        response: [],
-      });
+      return this.responseHandler.error(res, "Internal server error");
     }
   };
 
@@ -119,29 +82,18 @@ export default class ProductController {
     const products: AddProduct[] = req.body;
     const sellerid: string = req.user.id;
     try {
-      // if (products.length === 0) {
-      //   res.status(400).json({ message: "Empty products array", response: [] });
-      //   return;
-      // }
-      const data = await this.prodcutService.addProducts(products, sellerid);
-
-      if (!data || data.length > 0) {
-        res.status(201).json({
-          message: "Batch addition of products successful",
-          response: data,
-        });
-        return;
+      const data = await this.productService.addProducts(products, sellerid);
+      if (!data || data.length === 0) {
+        return this.responseHandler.error(res, "No products added");
       }
-      res.status(400).json({
-        message: "Batch addition of products unsuccessful",
-        response: [],
-      });
+      return this.responseHandler.created(
+        res,
+        "Products added successfully",
+        data
+      );
     } catch (err) {
-      console.error("Failed to add multiple products", err);
-      res.status(500).json({
-        message: "Failed to add products",
-        response: [],
-      });
+      console.error("Failed to add products", err);
+      return this.responseHandler.error(res, "Internal server error");
     }
   };
 
@@ -150,35 +102,25 @@ export default class ProductController {
     const sellerid = req.user.id;
     const update: UpdateProdcut = req.body;
     try {
-      // if (!productid || !update) {
-      //   res.status(400).json({ message: "Enter all fields", response: [] });
-      //   return;
-      // }
-      const result = await this.prodcutService.updateProduct(
+      const result = await this.productService.updateProduct(
         productid,
         sellerid,
         update
       );
-      if (
-        (result && Object.keys(result).length > 0) ||
-        (Array.isArray(result) && result.length > 0)
-      ) {
-        res.status(200).json({
-          message: `Product with id ${productid} updated successfully`,
-          response: result,
-        });
-        return;
+      if (!result) {
+        return this.responseHandler.notFound(
+          res,
+          "Product not found or update failed"
+        );
       }
-      res.status(404).json({
-        message: "No products to update",
-        response: [],
-      });
+      return this.responseHandler.success(
+        res,
+        `Product ${productid} updated successfully`,
+        result
+      );
     } catch (err) {
-      console.error("Failed to update a product", err);
-      res.status(500).json({
-        message: "Failed to update product",
-        response: [],
-      });
+      console.error("Failed to update product", err);
+      return this.responseHandler.error(res, "Internal server error");
     }
   };
 
@@ -187,52 +129,39 @@ export default class ProductController {
     const sellerid = req.user.id;
     const role = req.user.role;
     try {
-      // if (!productid) {
-      //   res.status(400).json({ message: "Product ID required", response: [] });
-      //   return;
-      // }
-      const result = await this.prodcutService.deleteProduct(
+      const result = await this.productService.deleteProduct(
         productid,
         sellerid,
         role
       );
       if (!result) {
-        res.status(404).json({
-          message: "Product deletion unsuccessful",
-          response: [],
-        });
-        return;
+        return this.responseHandler.notFound(
+          res,
+          "Product not found or delete failed"
+        );
       }
-      res.status(200).json({
-        message: "Product deleted successfully",
-        response: result,
-      });
+      return this.responseHandler.success(
+        res,
+        "Product deleted successfully",
+        result
+      );
     } catch (err) {
-      console.error("Failed to delete a product", err);
-      res.status(500).json({
-        message: "Failed to delete product",
-        response: [],
-      });
+      console.error("Failed to delete product", err);
+      return this.responseHandler.error(res, "Internal server error");
     }
   };
 
   public deleteProducts: RequestHandler = async (req, res) => {
     const id = req.user.id || req.body.sellerid;
     try {
-      // if (!id) {
-      //   res.status(400).json({ message: "Failed to get id" });
-      //   return;
-      // }
-      const result = await this.prodcutService.deleteProducts(id);
+      const result = await this.productService.deleteProducts(id);
       if (!result) {
-        res.status(400).json({ message: "Failed to delete products" });
-        return;
+        return this.responseHandler.error(res, "No products found to delete");
       }
-      res.status(200).json({ message: "Products deleted successfully" });
-      return;
+      return this.responseHandler.success(res, "Products deleted successfully");
     } catch (err) {
-      res.status(500).json({ message: "Internal server error" });
-      return;
+      console.error("Failed to delete products", err);
+      return this.responseHandler.error(res, "Internal server error");
     }
   };
 
@@ -240,37 +169,30 @@ export default class ProductController {
     const { productid } = req.params;
     const { quantity, modification } = req.body;
     try {
-      // if (!productid || !quantity || !modification) {
-      //   res
-      //     .status(400)
-      //     .json({ message: "Provide all required fields", response: [] });
-      //   return;
-      // }
-      const result = await this.prodcutService.modifyInventory(
+      const result = await this.productService.modifyInventory(
         productid,
         quantity,
         modification
       );
-      if (result === "insufiicientinventory") {
-        res.status(404).json({ message: "Insufficient inventory" });
+
+      if (result === "insufficientinventory") {
+        return this.responseHandler.error(res, "Insufficient inventory");
       }
-      if (result === "noproduct" || result === undefined) {
-        res.status(404).json({
-          message: "No product found",
-          response: [],
-        });
-        return;
+      if (result === "noproduct") {
+        return this.responseHandler.notFound(res, "Product not found");
       }
-      res.status(200).json({
-        message: "Inventory modification successful",
-        response: result,
-      });
+      if (!result) {
+        return this.responseHandler.error(res, "Failed to modify inventory");
+      }
+
+      return this.responseHandler.success(
+        res,
+        "Inventory modified successfully",
+        result
+      );
     } catch (err) {
-      console.error("Failed to modify product inventory", err);
-      res.status(500).json({
-        message: "Failed to modify inventory",
-        response: [],
-      });
+      console.error("Failed to modify inventory", err);
+      return this.responseHandler.error(res, "Internal server error");
     }
   };
 }

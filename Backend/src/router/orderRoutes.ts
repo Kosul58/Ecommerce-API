@@ -3,7 +3,7 @@ import OrderController from "../controllers/orderController.js";
 import verifyRole from "../middleware/verifyRole.js";
 import { container } from "tsyringe";
 import DataValidation from "../middleware/validateData.js";
-import { idSchema } from "../schemas/userSchema.js";
+import { idSchema } from "../validation/userSchema.js";
 import {
   cancelSingleSchema,
   cancelWholeSchema,
@@ -12,7 +12,7 @@ import {
   ordersSchema,
   orderStatusSchema,
   productStatusSchema,
-} from "../schemas/orderSchema.js";
+} from "../validation/orderSchema.js";
 const orderRoutes = express.Router();
 
 const orderController = container.resolve(OrderController);

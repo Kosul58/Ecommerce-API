@@ -16,7 +16,7 @@ export default class CategoryRepository {
 
   public async readCategories() {
     try {
-      return await CategorySchema.find();
+      return await CategorySchema.find({ isActive: true });
     } catch (err) {
       console.log("Failed to read the categories", err);
       throw err;
@@ -34,13 +34,11 @@ export default class CategoryRepository {
 
   public async updateCategory(categoryid: string, update: UpdateCategory) {
     try {
-      const updatedCategory = await CategorySchema.findByIdAndUpdate(
+      return await CategorySchema.findByIdAndUpdate(
         categoryid,
         { $set: update },
         { new: true }
       );
-      if (!updatedCategory) return undefined;
-      return updatedCategory;
     } catch (err) {
       console.log("Failed to update a category", err);
       throw err;
@@ -49,9 +47,7 @@ export default class CategoryRepository {
 
   public async deleteCategory(categoryid: string) {
     try {
-      const deleted = await CategorySchema.findByIdAndDelete(categoryid);
-      if (!deleted) return null;
-      return deleted;
+      return CategorySchema.findByIdAndDelete(categoryid);
     } catch (err) {
       console.log("Failed to delete category", err);
       throw err;

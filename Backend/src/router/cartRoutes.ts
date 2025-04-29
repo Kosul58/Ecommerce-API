@@ -3,7 +3,7 @@ import CartController from "../controllers/cartController.js";
 import verifyRole from "../middleware/verifyRole.js";
 import { container } from "tsyringe";
 import DataValidation from "../middleware/validateData.js";
-import { idSchema } from "../schemas/userSchema.js";
+import { idSchema } from "../validation/userSchema.js";
 import {
   addCartSchema,
   removeProductSchema,
@@ -11,7 +11,7 @@ import {
   updateSchema,
   viewCartParamsSchema,
   viewUserCartParamsSchema,
-} from "../schemas/cartSchema.js";
+} from "../validation/cartSchema.js";
 const cartRoutes = express.Router();
 
 const cartController = container.resolve(CartController);

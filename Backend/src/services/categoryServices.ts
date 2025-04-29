@@ -22,6 +22,7 @@ export default class CategoryService {
   private async checkCategory(name: string) {
     try {
       const categories = await this.readCategories();
+      if (!categories) return "nocategories";
       return !categories.find((c) => c.name === name);
     } catch (err) {
       throw err;
@@ -34,7 +35,9 @@ export default class CategoryService {
         return "catexists";
       }
       const newCategory = this.generateCategory(category);
-      return await this.categoryRepository.createCategory(newCategory);
+      const result = await this.categoryRepository.createCategory(newCategory);
+      if (!result || Object.keys(result).length === 0) return null;
+      return "success";
     } catch (err) {
       console.log("Failed to create a category", err);
       throw err;
@@ -42,7 +45,13 @@ export default class CategoryService {
   }
   public async readCategories() {
     try {
-      return await this.categoryRepository.readCategories();
+      const categories = await this.categoryRepository.readCategories();
+      if (!categories || categories.length === 0) return null;
+      return categories.map((c) => ({
+        name: c.name,
+        description: c.description,
+        parentId: c.parentId,
+      }));
     } catch (err) {
       console.log("Failed to read categories", err);
       throw err;
@@ -50,7 +59,13 @@ export default class CategoryService {
   }
   public async readCategory(categoryid: string) {
     try {
-      return await this.categoryRepository.readCategory(categoryid);
+      const category = await this.categoryRepository.readCategory(categoryid);
+      if (!category) return null;
+      return {
+        name: category.name,
+        description: category.description,
+        parentId: category.parentId,
+      };
     } catch (err) {
       console.log("Failed to read a category", err);
       throw err;
@@ -71,10 +86,12 @@ export default class CategoryService {
         const check = await this.readCategory(update.parentId);
         if (!check) return "noparent";
       }
-      return await this.categoryRepository.updateCategory(
+      const result = await this.categoryRepository.updateCategory(
         categoryid,
         updateFields
       );
+      if (!result || Object.keys(result).length === 0) return null;
+      return "success";
     } catch (err) {
       console.log("Failed to update category", err);
       throw err;
@@ -82,7 +99,9 @@ export default class CategoryService {
   }
   public async deleteCategory(categoryid: string) {
     try {
-      return await this.categoryRepository.deleteCategory(categoryid);
+      const result = await this.categoryRepository.deleteCategory(categoryid);
+      if (!result) return null;
+      return "success";
     } catch (err) {
       console.log("Failed to delete category", err);
       throw err;

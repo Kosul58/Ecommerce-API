@@ -3,6 +3,7 @@ import {
   AddUser,
   UpdateUser,
   User,
+  UserReturn,
   UserRole,
 } from "../common/types/userType.js";
 import AuthServices from "./authServices.js";
@@ -48,6 +49,7 @@ export default class UserServices {
       if (usernameTaken || emailTaken || phoneTaken) return null;
       const newUser = await this.generateUser(user, role);
       const result = await this.userRepository.signUp(newUser);
+      if (!result || Object.keys(result).length === 0) return { result: null };
       if (result && result.role === "User") {
         await this.cartService.createCart(result._id.toString());
       }
@@ -57,31 +59,51 @@ export default class UserServices {
         user.email,
         result.role
       );
-      return { result, token };
+      return { result: this.returnData(result), token };
     } catch (err) {
-      console.log("Failed to register user", err);
       throw err;
     }
+  }
+
+  private returnData<
+    T extends {
+      _id: any;
+      username: string;
+      email: string;
+      phone: number;
+      address: string;
+    }
+  >(data: T): UserReturn {
+    return {
+      id: data._id.toString(),
+      username: data.username,
+      email: data.email,
+      phone: data.phone,
+      address: data.address,
+    };
   }
 
   public async signIn(username: string, email: string, password: string) {
     try {
       const result = await this.userRepository.signIn(username, email);
-      let token;
+      if (!result || Object.keys(result).length === 0) return { result: null };
       if (result) {
         const check = await this.utils.comparePassword(
           password,
           result.password
         );
         if (!check) return { result: "incorrectpwd" };
-        token = this.authService.generateToken(
+      }
+
+      return {
+        result: this.returnData(result),
+        token: this.authService.generateToken(
           result._id.toString(),
           username,
           email,
           result.role
-        );
-      }
-      return { result, token };
+        ),
+      };
     } catch (err) {
       console.log("Failed to sign in user", err);
       throw err;
@@ -90,7 +112,9 @@ export default class UserServices {
 
   public async getUser(userid: string) {
     try {
-      return await this.userRepository.findUser(userid);
+      const result = await this.userRepository.findUser(userid);
+      if (!result || Object.keys(result).length === 0) return null;
+      return this.returnData(result);
     } catch (err) {
       console.log("Failed to get user", err);
       throw err;
@@ -98,7 +122,9 @@ export default class UserServices {
   }
   public async getUsers() {
     try {
-      return await this.userRepository.findUsers();
+      const result = await this.userRepository.findUsers();
+      if (!result || result.length === 0) return null;
+      return result.map((user) => this.returnData(user));
     } catch (err) {
       throw err;
     }
@@ -107,10 +133,11 @@ export default class UserServices {
   public async deleteUser(userid: string) {
     try {
       const data = await this.userRepository.deleteUser(userid);
+      if (!data) return null;
       if (data) {
         await this.cartService.deleteCart(userid);
       }
-      return data;
+      return "success";
     } catch (err) {
       console.log("Failed to delete user", err);
       throw err;
@@ -127,16 +154,18 @@ export default class UserServices {
           updateFields.username,
           userid
         );
-        if (usernameTaken) return null;
+        if (usernameTaken) return "unametaken";
       }
       if (updateFields.phone) {
         const usernameTaken = await this.userRepository.findPhoneNumber(
           updateFields.phone,
           userid
         );
-        if (usernameTaken) return null;
+        if (usernameTaken) return "phonetaken";
       }
-      return await this.userRepository.updateUser(userid, updateFields);
+      const result = await this.userRepository.updateUser(userid, updateFields);
+      if (!result) return null;
+      return "success";
     } catch (err) {
       console.log("Failed to update user info", err);
       throw err;

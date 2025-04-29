@@ -12,6 +12,7 @@ import ProductServices from "./productServices.js";
 import { CartProduct } from "../common/types/cartType.js";
 import { inject, injectable } from "tsyringe";
 import OrderRepository from "../repository/orderRepository.js";
+import { object } from "joi";
 
 @injectable()
 export default class OrderService {
@@ -57,10 +58,11 @@ export default class OrderService {
 
   private async generateOrderProduct(
     product: CartProduct
-  ): Promise<OrderProduct> {
+  ): Promise<OrderProduct | null> {
     const searchProduct = await this.productService.getProductById(
       product.productid
     );
+    if (!searchProduct) return null;
     return {
       productid: product.productid,
       sellerid: product.sellerid,
@@ -76,9 +78,22 @@ export default class OrderService {
     return items.reduce((a, p) => a + p.price * p.quantity, 0);
   }
 
-  public async getOrder(userid: string) {
+  private async returnData(data: any) {
+    return {
+      orderid: data._id.toString(),
+      userid: data.userid,
+      items: data.items,
+      type: data.type,
+      total: data.total,
+      status: data.status,
+    };
+  }
+
+  public async getUserOrders(userid: string) {
     try {
-      return await this.orderRepository.getOrder(userid);
+      const userOrders = await this.orderRepository.getUserOrders(userid);
+      if (!userOrders || userOrders.length === 0) return null;
+      return this.returnData(userOrders);
     } catch (err) {
       console.log("Failed to get order data", err);
       throw err;
@@ -86,7 +101,9 @@ export default class OrderService {
   }
   public async getOrders() {
     try {
-      return await this.orderRepository.getOrders();
+      const orders = await this.orderRepository.getOrders();
+      if (!orders || orders.length === 0) return null;
+      return orders.map((o) => this.returnData(o));
     } catch (err) {
       throw err;
     }
@@ -105,20 +122,24 @@ export default class OrderService {
 
   public async addOrder(userid: string, productid: string) {
     try {
-      const product = await this.cartService.getProductById(productid, userid);
-      if (!product) {
-        return "noproduct";
+      const cart = await this.cartService.getCart(userid);
+      if (!cart) {
+        return "nocart";
       }
+      const product = cart.products.find((p) => p.productid === productid);
+      if (!product) return "noproduct";
       const order = this.generateOrder(userid, OrderType.DELIVERY);
       const productItem = await this.generateOrderProduct(
         product as CartProduct
       );
+      if (!productItem) return "noproduct";
       order.items.push(productItem);
       order.total = this.calcTotal(order.items);
       const data = await this.orderRepository.addOrder(order);
+      if (!data || Object.keys(data).length === 0) return null;
       await this.manageCart(data.items, userid);
       await this.manageInventory([product] as CartProduct[], "decrease");
-      return data;
+      return "success";
     } catch (err) {
       console.log("Failed to add order of single product", err);
       throw err;
@@ -127,7 +148,7 @@ export default class OrderService {
 
   public async addOrders(userid: string, products: string[]) {
     try {
-      const searchProducts = await this.cartService.getProduct(userid);
+      const searchProducts = await this.cartService.getCart(userid);
       if (
         !searchProducts ||
         (Array.isArray(searchProducts.products) &&
@@ -145,31 +166,30 @@ export default class OrderService {
       const order = this.generateOrder(userid, OrderType.DELIVERY);
 
       for (let product of filteredProducts) {
-        const productItem: OrderProduct = await this.generateOrderProduct(
+        const productItem = await this.generateOrderProduct(
           product as CartProduct
         );
-        order.items.push(productItem);
+        if (productItem) order.items.push(productItem);
       }
 
       order.total = this.calcTotal(order.items);
-
       const data = await this.orderRepository.addOrders(order);
-
+      if (!data || Object.keys(data).length === 0) return null;
       await this.manageCart(filteredProducts as CartProduct[], userid);
       await this.manageInventory(filteredProducts as CartProduct[], "decrease");
-      return data;
+      return "success";
     } catch (err) {
       console.log("Failed to add order of multiple products", err);
       throw err;
     }
   }
 
+  //to find the products of a seller that are being ordered
   public async orderedProducts(id: string) {
     try {
-      const orders = await this.getOrders();
-      if (orders.length === 0) return null;
+      const orders = await this.orderRepository.getOrders();
+      if (!orders || orders.length === 0) return null;
       const sellerProducts = [];
-
       for (const order of orders) {
         const matchingItems = order.items.filter(
           (item: OrderProduct) => item.sellerid === id
@@ -186,26 +206,23 @@ export default class OrderService {
           });
         }
       }
-
       return sellerProducts;
     } catch (err) {
       throw err;
     }
   }
 
-  public async updateOrderStatus(
-    orderid: string,
-    userid: string,
-    status: string
-  ) {
+  public async updateOrderStatus(orderid: string, status: string) {
     try {
       if (
         !Object.values(DeliveryStatus).includes(status as DeliveryStatus) &&
         !Object.values(ReturnStatus).includes(status as ReturnStatus)
       ) {
-        throw new Error("Invalid status value provided.");
+        console.log("Invalid status value provided.");
+        return null;
       }
       const order = await this.orderRepository.getOrderById(orderid);
+      if (!order || Object.keys(order).length === 0) return "noorder";
       if (order) {
         if (order.status === "Delivered" || order.status === "Canceled") {
           return null;
@@ -218,11 +235,12 @@ export default class OrderService {
         }
       }
       const newStatus = status as DeliveryStatus | ReturnStatus;
-      return await this.orderRepository.updateOrderStatus(
+      const result = await this.orderRepository.updateOrderStatus(
         orderid,
-        userid,
         newStatus
       );
+      if (!result || Object.keys(result).length === 0) return null;
+      return "success";
     } catch (err) {
       console.log("Failed to update order status", err);
       throw err;
@@ -240,7 +258,8 @@ export default class OrderService {
           status as OrderProductStatus
         )
       ) {
-        throw new Error("Invalid status value provided.");
+        console.log("Invalid status value provided.");
+        return null;
       }
       const newStatus = status as OrderProductStatus;
       const order = await this.orderRepository.getOrderById(orderid);
@@ -253,10 +272,11 @@ export default class OrderService {
         productid,
         newStatus
       );
-      if (typeof data === "object" && status === "Rejected") {
-        await this.cancelOrder(orderid, productid);
+      if (!data || Object.keys(data).length === 0) return null;
+      if (data && typeof data === "object" && status === "Rejected") {
+        await this.cancelDeliveryOrder(orderid, productid);
       }
-      return data;
+      return "success";
     } catch (err) {
       console.log("Failed to update order status", err);
       throw err;
@@ -271,37 +291,46 @@ export default class OrderService {
     }
   }
 
-  public async cancelOrders(orderid: string) {
+  public async cancelDeliveryOrders(orderid: string) {
     try {
-      const data = await this.orderRepository.cancelOrders(orderid);
-      if (
-        data &&
-        typeof data === "object" &&
-        "result" in data &&
-        "modifier" in data
-      ) {
-        await this.manageInventory(data.modifier, "increase");
-        return data.result;
-      }
-      return data;
+      const order = this.orderRepository.getOrderById(orderid);
+      if (!order || Object.keys(order).length === 0) return "noorder";
+      const data = await this.orderRepository.cancelDeliveryOrders(orderid);
+      if (!data || Object.keys(data).length === 0) return null;
+      // if (data && typeof data === "object" && "items" in data) {
+      await this.manageInventory(data.items, "increase");
+      await this.updateOrderStatus(orderid, "Canceled");
+      return "success";
+      // }
     } catch (err) {
       console.log("Failed to remove order", err);
       throw err;
     }
   }
 
-  public async cancelOrder(orderid: string, productid: string) {
+  public async cancelDeliveryOrder(orderid: string, productid: string) {
     try {
-      const result = await this.orderRepository.cancelOrder(orderid, productid);
-      if (result && typeof result === "object" && "items" in result) {
-        const removed = result.items.find(
-          (item: any) => item.productid === productid
-        );
-        if (removed) {
-          await this.manageInventory([removed], "increase");
-        }
+      const order = this.orderRepository.getOrderById(orderid);
+      if (!order || Object.keys(order).length === 0) return "noorder";
+      const result = await this.orderRepository.cancelDeliveryOrder(
+        orderid,
+        productid
+      );
+      if (!result || Object.keys(result).length === 0) return null;
+      // if (result && typeof result === "object" && "items" in result) {
+      const removed = result.items.find(
+        (item: any) => item.productid === productid
+      );
+      if (removed) {
+        await this.manageInventory([removed], "increase");
       }
-      return result;
+      const remainingItems = result.items.filter((p) => p.active === true);
+      if (remainingItems.length === 0)
+        await this.updateOrderStatus(orderid, "Canceled");
+
+      return "success";
+      // }
+      return;
     } catch (err) {
       console.log("Failed to remove product from order", err);
       throw err;

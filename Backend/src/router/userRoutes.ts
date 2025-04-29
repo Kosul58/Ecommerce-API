@@ -11,7 +11,7 @@ import {
   signInSchema,
   signUpSchema,
   updateSchema,
-} from "../schemas/userSchema.js";
+} from "../validation/userSchema.js";
 const userController = container.resolve(UserController);
 const dataValidation = container.resolve(DataValidation);
 const userRoutes = express.Router();

@@ -7,7 +7,7 @@ import {
   categoryParamsSchema,
   createSchema,
   updateSchema,
-} from "../schemas/catagorySchema.js";
+} from "../validation/catagorySchema.js";
 const categoryRoutes = express.Router();
 
 const categoryController = container.resolve(CategoryController);

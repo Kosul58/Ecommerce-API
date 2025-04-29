@@ -1,26 +1,28 @@
 import { RequestHandler } from "express";
 import { inject, injectable } from "tsyringe";
 import CartService from "../services/cartServices.js";
+import ResponseHandler from "../utils/apiResponse.js";
+
 @injectable()
 export default class CartController {
-  constructor(@inject(CartService) private cartService: CartService) {}
+  constructor(
+    @inject(CartService) private cartService: CartService,
+    @inject(ResponseHandler) private responseHandler: ResponseHandler
+  ) {}
+
   // View all cart products
   public viewCartProducts: RequestHandler = async (req, res) => {
     try {
       const result = await this.cartService.getProducts();
       if (!result || result.length === 0) {
-        res
-          .status(404)
-          .json({ message: "Cart search unsuccessful", response: [] });
-        return;
+        return this.responseHandler.notFound(res, "Cannot find products");
       }
-      res
-        .status(200)
-        .json({ message: "Cart search successful", response: result });
+      return this.responseHandler.success(res, "Products found", result);
     } catch (err) {
-      res
-        .status(500)
-        .json({ message: "Failed to get products data from cart" });
+      return this.responseHandler.error(
+        res,
+        "Failed to get products data from cart"
+      );
     }
   };
 
@@ -30,18 +32,14 @@ export default class CartController {
     try {
       const result = await this.cartService.getProductById(productid, userid);
       if (!result || Object.keys(result).length === 0) {
-        res
-          .status(404)
-          .json({ message: "Product search unsuccessful", response: [] });
-        return;
+        return this.responseHandler.notFound(res, "No product found");
       }
-      res
-        .status(200)
-        .json({ message: "Product search successful", response: result });
+      return this.responseHandler.success(res, "Product found", result);
     } catch (err) {
-      res
-        .status(500)
-        .json({ message: "Failed to search product in cart of user" });
+      return this.responseHandler.error(
+        res,
+        "Failed to search product in cart of user"
+      );
     }
   };
 
@@ -49,21 +47,16 @@ export default class CartController {
   public viewCart: RequestHandler = async (req, res) => {
     const { userid } = req.params;
     try {
-      const result = await this.cartService.getProduct(userid);
-      console.log(result);
+      const result = await this.cartService.getCart(userid);
       if (!result || Object.keys(result).length === 0) {
-        res
-          .status(404)
-          .json({ message: "Cart search unsuccessful", response: result });
-        return;
+        return this.responseHandler.notFound(res, "Cannot find cart");
       }
-      res
-        .status(200)
-        .json({ message: "Cart search successful", response: result });
+      return this.responseHandler.success(res, "Cart found", result);
     } catch (err) {
-      res
-        .status(500)
-        .json({ message: "Failed to search products in cart of user" });
+      return this.responseHandler.error(
+        res,
+        "Failed to search products in cart of user"
+      );
     }
   };
 
@@ -71,42 +64,32 @@ export default class CartController {
   public addProduct: RequestHandler = async (req, res) => {
     const { userid, productid, quantity } = req.body;
     try {
-      // if (!userid || !productid || !quantity) {
-      //   res.status(400).json({ message: "Provide all fields", response: [] });
-      //   return;
-      // }
       const result = await this.cartService.addProduct(
         userid,
         productid,
         quantity
       );
       if (result === "noproduct") {
-        res
-          .status(404)
-          .json({ message: "Product not in the Product database" });
-        return;
+        return this.responseHandler.notFound(
+          res,
+          "Product not in the Product database"
+        );
       }
       if (result === "insufficientinventory") {
-        res.status(400).json({ message: "Insufficient inventory" });
+        return this.responseHandler.error(res, "Insufficient inventory");
       }
-
       if (result === "nocart") {
-        res.status(404).json({ message: "No cart found for the user" });
-        return;
+        return this.responseHandler.notFound(res, "No cart found for the user");
       }
-
-      if (!result || Object.keys(result).length === 0) {
-        res.status(400).json({
-          message: "Product addition to cart unsuccessful",
-          response: [],
-        });
-        return;
+      if (!result) {
+        return this.responseHandler.error(
+          res,
+          "Product addition to cart failed"
+        );
       }
-      res
-        .status(201)
-        .json({ message: "Product added to cart", response: result });
+      return this.responseHandler.created(res, "Product added to cart", result);
     } catch (err) {
-      res.status(500).json({ message: "Failed to add product to cart" });
+      return this.responseHandler.error(res, "Failed to add product to cart");
     }
   };
 
@@ -114,30 +97,29 @@ export default class CartController {
   public removeProduct: RequestHandler = async (req, res) => {
     const { userid, productid } = req.params;
     try {
-      // if (!userid || !productid) {
-      //   res
-      //     .status(400)
-      //     .json({ message: "User ID and Product ID required", response: [] });
-      //   return;
-      // }
       const result = await this.cartService.removeProduct(userid, productid);
       if (result === "nocart") {
-        res
-          .status(404)
-          .json({ message: "No cart found containing the product" });
-        return;
+        return this.responseHandler.notFound(
+          res,
+          "No cart found for the given user"
+        );
       }
-      if (!result || Object.keys(result).length < 1) {
-        res
-          .status(404)
-          .json({ message: "Product removal unsuccessful", response: [] });
-        return;
+      if (result === "noproduct") {
+        return this.responseHandler.notFound(
+          res,
+          "No product found in the cart"
+        );
       }
-      res
-        .status(200)
-        .json({ message: "Product removal successful", response: result });
+      if (!result) {
+        return this.responseHandler.notFound(res, "Product removal failed");
+      }
+      return this.responseHandler.success(
+        res,
+        "Product removal successful",
+        result
+      );
     } catch (err) {
-      res.status(500).json({ message: "Failed to remove a product" });
+      return this.responseHandler.error(res, "Failed to remove a product");
     }
   };
 
@@ -145,28 +127,29 @@ export default class CartController {
   public removeProducts: RequestHandler = async (req, res) => {
     const { userid, products } = req.body;
     try {
-      // if (!userid || !products || products.length === 0) {
-      //   res
-      //     .status(400)
-      //     .json({ message: "User ID and product list required", response: [] });
-      //   return;
-      // }
       const result = await this.cartService.removeProducts(userid, products);
       if (result === "nocart") {
-        res.status(404).json({ message: "No cart found" });
-        return;
+        return this.responseHandler.notFound(res, "No cart found");
       }
-      if (!result || Object.keys(result).length < 1) {
-        res
-          .status(404)
-          .json({ message: "Products removal unsuccessful", response: [] });
-        return;
+      if (result === "noproduct") {
+        return this.responseHandler.notFound(
+          res,
+          "No product found in the cart"
+        );
       }
-      res
-        .status(200)
-        .json({ message: "Products removal successful", response: result });
+      if (!result) {
+        return this.responseHandler.notFound(
+          res,
+          "Products removal unsuccessful"
+        );
+      }
+      return this.responseHandler.success(
+        res,
+        "Products removal successful",
+        result
+      );
     } catch (err) {
-      res.status(500).json({ message: "Failed to remove products" });
+      return this.responseHandler.error(res, "Failed to remove products");
     }
   };
 
@@ -178,38 +161,33 @@ export default class CartController {
       quantity: number;
     };
     try {
-      // if (!userid || !productid || !quantity) {
-      //   res.status(400).json({ message: "Enter all fields", response: [] });
-      //   return;
-      // }
       const result = await this.cartService.updateProduct(
         userid,
         productid,
         quantity
       );
       if (result === "nocart") {
-        res.status(400).json({ message: "No cart found" });
-        return;
+        return this.responseHandler.error(res, "No cart found");
       }
       if (result === "noproduct") {
-        res.status(404).json({ message: "Product not found in cart" });
-        return;
+        return this.responseHandler.notFound(res, "Product not found in cart");
       }
       if (result === "insufficientinventory") {
-        res.status(400).json({ message: "Insufficient Inventory" });
-        return;
+        return this.responseHandler.error(res, "Insufficient Inventory");
       }
-      if (!result || Object.keys(result).length < 1) {
-        res
-          .status(404)
-          .json({ message: "Product update unsuccessful", response: [] });
-        return;
+      if (!result) {
+        return this.responseHandler.notFound(
+          res,
+          "Product update unsuccessful"
+        );
       }
-      res
-        .status(200)
-        .json({ message: "Product update successful", response: result });
+      return this.responseHandler.success(
+        res,
+        "Product update successful",
+        result
+      );
     } catch (err) {
-      res.status(500).json({ message: "Failed to update product" });
+      return this.responseHandler.error(res, "Failed to update product");
     }
   };
 
@@ -217,25 +195,23 @@ export default class CartController {
   public calcTotal: RequestHandler = async (req, res) => {
     const userid = req.user.id;
     try {
-      // if (!userid) {
-      //   res.status(400).json({ message: "Cannot find user ID", response: [] });
-      //   return;
-      // }
       const result = await this.cartService.cartTotal(userid);
-      if (!result) {
-        res
-          .status(500)
-          .json({ message: "Error in total price calculation", response: [] });
-        return;
+      if (result === "nocart") {
+        return this.responseHandler.error(res, "No cart found");
       }
-      res.status(200).json({
-        message: "Total of all products in the cart",
-        response: result,
-      });
+      if (result === "noproduct") {
+        return this.responseHandler.notFound(res, "Product not found in cart");
+      }
+      return this.responseHandler.success(
+        res,
+        "Total of all products in the cart",
+        result
+      );
     } catch (err) {
-      res.status(500).json({
-        message: "Failed to calculate total price of products in cart",
-      });
+      return this.responseHandler.error(
+        res,
+        "Failed to calculate total price of products in cart"
+      );
     }
   };
 }

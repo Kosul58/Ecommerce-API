@@ -4,7 +4,7 @@ import {
   signInSchema,
   updateSchema,
   idSchema,
-} from "../schemas/userSchema.js";
+} from "../validation/userSchema.js";
 import DataValidation from "./validateData";
 @injectable()
 export default class UserValidation {

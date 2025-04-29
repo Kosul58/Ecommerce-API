@@ -1,7 +1,7 @@
 import { inject, injectable } from "tsyringe";
 import { AddSeller, Seller, SellerUpadte } from "../common/types/sellerType.js";
 import Utills from "../utils/utils.js";
-import { UserRole } from "../common/types/userType.js";
+import { UserReturn, UserRole } from "../common/types/userType.js";
 import SellerRepository from "../repository/sellerRepository.js";
 import AuthService from "./authServices.js";
 import ProductServices from "./productServices.js";
@@ -25,10 +25,28 @@ export default class SellerServices {
       role: UserRole.SELLER,
     };
   }
-
+  private returnData<
+    T extends {
+      _id: any;
+      username: string;
+      email: string;
+      phone: number;
+      address: string;
+    }
+  >(data: T): UserReturn {
+    return {
+      id: data._id.toString(),
+      username: data.username,
+      email: data.email,
+      phone: data.phone,
+      address: data.address,
+    };
+  }
   public async getSeller(sellerid: string) {
     try {
-      return await this.sellerRepository.findSeller(sellerid);
+      const seller = await this.sellerRepository.findSeller(sellerid);
+      if (!seller || Object.keys(seller).length === 0) return null;
+      return this.returnData(seller);
     } catch (err) {
       throw err;
     }
@@ -36,7 +54,9 @@ export default class SellerServices {
 
   public async getSellers() {
     try {
-      return await this.sellerRepository.findSellers();
+      const sellers = await this.sellerRepository.findSellers();
+      if (!sellers || sellers.length === 0) return null;
+      return sellers.map((s) => this.returnData(s));
     } catch (err) {
       throw err;
     }
@@ -49,17 +69,20 @@ export default class SellerServices {
         this.sellerRepository.findPhone(seller.phone),
       ]);
 
-      if (usernameTaken || emailTaken || phoneTaken) return { result: null };
+      if (usernameTaken || emailTaken || phoneTaken) return { result: "taken" };
 
       const newSeller = await this.generateSeller(seller);
       const result = await this.sellerRepository.signup(newSeller);
-      const token = this.authService.generateToken(
-        result._id.toString(),
-        seller.username,
-        seller.email,
-        result.role
-      );
-      return { result, token };
+      if (!result) return { result: null };
+      return {
+        result: this.returnData(result),
+        token: this.authService.generateToken(
+          result._id.toString(),
+          seller.username,
+          seller.email,
+          result.role
+        ),
+      };
     } catch (err) {
       throw err;
     }
@@ -67,6 +90,7 @@ export default class SellerServices {
   public async signIn(username: string, email: string, password: string) {
     try {
       const result = await this.sellerRepository.signIn(username, email);
+      if (!result) return { result: null };
       let token;
       if (result) {
         const check = await this.utils.comparePassword(
@@ -74,14 +98,16 @@ export default class SellerServices {
           result.password
         );
         if (!check) return { result: "incorrectpwd" };
-        token = this.authService.generateToken(
+      }
+      return {
+        result: this.returnData(result),
+        token: this.authService.generateToken(
           result._id.toString(),
           username,
           email,
           result.role
-        );
-      }
-      return { result, token };
+        ),
+      };
     } catch (err) {
       throw err;
     }
@@ -100,7 +126,19 @@ export default class SellerServices {
         );
         if (usernameTaken) return "utaken";
       }
-      return await this.sellerRepository.updateSeller(sellerid, updateFields);
+      if (updateFields.phone) {
+        const phoneTaken = await this.sellerRepository.findPhone(
+          updateFields.phone,
+          sellerid
+        );
+        if (phoneTaken) return "phonetaken";
+      }
+      const result = await this.sellerRepository.updateSeller(
+        sellerid,
+        updateFields
+      );
+      if (!result || Object.keys(result).length === 0) return null;
+      return "success";
     } catch (err) {
       throw err;
     }
@@ -112,8 +150,9 @@ export default class SellerServices {
       const result = await this.sellerRepository.deleteSeller(sellerid);
       if (result) {
         await this.productServices.deleteProducts(sellerid);
+        return "success";
       }
-      return result;
+      return null;
     } catch (err) {
       throw err;
     }

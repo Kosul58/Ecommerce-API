@@ -33,6 +33,7 @@
 
 # Next week goals:
 
+-> implement error handler.
 -> implement response handler.
 -> learn about design patterns.
 -> continue implementing SOLID principles
