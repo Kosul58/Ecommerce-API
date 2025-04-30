@@ -160,12 +160,6 @@ export default class ProductController {
         quantity,
         modification
       );
-      if (result === "insufficientinventory") {
-        return this.responseHandler.error(res, "Insufficient inventory");
-      }
-      if (result === "noproduct") {
-        return this.responseHandler.notFound(res, "Product not found");
-      }
       if (!result) {
         return this.responseHandler.error(res, "Failed to modify inventory");
       }

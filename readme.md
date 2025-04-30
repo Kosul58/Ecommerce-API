@@ -133,6 +133,62 @@
 - **Maintainability**: Separation of concerns using controllers, services, and repositories
 - **Validation and Error Safety**: Strong input validation and error management mechanisms
 
+# Authentication Flow (Signup/Signin)
+
+## Signup
+
+### Route: POST /api/user/signup or POST /api/seller/signup
+
+### Input: JSON with user details (name, username, phone, email, password, etc.)
+
+### Logic:
+
+-> Validate input using Joi.
+
+-> Check if username,phone,email is already used.
+
+-> Hash the password using bcrypt.
+
+-> Save user to DB.
+
+-> Create a cart (for users).
+
+-> Generate a JWT token and return it in the response.
+
+## Signin
+
+### Route: POST /api/user/signin or POST /api/seller/signin
+
+### Input: JSON with username, email and password.
+
+### Logic:
+
+-> Validate input.
+
+-> Find user by username and email.
+
+-> Compare password with hashed password in DB.
+
+-> If valid, generate and return JWT token.
+
+## Token Usage
+
+-> Include token in Authorization: Bearer <token> header for protected routes.
+
+-> Middleware checks and verifies the token.
+
+-> Role-based access control is enforced based on the user type in the token.
+
+# Product Flow
+
+## Add Product
+
+### Route: POST /api/product
+
+### Input: JSON with name, price, inventory , description and category
+
+.
+
 <!-- verifytoken
 authorize role
 
