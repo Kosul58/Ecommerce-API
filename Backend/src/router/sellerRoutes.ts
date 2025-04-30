@@ -40,7 +40,7 @@ sellerRoutes.post(
 sellerRoutes.put(
   "/",
   verifyToken.verify,
-  verifyRole.verify("Seller", "Admin"),
+  verifyRole.verify("Seller"),
   dataValidation.validateBody(updateSchema),
   sellerController.updateSeller
 );

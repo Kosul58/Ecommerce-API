@@ -69,7 +69,6 @@ export default class ProductServices {
       }
       return products.map((p) => this.returnProductData(p));
     } catch (err) {
-      console.log("Failed to get the data of all products", err);
       throw err;
     }
   }
@@ -85,7 +84,6 @@ export default class ProductServices {
       }
       return products.map((p) => this.returnProductData(p));
     } catch (err) {
-      console.log("Failed to get the data of all products of a seller", err);
       throw err;
     }
   }
@@ -100,10 +98,6 @@ export default class ProductServices {
       }
       return this.returnProductData(product);
     } catch (err) {
-      console.log(
-        "Failed to get the data of a product based on productid",
-        err
-      );
       throw err;
     }
   }
@@ -130,7 +124,6 @@ export default class ProductServices {
       }
       return "success";
     } catch (err) {
-      console.log("Failed to add a new product", err);
       throw err;
     }
   }
@@ -159,7 +152,6 @@ export default class ProductServices {
       }
       return "success";
     } catch (err) {
-      console.log("Failed to add a batch of new products", err);
       throw err;
     }
   }
@@ -193,7 +185,6 @@ export default class ProductServices {
       }
       return "success";
     } catch (err) {
-      console.log("Failed to update a product", err);
       throw err;
     }
   }
@@ -214,7 +205,6 @@ export default class ProductServices {
       }
       return "success";
     } catch (err) {
-      console.log("Failed to delete a product", err);
       throw err;
     }
   }
@@ -223,9 +213,10 @@ export default class ProductServices {
     try {
       const products = await this.getSellerProducts(id);
       if (!products || products.length === 0) {
-        const error = new Error("No products found");
-        (error as any).statusCode = 404;
-        throw error;
+        // const error = new Error("No products found to delete");
+        // (error as any).statusCode = 404;
+        // throw error;
+        return null;
       }
       const deleteIds = products.map((p) => p.id);
       const result = await this.productRepositroy.deleteProducts(deleteIds);
@@ -238,7 +229,6 @@ export default class ProductServices {
       }
       return "success";
     } catch (err) {
-      console.log("Failed to delete products", err);
       throw err;
     }
   }
@@ -266,7 +256,10 @@ export default class ProductServices {
       } else {
         newInventory -= quantity;
       }
-      const result = await this.productRepositroy.manageInventory(id, quantity);
+      const result = await this.productRepositroy.manageInventory(
+        id,
+        newInventory
+      );
       if (!result || Object.keys(result).length === 0) {
         const error = new Error("Product inventory modification failed");
         (error as any).statusCode = 500;
@@ -274,7 +267,6 @@ export default class ProductServices {
       }
       return "success";
     } catch (err) {
-      console.log("Failed to update the inventory of a product", err);
       throw err;
     }
   }

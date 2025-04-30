@@ -208,12 +208,10 @@ export default class UserServices {
   }
 
   public async updatePassword() {
-    // Implement as needed
     throw new Error("updatePassword not implemented");
   }
 
   public async updateEmail() {
-    // Implement as needed
     throw new Error("updateEmail not implemented");
   }
 

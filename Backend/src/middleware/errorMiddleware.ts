@@ -36,6 +36,11 @@ export default class ErrorMiddleware {
           res,
           err.message || "Resource not found"
         );
+      case 403:
+        return this.responseHandler.forbidden(
+          res,
+          err.message || "forbidden request"
+        );
       case 409:
         return this.responseHandler.conflict(
           res,

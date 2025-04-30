@@ -25,7 +25,8 @@ export default class CartController {
 
   // View a specific cart product
   public viewCartProduct: RequestHandler = async (req, res, next) => {
-    const { productid, userid } = req.params;
+    const { productid } = req.params;
+    const userid = req.user.id;
     try {
       const result = await this.cartService.getProductById(productid, userid);
       if (!result || Object.keys(result).length === 0) {
@@ -39,7 +40,7 @@ export default class CartController {
 
   // View cart for a user
   public viewCart: RequestHandler = async (req, res, next) => {
-    const { userid } = req.params;
+    const userid = req.user.id;
     try {
       const result = await this.cartService.getCart(userid);
       if (!result || Object.keys(result).length === 0) {
@@ -53,7 +54,8 @@ export default class CartController {
 
   // Add product to the cart
   public addProduct: RequestHandler = async (req, res, next) => {
-    const { userid, productid, quantity } = req.body;
+    const { productid, quantity } = req.body;
+    const userid = req.user.id;
     try {
       const result = await this.cartService.addProduct(
         userid,
@@ -74,7 +76,8 @@ export default class CartController {
 
   // Remove product from cart
   public removeProduct: RequestHandler = async (req, res, next) => {
-    const { userid, productid } = req.params;
+    const { productid } = req.params;
+    const userid = req.user.id;
     try {
       const result = await this.cartService.removeProduct(userid, productid);
       if (!result) {

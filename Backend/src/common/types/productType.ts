@@ -26,7 +26,6 @@ export interface UpdateProdcut {
   invetory?: number;
   description?: string;
   category?: string;
-  sellerid?: string;
 }
 
 export interface ProductReturn {

@@ -16,7 +16,6 @@ export const viewUserCartParamsSchema = Joi.object({
 });
 
 export const addCartSchema = Joi.object({
-  userid: Joi.string().min(15).required(),
   productid: Joi.string().min(15).required(),
   quantity: Joi.number().positive().required(),
 });

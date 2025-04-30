@@ -20,10 +20,7 @@ export default class CategoryController {
     try {
       const result = await this.categoryServices.createCategory(category);
       if (!result) {
-        return this.responseHandler.notFound(
-          res,
-          "Category creation unsuccessful"
-        );
+        return this.responseHandler.conflict(res, "Category already exists");
       }
       return this.responseHandler.created(
         res,

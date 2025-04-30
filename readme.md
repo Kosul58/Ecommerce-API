@@ -1,4 +1,139 @@
-verifytoken
+# 📘 Project Features Documentation
+
+## Functional Features
+
+### 1. **Authentication**
+
+- Token-based authentication using **JWT** for Users, Sellers, and Admins.
+
+### 2. **Dependency Injection**
+
+- Uses **Tsyringe** for managing dependencies and improving testability and modularity.
+
+### 3. **Error Handling**
+
+- Centralized error handling strategy for consistent and informative error responses.
+
+### 4. **Response Handler**
+
+- Unified response format for success and error messages.
+
+### 5. **Data Validation**
+
+- Input validation using **Joi** to ensure correctness and integrity of user-provided data.
+
+---
+
+### 6. **Core Operations**
+
+#### a. **Product Operations**
+
+- Add a product
+- Add multiple products
+- Update a product
+- Delete a product
+- Find a product
+- Find all products
+- Find products added by a specific seller
+
+#### b. **Cart Operations**
+
+- Add a product to a cart
+- Update product quantity in a cart
+- Remove a product from a cart
+- Remove multiple products from a cart
+- Find a user's cart
+- Find multiple carts
+- Find a specific product in a cart
+- Calculate total price of products in a cart
+
+#### c. **Order Operations**
+
+- Create an order for a single product
+- Create an order for multiple products
+- Update the status of an order
+- Update the status of a product within an order
+- Cancel a single product from an order
+- Cancel an entire order
+- View orders of a user
+- View all orders
+- View a specific order
+
+#### d. **Category Operations**
+
+- Create a category
+- Retrieve all categories
+- Retrieve a single category by ID
+- Update a category
+- Delete a category
+
+#### e. **User Operations**
+
+- Sign up as a user
+- Sign in as a user
+- Find a user
+- Retrieve all users
+- Update user information
+- Delete a user
+
+#### f. **Seller Operations**
+
+- Sign up as a seller
+- Sign in as a seller
+- Update seller information
+- Delete seller account
+- Find a seller
+- Retrieve all sellers
+
+---
+
+### 7. **Platform-Specific Features**
+
+#### a. **User Features**
+
+- On signup: cart is auto-created and JWT is returned
+- On login: JWT is returned
+- Update user info (username, phone, etc.) with uniqueness check
+- Delete account (deletes associated cart as well)
+- Browse all products or search by ID
+- Add/remove/update product in cart
+- View all cart items
+- Create an order (single or multiple products)
+- Cancel single product or full order
+- View all orders placed by the user
+
+#### b. **Seller Features**
+
+- On signup/login: JWT is returned
+- Update seller profile (shop name, phone, etc.)
+- Delete account (deletes all seller's products)
+- Add one or multiple products
+- Update product info (name, price, inventory, etc.)
+- View all products added by seller
+- View all products that have been ordered
+- Update status of ordered products (Requested, Rejected, Accepted, Ready)
+
+#### c. **Admin Features**
+
+- Sign in (JWT issued)
+- View all sellers, users, carts, and orders
+- Delete sellers, users, or specific products
+- Remove all products of a seller
+- Update order statuses
+- Full CRUD operations on categories (create, read, update, delete)
+
+---
+
+## Non-Functional Features
+
+- **Multi-User Support**: Concurrent support for multiple users and roles (User, Seller, Admin)
+- **Scalability**: Designed to support multiple sellers adding products and handling orders simultaneously
+- **Security**: Role-based access control with JWT protection
+- **Modular Architecture**: Based on clean architecture principles using services, repositories, and dependency injection
+- **Maintainability**: Separation of concerns using controllers, services, and repositories
+- **Validation and Error Safety**: Strong input validation and error management mechanisms
+
+<!-- verifytoken
 authorize role
 
 Role Based access control
@@ -11,4 +146,4 @@ timestamp
 
 sendgrid , nodemailer , payment gateway
 
-health, server is up bhanni message dini from routes
+health, server is up bhanni message dini from routes -->

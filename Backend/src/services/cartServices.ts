@@ -51,7 +51,6 @@ export default class CartService {
       }
       return cart;
     } catch (err) {
-      console.log("Failed to get user's cart products", err);
       throw err;
     }
   }
@@ -151,7 +150,6 @@ export default class CartService {
       }
       return "success";
     } catch (err) {
-      console.log("Failed to remove product from cart", err);
       throw err;
     }
   }
@@ -250,7 +248,6 @@ export default class CartService {
         return sum + price * item.quantity;
       }, 0);
     } catch (err) {
-      console.log("Failed to calculate total cart price", err);
       throw err;
     }
   }

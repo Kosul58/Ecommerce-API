@@ -12,7 +12,7 @@ export default class OrderController {
 
   // View all the orders of a user
   public viewUserOrders: RequestHandler = async (req, res, next) => {
-    const { userid } = req.params;
+    const userid = req.user.id;
     try {
       const result = await this.orderService.getUserOrders(userid);
       if (!result) {

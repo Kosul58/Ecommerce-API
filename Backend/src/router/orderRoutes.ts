@@ -25,9 +25,9 @@ orderRoutes.get(
 );
 
 orderRoutes.get(
-  "/:userid",
-  verifyRole.verify("Admin", "User"),
-  dataValidation.validateParams(orderParamsSchema),
+  "/user",
+  verifyRole.verify("User"),
+  dataValidation.validateTokenData(idSchema),
   orderController.viewUserOrders
 );
 orderRoutes.get(

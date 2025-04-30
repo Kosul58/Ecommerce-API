@@ -32,9 +32,10 @@ export default class CategoryService {
     try {
       const isUnique = await this.checkCategory(category.name);
       if (!isUnique || isUnique === "nocategories") {
-        const error = new Error("Category already exists");
-        (error as any).statusCode = 409;
-        throw error;
+        // const error = new Error("Category already exists");
+        // (error as any).statusCode = 409;
+        // throw error;
+        return null;
       }
       const newCategory = this.generateCategory(category);
       const result = await this.categoryRepository.createCategory(newCategory);
@@ -45,7 +46,6 @@ export default class CategoryService {
       }
       return "success";
     } catch (err) {
-      console.log("Failed to create a category", err);
       throw err;
     }
   }
@@ -115,7 +115,6 @@ export default class CategoryService {
       }
       return "success";
     } catch (err) {
-      console.log("Failed to update category", err);
       throw err;
     }
   }
@@ -129,7 +128,6 @@ export default class CategoryService {
       }
       return "success";
     } catch (err) {
-      console.log("Failed to delete category", err);
       throw err;
     }
   }

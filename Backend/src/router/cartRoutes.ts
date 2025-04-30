@@ -19,7 +19,7 @@ const dataValidation = container.resolve(DataValidation);
 // Create cart item
 cartRoutes.post(
   "/",
-  verifyRole.verify("User", "Admin"),
+  verifyRole.verify("User"),
   dataValidation.validateTokenData(idSchema),
   dataValidation.validateBody(addCartSchema),
   cartController.addProduct
@@ -36,21 +36,16 @@ cartRoutes.get(
 // View all carts (for all users)
 cartRoutes.get(
   "/",
-  verifyRole.verify("User", "Admin"),
+  verifyRole.verify("Admin"),
   cartController.viewCartProducts
 );
 
 // View all products in a user's cart
-cartRoutes.get(
-  "/:userid",
-  verifyRole.verify("User"),
-  dataValidation.validateParams(viewUserCartParamsSchema),
-  cartController.viewCart
-);
+cartRoutes.get("/user", verifyRole.verify("User"), cartController.viewCart);
 
 // View specific product in a user's cart
 cartRoutes.get(
-  "/:userid/:productid",
+  "/user/:productid",
   verifyRole.verify("User"),
   dataValidation.validateParams(viewCartParamsSchema),
   cartController.viewCartProduct
@@ -66,7 +61,7 @@ cartRoutes.put(
 
 // Delete specific product from cart
 cartRoutes.delete(
-  "/:userid/:productid",
+  "/:productid",
   verifyRole.verify("User"),
   dataValidation.validateBody(removeProductSchema),
   cartController.removeProduct

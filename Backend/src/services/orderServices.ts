@@ -6,6 +6,7 @@ import {
   OrderProductStatus,
   OrderType,
   ReturnStatus,
+  OrderDocumnet,
 } from "../common/types/orderType.js";
 import CartService from "./cartServices.js";
 import ProductServices from "./productServices.js";
@@ -85,14 +86,19 @@ export default class OrderService {
   }
 
   private async returnData(data: any) {
-    return {
-      orderid: data._id.toString(),
-      userid: data.userid,
-      items: data.items,
-      type: data.type,
-      total: data.total,
-      status: data.status,
-    };
+    const orders = [];
+    for (let order of data) {
+      const myOrder = {
+        orderid: order._id?.toString(),
+        userid: order.userid,
+        items: order.items,
+        type: order.type,
+        total: order.total,
+        status: order.status,
+      };
+      orders.push(myOrder);
+    }
+    return orders;
   }
 
   public async getUserOrders(userid: string) {
@@ -116,7 +122,20 @@ export default class OrderService {
         (error as any).statusCode = 404;
         throw error;
       }
-      return orders.map((o) => this.returnData(o));
+      return this.returnData(orders);
+    } catch (err) {
+      throw err;
+    }
+  }
+
+  public async getOrder(orderid: string) {
+    try {
+      const order = await this.orderRepository.getOrderById(orderid);
+      if (!order || Object.keys(order).length === 0) {
+        const error = new Error("No order found");
+        (error as any).statusCode = 404;
+        throw error;
+      }
     } catch (err) {
       throw err;
     }
@@ -167,7 +186,6 @@ export default class OrderService {
       await this.manageInventory([product] as CartProduct[], "decrease");
       return "success";
     } catch (err) {
-      console.log("Failed to add order of single product", err);
       throw err;
     }
   }
@@ -213,7 +231,6 @@ export default class OrderService {
       await this.manageInventory(filteredProducts as CartProduct[], "decrease");
       return "success";
     } catch (err) {
-      console.log("Failed to add order of multiple products", err);
       throw err;
     }
   }
@@ -230,7 +247,7 @@ export default class OrderService {
       const sellerProducts = [];
       for (const order of orders) {
         const matchingItems = order.items.filter(
-          (item: OrderProduct) => item.sellerid === id
+          (item: OrderProduct) => item.sellerid === id && item.active === true
         );
         for (const item of matchingItems) {
           sellerProducts.push({
@@ -297,7 +314,6 @@ export default class OrderService {
       }
       return "success";
     } catch (err) {
-      console.log("Failed to update order status", err);
       throw err;
     }
   }
@@ -347,7 +363,6 @@ export default class OrderService {
       }
       return "success";
     } catch (err) {
-      console.log("Failed to update order status", err);
       throw err;
     }
   }
@@ -380,7 +395,6 @@ export default class OrderService {
       await this.updateOrderStatus(orderid, "Canceled");
       return "success";
     } catch (err) {
-      console.log("Failed to remove order", err);
       throw err;
     }
   }
@@ -423,7 +437,6 @@ export default class OrderService {
 
       return "success";
     } catch (err) {
-      console.log("Failed to remove product from order", err);
       throw err;
     }
   }
