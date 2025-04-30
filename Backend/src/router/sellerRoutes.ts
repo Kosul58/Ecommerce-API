@@ -45,7 +45,7 @@ sellerRoutes.put(
   sellerController.updateSeller
 );
 sellerRoutes.delete(
-  "/",
+  "/:sellerid",
   verifyToken.verify,
   verifyRole.verify("Admin", "Seller"),
   dataValidation.validateTokenData(idSchema),

@@ -9,7 +9,6 @@ export default class ProductRepository {
     try {
       return await ProductSchema.find();
     } catch (err) {
-      console.log("Failed to get product data", err);
       throw err;
     }
   }
@@ -23,7 +22,6 @@ export default class ProductRepository {
     try {
       return await ProductSchema.findById(productid);
     } catch (err) {
-      console.log("Failed to get product data based on productid", err);
       throw err;
     }
   }
@@ -36,7 +34,6 @@ export default class ProductRepository {
         sellerid: product.sellerid,
       });
     } catch (err) {
-      console.log("Failed to check product", err);
       throw err;
     }
   }
@@ -51,7 +48,6 @@ export default class ProductRepository {
         })),
       });
     } catch (err) {
-      console.log("Failed to check multiple products", err);
       throw err;
     }
   }
@@ -61,7 +57,6 @@ export default class ProductRepository {
       const doc = new ProductSchema(product);
       return await doc.save();
     } catch (err) {
-      console.log("Failed to add a product to database", err);
       throw err;
     }
   }
@@ -70,7 +65,6 @@ export default class ProductRepository {
     try {
       return await ProductSchema.insertMany(products);
     } catch (err) {
-      console.error("Failed to add products to the database", err);
       throw err;
     }
   }
@@ -83,7 +77,6 @@ export default class ProductRepository {
         { new: true }
       );
     } catch (err) {
-      console.log("Failed to update a product", err);
       throw err;
     }
   }
@@ -92,7 +85,6 @@ export default class ProductRepository {
     try {
       return await ProductSchema.findByIdAndDelete(productid);
     } catch (err) {
-      console.log("Failed to remove a product", err);
       throw err;
     }
   }
@@ -115,7 +107,6 @@ export default class ProductRepository {
       product.inventory = quantity;
       return await product.save();
     } catch (err) {
-      console.log("Failed to update inventory", err);
       throw err;
     }
   }

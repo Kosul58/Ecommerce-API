@@ -31,12 +31,18 @@ export default class CategoryService {
   public async createCategory(category: CategoryOption) {
     try {
       const isUnique = await this.checkCategory(category.name);
-      if (!isUnique) {
-        return "catexists";
+      if (!isUnique || isUnique === "nocategories") {
+        const error = new Error("Category already exists");
+        (error as any).statusCode = 409;
+        throw error;
       }
       const newCategory = this.generateCategory(category);
       const result = await this.categoryRepository.createCategory(newCategory);
-      if (!result || Object.keys(result).length === 0) return null;
+      if (!result || Object.keys(result).length === 0) {
+        const error = new Error("Failed to create a category");
+        (error as any).statusCode = 500;
+        throw error;
+      }
       return "success";
     } catch (err) {
       console.log("Failed to create a category", err);
@@ -46,28 +52,34 @@ export default class CategoryService {
   public async readCategories() {
     try {
       const categories = await this.categoryRepository.readCategories();
-      if (!categories || categories.length === 0) return null;
+      if (!categories || categories.length === 0) {
+        const error = new Error("No categories found");
+        (error as any).statusCode = 404;
+        throw error;
+      }
       return categories.map((c) => ({
         name: c.name,
         description: c.description,
         parentId: c.parentId,
       }));
     } catch (err) {
-      console.log("Failed to read categories", err);
       throw err;
     }
   }
   public async readCategory(categoryid: string) {
     try {
       const category = await this.categoryRepository.readCategory(categoryid);
-      if (!category) return null;
+      if (!category) {
+        const error = new Error("Failed to find category");
+        (error as any).statusCode = 500;
+        throw error;
+      }
       return {
         name: category.name,
         description: category.description,
         parentId: category.parentId,
       };
     } catch (err) {
-      console.log("Failed to read a category", err);
       throw err;
     }
   }
@@ -79,18 +91,28 @@ export default class CategoryService {
       if (updateFields.name) {
         const isUnique = await this.checkCategory(updateFields.name);
         if (!isUnique) {
-          return "catexists";
+          const error = new Error("Category already exists");
+          (error as any).statusCode = 409;
+          throw error;
         }
       }
       if (update.parentId) {
         const check = await this.readCategory(update.parentId);
-        if (!check) return "noparent";
+        if (!check) {
+          const error = new Error("No such parentId exists");
+          (error as any).statusCode = 400;
+          throw error;
+        }
       }
       const result = await this.categoryRepository.updateCategory(
         categoryid,
         updateFields
       );
-      if (!result || Object.keys(result).length === 0) return null;
+      if (!result || Object.keys(result).length === 0) {
+        const error = new Error("Failed to update category");
+        (error as any).statusCode = 500;
+        throw error;
+      }
       return "success";
     } catch (err) {
       console.log("Failed to update category", err);
@@ -100,7 +122,11 @@ export default class CategoryService {
   public async deleteCategory(categoryid: string) {
     try {
       const result = await this.categoryRepository.deleteCategory(categoryid);
-      if (!result) return null;
+      if (!result) {
+        const error = new Error("Failed to delete a category");
+        (error as any).statusCode = 500;
+        throw error;
+      }
       return "success";
     } catch (err) {
       console.log("Failed to delete category", err);

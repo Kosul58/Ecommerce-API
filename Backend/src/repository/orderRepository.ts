@@ -1,3 +1,4 @@
+import { idText } from "typescript";
 import {
   Order,
   OrderType,
@@ -6,6 +7,7 @@ import {
   DeliveryOrder,
   ReturnOrder,
   OrderProductStatus,
+  OrderDocumnet,
 } from "../common/types/orderType.js";
 import OrderSchema from "../models/order.js";
 import { injectable } from "tsyringe";
@@ -23,15 +25,13 @@ export default class OrderRepository {
     try {
       return await OrderSchema.find({ userid });
     } catch (err) {
-      console.log("Failed to search orders of user", err);
       throw err;
     }
   }
-  public async getOrderById(orderid: string) {
+  public async getOrderById(orderid: string): Promise<OrderDocumnet | null> {
     try {
       return await OrderSchema.findById(orderid);
     } catch (err) {
-      console.log("Failed to search orders of user", err);
       throw err;
     }
   }
@@ -40,7 +40,6 @@ export default class OrderRepository {
       const newOrder = new OrderSchema(order);
       return newOrder.save();
     } catch (err) {
-      console.log("Failed to add order for user", err);
       throw err;
     }
   }
@@ -49,76 +48,50 @@ export default class OrderRepository {
       const newOrder = new OrderSchema(order);
       return await newOrder.save();
     } catch (err) {
-      console.log("Failed to add order", err);
-      throw err;
-    }
-  }
-  public async cancelDeliveryOrder(orderid: string, productid: string) {
-    try {
-      const order = await OrderSchema.findOne({ _id: orderid });
-      if (!order) return;
-      const product = order.items.find((p: any) => p.productid === productid);
-      if (!product) return;
-      product.active = false;
-      order.markModified("items");
-      return await order.save();
-    } catch (err) {
-      console.log("Failed to remove the order of a product", err);
-      throw err;
-    }
-  }
-  public async cancelDeliveryOrders(orderid: string) {
-    try {
-      const order = await OrderSchema.findOne({ _id: orderid });
-      if (!order) return;
-      order.items.forEach((item: any) => {
-        item.active = false;
-      });
-      order.markModified("items");
-      return await order.save();
-    } catch (err) {
-      console.log("Failed to remove a order", err);
       throw err;
     }
   }
 
-  public async updateOrderStatus(
-    orderid: string,
-    status: DeliveryStatus | ReturnStatus
-  ) {
+  // public async saveOrder(order: OrderDocumnet, productIndex: number) {
+  //   try {
+  //     order.items[productIndex].active = false;
+  //     order.markModified("items");
+  //     return order.save();
+  //   } catch (err) {
+  //     throw err;
+  //   }
+  // }
+
+  public async cancelDeliveryOrder(order: OrderDocumnet, productIndex: number) {
     try {
-      const order = await OrderSchema.findById(orderid);
-      if (!order) return;
-      order.status = status;
-      return order.save();
-    } catch (err) {
-      console.log("Failed to update order status", err);
-      throw err;
-    }
-  }
-  public async updateProductStatus(
-    orderid: string,
-    productid: string,
-    status: OrderProductStatus
-  ) {
-    try {
-      const order = await OrderSchema.findById(orderid);
-      if (!order) return;
-      const product = order.items.find(
-        (i) =>
-          i.productid === productid &&
-          i.active === true &&
-          i.status !== "Rejected"
-      );
-      if (product) {
-        product.status = status;
-      } else {
-        return;
-      }
+      order.items[productIndex].active = false;
       order.markModified("items");
       return order.save();
     } catch (err) {
-      console.log("Failed to update order status", err);
+      throw err;
+    }
+  }
+  public async cancelDeliveryOrders(order: OrderDocumnet) {
+    try {
+      order.markModified("items");
+      return await order.save();
+    } catch (err) {
+      throw err;
+    }
+  }
+
+  public async updateProductStatus(order: OrderDocumnet) {
+    try {
+      order.markModified("items");
+      return await order.save();
+    } catch (err) {
+      throw err;
+    }
+  }
+  public async updateOrderStatus(order: OrderDocumnet) {
+    try {
+      return await order.save();
+    } catch (err) {
       throw err;
     }
   }
@@ -135,7 +108,6 @@ export default class OrderRepository {
       // const returnOrder = this.generateOrder(userid, type);
       // return { orderid, usserid, product };
     } catch (err) {
-      console.log("Failed to return a order");
       throw err;
     }
   }

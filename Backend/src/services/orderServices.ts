@@ -53,7 +53,9 @@ export default class OrderService {
         returnTime: "",
       };
     }
-    throw new Error("Invalid order type");
+    const error = new Error("Invalid order type");
+    (error as any).statusCode = 400;
+    throw error;
   }
 
   private async generateOrderProduct(
@@ -62,7 +64,11 @@ export default class OrderService {
     const searchProduct = await this.productService.getProductById(
       product.productid
     );
-    if (!searchProduct) return null;
+    if (!searchProduct) {
+      const error = new Error("No product found");
+      (error as any).statusCode = 404;
+      throw error;
+    }
     return {
       productid: product.productid,
       sellerid: product.sellerid,
@@ -92,17 +98,24 @@ export default class OrderService {
   public async getUserOrders(userid: string) {
     try {
       const userOrders = await this.orderRepository.getUserOrders(userid);
-      if (!userOrders || userOrders.length === 0) return null;
+      if (!userOrders || userOrders.length === 0) {
+        const error = new Error("No order found");
+        (error as any).statusCode = 404;
+        throw error;
+      }
       return this.returnData(userOrders);
     } catch (err) {
-      console.log("Failed to get order data", err);
       throw err;
     }
   }
   public async getOrders() {
     try {
       const orders = await this.orderRepository.getOrders();
-      if (!orders || orders.length === 0) return null;
+      if (!orders || orders.length === 0) {
+        const error = new Error("No orders found");
+        (error as any).statusCode = 404;
+        throw error;
+      }
       return orders.map((o) => this.returnData(o));
     } catch (err) {
       throw err;
@@ -115,7 +128,6 @@ export default class OrderService {
     try {
       await this.cartService.removeProducts(userid, productIds);
     } catch (err) {
-      console.log("Failed to remove products from cart", err);
       throw err;
     }
   }
@@ -124,19 +136,33 @@ export default class OrderService {
     try {
       const cart = await this.cartService.getCart(userid);
       if (!cart) {
-        return "nocart";
+        const error = new Error("No Cart found");
+        (error as any).statusCode = 404;
+        throw error;
       }
       const product = cart.products.find((p) => p.productid === productid);
-      if (!product) return "noproduct";
+      if (!product) {
+        const error = new Error("No product found in cart");
+        (error as any).statusCode = 404;
+        throw error;
+      }
       const order = this.generateOrder(userid, OrderType.DELIVERY);
       const productItem = await this.generateOrderProduct(
         product as CartProduct
       );
-      if (!productItem) return "noproduct";
+      if (!productItem) {
+        const error = new Error("Product not in product database");
+        (error as any).statusCode = 404;
+        throw error;
+      }
       order.items.push(productItem);
       order.total = this.calcTotal(order.items);
       const data = await this.orderRepository.addOrder(order);
-      if (!data || Object.keys(data).length === 0) return null;
+      if (!data || Object.keys(data).length === 0) {
+        const error = new Error("Failed to create order");
+        (error as any).statusCode = 500;
+        throw error;
+      }
       await this.manageCart(data.items, userid);
       await this.manageInventory([product] as CartProduct[], "decrease");
       return "success";
@@ -154,17 +180,21 @@ export default class OrderService {
         (Array.isArray(searchProducts.products) &&
           searchProducts.products.length < 1)
       ) {
-        return "noproducts";
+        const error = new Error("No products found in the cart");
+        (error as any).statusCode = 404;
+        throw error;
       }
 
       const filteredProducts = searchProducts.products.filter((p) =>
         products.includes(p.productid)
       );
 
-      if (!filteredProducts || filteredProducts.length === 0)
-        return "noproducts";
+      if (!filteredProducts || filteredProducts.length === 0) {
+        const error = new Error("Products donot match with cart");
+        (error as any).statusCode = 404;
+        throw error;
+      }
       const order = this.generateOrder(userid, OrderType.DELIVERY);
-
       for (let product of filteredProducts) {
         const productItem = await this.generateOrderProduct(
           product as CartProduct
@@ -174,7 +204,11 @@ export default class OrderService {
 
       order.total = this.calcTotal(order.items);
       const data = await this.orderRepository.addOrders(order);
-      if (!data || Object.keys(data).length === 0) return null;
+      if (!data || Object.keys(data).length === 0) {
+        const error = new Error("Failed to create a order");
+        (error as any).statusCode = 500;
+        throw error;
+      }
       await this.manageCart(filteredProducts as CartProduct[], userid);
       await this.manageInventory(filteredProducts as CartProduct[], "decrease");
       return "success";
@@ -188,7 +222,11 @@ export default class OrderService {
   public async orderedProducts(id: string) {
     try {
       const orders = await this.orderRepository.getOrders();
-      if (!orders || orders.length === 0) return null;
+      if (!orders || orders.length === 0) {
+        const error = new Error("No orders found");
+        (error as any).statusCode = 404;
+        throw error;
+      }
       const sellerProducts = [];
       for (const order of orders) {
         const matchingItems = order.items.filter(
@@ -218,28 +256,45 @@ export default class OrderService {
         !Object.values(DeliveryStatus).includes(status as DeliveryStatus) &&
         !Object.values(ReturnStatus).includes(status as ReturnStatus)
       ) {
-        console.log("Invalid status value provided.");
-        return null;
+        const error = new Error("Invalid status value");
+        (error as any).statusCode = 400;
+        throw error;
       }
       const order = await this.orderRepository.getOrderById(orderid);
-      if (!order || Object.keys(order).length === 0) return "noorder";
+      if (!order || Object.keys(order).length === 0) {
+        const error = new Error("No order found");
+        (error as any).statusCode = 404;
+        throw error;
+      }
       if (order) {
         if (order.status === "Delivered" || order.status === "Canceled") {
-          return null;
+          const error = new Error("Order cannot be canceled now");
+          (error as any).statusCode = 403;
+          throw error;
         } else if (status === "Confirmed") {
           const products = order.items.filter((p) => p.status === "Accepted");
-          if (products.length !== order.items.length) return null;
+          if (products.length !== order.items.length) {
+            const error = new Error("Order acceptence pending from the seller");
+            (error as any).statusCode = 400;
+            throw error;
+          }
         } else if (status === "Processing") {
           const products = order.items.filter((p) => p.status === "Ready");
-          if (products.length !== order.items.length) return null;
+          if (products.length !== order.items.length) {
+            const error = new Error("Order ready pending from the seller");
+            (error as any).statusCode = 400;
+            throw error;
+          }
         }
       }
       const newStatus = status as DeliveryStatus | ReturnStatus;
-      const result = await this.orderRepository.updateOrderStatus(
-        orderid,
-        newStatus
-      );
-      if (!result || Object.keys(result).length === 0) return null;
+      order.status = newStatus;
+      const result = await this.orderRepository.updateOrderStatus(order);
+      if (!result || Object.keys(result).length === 0) {
+        const error = new Error("Failed to update order status");
+        (error as any).statusCode = 400;
+        throw error;
+      }
       return "success";
     } catch (err) {
       console.log("Failed to update order status", err);
@@ -258,21 +313,35 @@ export default class OrderService {
           status as OrderProductStatus
         )
       ) {
-        console.log("Invalid status value provided.");
-        return null;
+        const error = new Error("Invalid product status");
+        (error as any).statusCode = 400;
+        throw error;
       }
       const newStatus = status as OrderProductStatus;
       const order = await this.orderRepository.getOrderById(orderid);
+      if (!order || Object.keys(order).length === 0) {
+        const error = new Error("No order found");
+        (error as any).statusCode = 404;
+        throw error;
+      }
       if (order) {
         const product = order.items.find((p) => p.productid === productid);
-        if (product && product.sellerid !== sellerid) return null;
+        if (product && product.sellerid !== sellerid) {
+          const error = new Error("No  Product found");
+          (error as any).statusCode = 404;
+          throw error;
+        }
       }
-      const data = await this.orderRepository.updateProductStatus(
-        orderid,
-        productid,
-        newStatus
+      const productIndex = order.items.findIndex(
+        (p) => p.productid === productid
       );
-      if (!data || Object.keys(data).length === 0) return null;
+      order.items[productIndex].status = newStatus;
+      const data = await this.orderRepository.updateProductStatus(order);
+      if (!data || Object.keys(data).length === 0) {
+        const error = new Error("Failed to update status of a product");
+        (error as any).statusCode = 500;
+        throw error;
+      }
       if (data && typeof data === "object" && status === "Rejected") {
         await this.cancelDeliveryOrder(orderid, productid);
       }
@@ -293,15 +362,23 @@ export default class OrderService {
 
   public async cancelDeliveryOrders(orderid: string) {
     try {
-      const order = this.orderRepository.getOrderById(orderid);
-      if (!order || Object.keys(order).length === 0) return "noorder";
-      const data = await this.orderRepository.cancelDeliveryOrders(orderid);
-      if (!data || Object.keys(data).length === 0) return null;
-      // if (data && typeof data === "object" && "items" in data) {
+      const order = await this.orderRepository.getOrderById(orderid);
+      if (!order || Object.keys(order).length === 0) {
+        const error = new Error("No order found");
+        (error as any).statusCode = 404;
+        throw error;
+      }
+      order.items.forEach((p) => (p.active = false));
+      order.status = DeliveryStatus.CANCELED;
+      const data = await this.orderRepository.cancelDeliveryOrders(order);
+      if (!data || Object.keys(data).length === 0) {
+        const error = new Error("Failed to cancel order of products");
+        (error as any).statusCode = 500;
+        throw error;
+      }
       await this.manageInventory(data.items, "increase");
       await this.updateOrderStatus(orderid, "Canceled");
       return "success";
-      // }
     } catch (err) {
       console.log("Failed to remove order", err);
       throw err;
@@ -310,14 +387,30 @@ export default class OrderService {
 
   public async cancelDeliveryOrder(orderid: string, productid: string) {
     try {
-      const order = this.orderRepository.getOrderById(orderid);
-      if (!order || Object.keys(order).length === 0) return "noorder";
-      const result = await this.orderRepository.cancelDeliveryOrder(
-        orderid,
-        productid
+      const order = await this.orderRepository.getOrderById(orderid);
+      if (!order || Object.keys(order).length === 0) {
+        const error = new Error("No order found");
+        (error as any).statusCode = 404;
+        throw error;
+      }
+      const productIndex = order.items.findIndex(
+        (p) => p.productid === productid
       );
-      if (!result || Object.keys(result).length === 0) return null;
-      // if (result && typeof result === "object" && "items" in result) {
+      if (productIndex < 0) {
+        const error = new Error("No such product in the order");
+        (error as any).statusCode = 404;
+        throw error;
+      }
+      const result = await this.orderRepository.cancelDeliveryOrder(
+        order,
+        productIndex
+      );
+
+      if (!result || Object.keys(result).length === 0) {
+        const error = new Error("Failed to cancel order of a product");
+        (error as any).statusCode = 500;
+        throw error;
+      }
       const removed = result.items.find(
         (item: any) => item.productid === productid
       );
@@ -329,8 +422,6 @@ export default class OrderService {
         await this.updateOrderStatus(orderid, "Canceled");
 
       return "success";
-      // }
-      return;
     } catch (err) {
       console.log("Failed to remove product from order", err);
       throw err;

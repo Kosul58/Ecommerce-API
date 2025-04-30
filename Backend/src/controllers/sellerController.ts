@@ -11,7 +11,7 @@ export default class SellerController {
     @inject(ResponseHandler) private responseHandler: ResponseHandler
   ) {}
 
-  public getSeller: RequestHandler = async (req, res) => {
+  public getSeller: RequestHandler = async (req, res, next) => {
     const sellerid = req.user.id;
     try {
       const seller = await this.sellerServices.getSeller(sellerid);
@@ -20,12 +20,11 @@ export default class SellerController {
       }
       return this.responseHandler.success(res, "Seller found", seller);
     } catch (err) {
-      console.error("Get seller error:", err);
-      return this.responseHandler.error(res, "Server error");
+      return next(err);
     }
   };
 
-  public getSellers: RequestHandler = async (_req, res) => {
+  public getSellers: RequestHandler = async (req, res, next) => {
     try {
       const sellers = await this.sellerServices.getSellers();
       if (!sellers || sellers.length === 0) {
@@ -33,25 +32,17 @@ export default class SellerController {
       }
       return this.responseHandler.success(res, "Sellers found", sellers);
     } catch (err) {
-      console.error("Get sellers error:", err);
-      return this.responseHandler.error(res, "Server error");
+      return next(err);
     }
   };
 
-  public signUp: RequestHandler = async (req, res) => {
+  public signUp: RequestHandler = async (req, res, next) => {
     const seller: AddSeller = req.body;
     try {
       const { result, token } = await this.sellerServices.signUp(
         seller,
         "Seller"
       );
-
-      if (result === "taken") {
-        return this.responseHandler.conflict(
-          res,
-          "Seller with the same credentials already exists"
-        );
-      }
       if (!result) {
         return this.responseHandler.error(res, "Failed to sign up seller");
       }
@@ -61,12 +52,11 @@ export default class SellerController {
         token,
       });
     } catch (err) {
-      console.error("Sign up error:", err);
-      return this.responseHandler.error(res, "Server error");
+      return next(err);
     }
   };
 
-  public signIn: RequestHandler = async (req, res) => {
+  public signIn: RequestHandler = async (req, res, next) => {
     const { username, email, password } = req.body;
     try {
       const { result, token } = await this.sellerServices.signIn(
@@ -74,10 +64,6 @@ export default class SellerController {
         email,
         password
       );
-
-      if (result === "incorrectpwd") {
-        return this.responseHandler.error(res, "Password does not match");
-      }
       if (!result) {
         return this.responseHandler.error(res, "No seller found");
       }
@@ -87,55 +73,44 @@ export default class SellerController {
         token,
       });
     } catch (err) {
-      console.error("Sign in error:", err);
-      return this.responseHandler.error(res, "Server error");
+      return next(err);
     }
   };
 
-  public updateSeller: RequestHandler = async (req, res) => {
+  public updateSeller: RequestHandler = async (req, res, next) => {
     const sellerid = req.user.id;
     const update: SellerUpadte = req.body;
 
     try {
       const result = await this.sellerServices.updateSeller(sellerid, update);
-
-      if (result === "utaken") {
-        return this.responseHandler.conflict(res, "Username already taken");
-      }
-      if (result === "phonetaken") {
-        return this.responseHandler.conflict(res, "Phone number already taken");
-      }
       if (!result) {
         return this.responseHandler.error(res, "Failed to update seller data");
       }
-
       return this.responseHandler.success(
         res,
         "Updated seller successfully",
         result
       );
     } catch (err) {
-      console.error("Update seller error:", err);
-      return this.responseHandler.error(res, "Server error");
+      return next(err);
     }
   };
 
-  public deleteSeller: RequestHandler = async (req, res) => {
-    const sellerid = req.user.id;
+  public deleteSeller: RequestHandler = async (req, res, next) => {
+    const { sellerid } = req.params;
+    const { id, role } = req.user;
     try {
-      const result = await this.sellerServices.deleteSeller(sellerid);
+      const result = await this.sellerServices.deleteSeller(sellerid, id, role);
       if (!result) {
         return this.responseHandler.error(res, "Failed to delete seller");
       }
-
       return this.responseHandler.success(
         res,
         "Seller deleted successfully",
         result
       );
     } catch (err) {
-      console.error("Delete seller error:", err);
-      return this.responseHandler.error(res, "Server error");
+      return next(err);
     }
   };
 }

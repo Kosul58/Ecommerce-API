@@ -1,11 +1,14 @@
 import { CartProduct } from "./cartType.js";
+import { Document, Types } from "mongoose";
 
 export interface Order {
+  _id?: string | Types.ObjectId;
   orderid?: string;
   userid: string;
   timestamp?: Date;
+  type?: string;
   status: DeliveryStatus | ReturnStatus;
-  items: CartProduct[];
+  items: OrderProduct[];
   total: number;
 }
 
@@ -72,3 +75,5 @@ export interface ReturnOrder extends BaseOrder {
 }
 
 export type OrderSchema = DeliveryOrder | ReturnOrder;
+
+export type OrderDocumnet = Order & Document;

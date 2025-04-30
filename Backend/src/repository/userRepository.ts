@@ -24,7 +24,6 @@ export default class UserRepository {
     try {
       return await UserSchema.findOne({ username, email });
     } catch (err) {
-      console.log("Failed to sign in user", err);
       throw err;
     }
   }
@@ -34,7 +33,6 @@ export default class UserRepository {
       const newUser = new UserSchema(user);
       return newUser.save();
     } catch (err) {
-      console.log("Failed to register user", err);
       throw err;
     }
   }
@@ -42,7 +40,6 @@ export default class UserRepository {
     try {
       return await UserSchema.findById(userid);
     } catch (err) {
-      console.log("Failed to fetch user", err);
       throw err;
     }
   }
@@ -50,7 +47,6 @@ export default class UserRepository {
     try {
       return await UserSchema.find();
     } catch (err) {
-      console.log("Failed to fetch users", err);
       throw err;
     }
   }
@@ -59,7 +55,6 @@ export default class UserRepository {
     try {
       return await UserSchema.findByIdAndDelete(userid);
     } catch (err) {
-      console.log("Failed to remove user", err);
       throw err;
     }
   }
@@ -72,7 +67,6 @@ export default class UserRepository {
         { new: true }
       );
     } catch (err) {
-      console.log("Failed to update user info", err);
       throw err;
     }
   }

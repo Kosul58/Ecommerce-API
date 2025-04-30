@@ -16,7 +16,7 @@ const dataValidation = container.resolve(DataValidation);
 // Create category
 categoryRoutes.post(
   "/",
-  verifyRole.verify("Seller", "Admin"),
+  verifyRole.verify("Admin"),
   dataValidation.validateBody(createSchema),
   categoryController.createCategory
 );
@@ -24,12 +24,12 @@ categoryRoutes.post(
 // Read category
 categoryRoutes.get(
   "/",
-  verifyRole.verify("Seller", "Admin"),
+  verifyRole.verify("Admin"),
   categoryController.readCategories
 );
 categoryRoutes.get(
   "/:categoryid",
-  verifyRole.verify("Seller", "Admin"),
+  verifyRole.verify("Admin"),
   dataValidation.validateParams(categoryParamsSchema),
   categoryController.readCategory
 );
@@ -37,7 +37,7 @@ categoryRoutes.get(
 // Update category
 categoryRoutes.put(
   "/:categoryid",
-  verifyRole.verify("Seller", "Admin"),
+  verifyRole.verify("Admin"),
   dataValidation.validateParams(categoryParamsSchema),
   dataValidation.validateBody(updateSchema),
   categoryController.updateCategory
@@ -46,7 +46,7 @@ categoryRoutes.put(
 // Delete category
 categoryRoutes.delete(
   "/:categoryid",
-  verifyRole.verify("Seller", "Admin"),
+  verifyRole.verify("Admin"),
   dataValidation.validateParams(categoryParamsSchema),
   categoryController.deleteCategory
 );

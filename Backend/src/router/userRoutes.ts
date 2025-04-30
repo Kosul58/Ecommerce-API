@@ -18,7 +18,7 @@ const userRoutes = express.Router();
 userRoutes.get(
   "/",
   verifyToken.verify,
-  verifyRole.verify("Admin"),
+  verifyRole.verify("Admin", "User"),
   dataValidation.validateTokenData(idSchema),
   userController.getUser
 );
@@ -40,7 +40,7 @@ userRoutes.post(
   userController.signIn
 );
 userRoutes.delete(
-  "/",
+  "/:userid",
   verifyToken.verify,
   verifyRole.verify("Admin", "User"),
   dataValidation.validateTokenData(idSchema),

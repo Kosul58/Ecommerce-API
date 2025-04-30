@@ -11,7 +11,7 @@ export default class ProductController {
     @inject(ResponseHandler) private responseHandler: ResponseHandler
   ) {}
 
-  public getProducts: RequestHandler = async (req, res) => {
+  public getProducts: RequestHandler = async (req, res, next) => {
     try {
       const response = await this.productService.getProducts();
       if (!response) {
@@ -19,12 +19,11 @@ export default class ProductController {
       }
       return this.responseHandler.success(res, "Products found", response);
     } catch (err) {
-      console.error("Failed to get products", err);
-      return this.responseHandler.error(res, "Internal server error");
+      return next(err);
     }
   };
 
-  public getSellerProducts: RequestHandler = async (req, res) => {
+  public getSellerProducts: RequestHandler = async (req, res, next) => {
     const sellerid = req.user.id;
     try {
       const result = await this.productService.getSellerProducts(sellerid);
@@ -33,12 +32,11 @@ export default class ProductController {
       }
       return this.responseHandler.success(res, "Products found", result);
     } catch (err) {
-      console.error("Failed to get seller products", err);
-      return this.responseHandler.error(res, "Internal server error");
+      return next(err);
     }
   };
 
-  public getProductById: RequestHandler = async (req, res) => {
+  public getProductById: RequestHandler = async (req, res, next) => {
     const { productid } = req.params;
     try {
       const data = await this.productService.getProductById(productid);
@@ -47,12 +45,11 @@ export default class ProductController {
       }
       return this.responseHandler.success(res, "Product found", data);
     } catch (err) {
-      console.error("Failed to get product by ID", err);
-      return this.responseHandler.error(res, "Internal server error");
+      return next(err);
     }
   };
 
-  public addProduct: RequestHandler = async (req, res) => {
+  public addProduct: RequestHandler = async (req, res, next) => {
     const productData: AddProduct = req.body;
     const sellerid: string = req.user.id;
     try {
@@ -60,10 +57,6 @@ export default class ProductController {
         productData,
         sellerid
       );
-
-      if (result === "productexists") {
-        return this.responseHandler.conflict(res, "Product already exists");
-      }
       if (!result) {
         return this.responseHandler.error(res, "Failed to add product");
       }
@@ -73,17 +66,16 @@ export default class ProductController {
         result
       );
     } catch (err) {
-      console.error("Failed to add product", err);
-      return this.responseHandler.error(res, "Internal server error");
+      return next(err);
     }
   };
 
-  public addProducts: RequestHandler = async (req, res) => {
+  public addProducts: RequestHandler = async (req, res, next) => {
     const products: AddProduct[] = req.body;
     const sellerid: string = req.user.id;
     try {
       const data = await this.productService.addProducts(products, sellerid);
-      if (!data || data.length === 0) {
+      if (!data) {
         return this.responseHandler.error(res, "No products added");
       }
       return this.responseHandler.created(
@@ -92,12 +84,11 @@ export default class ProductController {
         data
       );
     } catch (err) {
-      console.error("Failed to add products", err);
-      return this.responseHandler.error(res, "Internal server error");
+      return next(err);
     }
   };
 
-  public updateProduct: RequestHandler = async (req, res) => {
+  public updateProduct: RequestHandler = async (req, res, next) => {
     const { productid } = req.params;
     const sellerid = req.user.id;
     const update: UpdateProdcut = req.body;
@@ -119,20 +110,17 @@ export default class ProductController {
         result
       );
     } catch (err) {
-      console.error("Failed to update product", err);
-      return this.responseHandler.error(res, "Internal server error");
+      return next(err);
     }
   };
 
-  public deleteProduct: RequestHandler = async (req, res) => {
+  public deleteProduct: RequestHandler = async (req, res, next) => {
     const { productid } = req.params;
     const sellerid = req.user.id;
-    const role = req.user.role;
     try {
       const result = await this.productService.deleteProduct(
         productid,
-        sellerid,
-        role
+        sellerid
       );
       if (!result) {
         return this.responseHandler.notFound(
@@ -146,12 +134,11 @@ export default class ProductController {
         result
       );
     } catch (err) {
-      console.error("Failed to delete product", err);
-      return this.responseHandler.error(res, "Internal server error");
+      return next(err);
     }
   };
 
-  public deleteProducts: RequestHandler = async (req, res) => {
+  public deleteProducts: RequestHandler = async (req, res, next) => {
     const id = req.user.id || req.body.sellerid;
     try {
       const result = await this.productService.deleteProducts(id);
@@ -160,12 +147,11 @@ export default class ProductController {
       }
       return this.responseHandler.success(res, "Products deleted successfully");
     } catch (err) {
-      console.error("Failed to delete products", err);
-      return this.responseHandler.error(res, "Internal server error");
+      return next(err);
     }
   };
 
-  public modifyInventory: RequestHandler = async (req, res) => {
+  public modifyInventory: RequestHandler = async (req, res, next) => {
     const { productid } = req.params;
     const { quantity, modification } = req.body;
     try {
@@ -174,7 +160,6 @@ export default class ProductController {
         quantity,
         modification
       );
-
       if (result === "insufficientinventory") {
         return this.responseHandler.error(res, "Insufficient inventory");
       }
@@ -191,8 +176,7 @@ export default class ProductController {
         result
       );
     } catch (err) {
-      console.error("Failed to modify inventory", err);
-      return this.responseHandler.error(res, "Internal server error");
+      return next(err);
     }
   };
 }

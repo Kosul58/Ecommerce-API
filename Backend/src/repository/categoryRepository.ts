@@ -9,7 +9,6 @@ export default class CategoryRepository {
       const newCategory = new CategorySchema(category);
       return await newCategory.save();
     } catch (err) {
-      console.log("Failed to create a category", err);
       throw err;
     }
   }
@@ -18,7 +17,6 @@ export default class CategoryRepository {
     try {
       return await CategorySchema.find({ isActive: true });
     } catch (err) {
-      console.log("Failed to read the categories", err);
       throw err;
     }
   }
@@ -27,7 +25,6 @@ export default class CategoryRepository {
     try {
       return await CategorySchema.findById(categoryid);
     } catch (err) {
-      console.log("Failed to read a category", err);
       throw err;
     }
   }
@@ -40,7 +37,6 @@ export default class CategoryRepository {
         { new: true }
       );
     } catch (err) {
-      console.log("Failed to update a category", err);
       throw err;
     }
   }
@@ -49,7 +45,6 @@ export default class CategoryRepository {
     try {
       return CategorySchema.findByIdAndDelete(categoryid);
     } catch (err) {
-      console.log("Failed to delete category", err);
       throw err;
     }
   }

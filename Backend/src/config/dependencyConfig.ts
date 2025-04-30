@@ -21,8 +21,8 @@ import SellerServices from "../services/sellerServices.js";
 import SellerController from "../controllers/sellerController.js";
 import AuthServices from "../services/authServices.js";
 import DataValidation from "../middleware/validateData.js";
-import UserValidation from "../middleware/userValidation.js";
 import ResponseHandler from "../utils/apiResponse.js";
+import ErrorMiddleware from "../middleware/errorMiddleware.js";
 
 container.register(CategoryController, { useClass: CategoryController });
 container.register(CategoryService, { useClass: CategoryService });
@@ -46,7 +46,7 @@ container.register(SellerServices, { useClass: SellerServices });
 container.register(SellerController, { useClass: SellerController });
 container.register(AuthServices, { useClass: AuthServices });
 container.register(DataValidation, { useClass: DataValidation });
-container.register(UserValidation, { useClass: UserValidation });
 container.register(ResponseHandler, { useClass: ResponseHandler });
+container.register(ErrorMiddleware, { useClass: ErrorMiddleware });
 // const isRegistered = container.isRegistered(UserController);
 // console.log(isRegistered);

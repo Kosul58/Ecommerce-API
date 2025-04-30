@@ -15,13 +15,10 @@ export default class CategoryController {
   ) {}
 
   // Create Category
-  public createCategory: RequestHandler = async (req, res) => {
+  public createCategory: RequestHandler = async (req, res, next) => {
     const category: CategoryOption = req.body;
     try {
       const result = await this.categoryServices.createCategory(category);
-      if (result === "catexists") {
-        return this.responseHandler.error(res, "Category already exists");
-      }
       if (!result) {
         return this.responseHandler.notFound(
           res,
@@ -34,12 +31,12 @@ export default class CategoryController {
         result
       );
     } catch (err) {
-      return this.responseHandler.error(res, "Failed to create category");
+      return next(err);
     }
   };
 
   // Read All Categories
-  public readCategories: RequestHandler = async (req, res) => {
+  public readCategories: RequestHandler = async (req, res, next) => {
     try {
       const result = await this.categoryServices.readCategories();
       if (!result || result.length === 0) {
@@ -51,12 +48,12 @@ export default class CategoryController {
         result
       );
     } catch (err) {
-      return this.responseHandler.error(res, "Failed to read categories");
+      return next(err);
     }
   };
 
   // Read Single Category
-  public readCategory: RequestHandler = async (req, res) => {
+  public readCategory: RequestHandler = async (req, res, next) => {
     const { categoryid } = req.params;
     try {
       const result = await this.categoryServices.readCategory(categoryid);
@@ -69,12 +66,12 @@ export default class CategoryController {
         result
       );
     } catch (err) {
-      return this.responseHandler.error(res, "Failed to read category");
+      return next(err);
     }
   };
 
   // Update Category
-  public updateCategory: RequestHandler = async (req, res) => {
+  public updateCategory: RequestHandler = async (req, res, next) => {
     const { categoryid } = req.params;
     const update: UpdateCategory = req.body;
     try {
@@ -85,30 +82,18 @@ export default class CategoryController {
       if (!result) {
         return this.responseHandler.notFound(res, "Category not found");
       }
-      if (result === "catexists") {
-        return this.responseHandler.error(
-          res,
-          "Category with the same name already exists"
-        );
-      }
-      if (result === "noparent") {
-        return this.responseHandler.error(
-          res,
-          "Cannot find any category with the given parentId"
-        );
-      }
       return this.responseHandler.success(
         res,
         "Category update successful",
         result
       );
     } catch (err) {
-      return this.responseHandler.error(res, "Failed to update category");
+      return next(err);
     }
   };
 
   // Delete Category
-  public deleteCategory: RequestHandler = async (req, res) => {
+  public deleteCategory: RequestHandler = async (req, res, next) => {
     const { categoryid } = req.params;
     try {
       const result = await this.categoryServices.deleteCategory(categoryid);
@@ -121,7 +106,7 @@ export default class CategoryController {
         result
       );
     } catch (err) {
-      return this.responseHandler.error(res, "Failed to delete category");
+      return next(err);
     }
   };
 }

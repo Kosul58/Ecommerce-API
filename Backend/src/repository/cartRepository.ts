@@ -8,7 +8,6 @@ export default class CartRepository {
     try {
       return await CartSchema.find();
     } catch (err) {
-      console.log("Failed to get products from cart", err);
       throw err;
     }
   }
@@ -16,7 +15,6 @@ export default class CartRepository {
     try {
       return await CartSchema.findOne({ userid });
     } catch (err) {
-      console.log("Failed to get the products of a user in cart", err);
       throw err;
     }
   }
@@ -25,7 +23,6 @@ export default class CartRepository {
       const newCart = new CartSchema({ userid, products: [] });
       return await newCart.save();
     } catch (err) {
-      console.log("Failed to create a cart on signup");
       throw err;
     }
   }
@@ -34,7 +31,6 @@ export default class CartRepository {
       cart.markModified("products");
       return await cart.save();
     } catch (err) {
-      console.log("Failed to add product to the cart of a user", err);
       throw err;
     }
   }
@@ -115,7 +111,6 @@ export default class CartRepository {
     try {
       return await CartSchema.findOneAndDelete({ userid });
     } catch (err) {
-      console.log("Failed to delete a cart", err);
       throw err;
     }
   }

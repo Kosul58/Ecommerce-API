@@ -62,7 +62,11 @@ export default class ProductServices {
   public async getProducts() {
     try {
       const products = await this.productRepositroy.getProducts();
-      if (!products || products.length === 0) return null;
+      if (!products || products.length === 0) {
+        const error = new Error("No Products found");
+        (error as any).statusCode = 404;
+        throw error;
+      }
       return products.map((p) => this.returnProductData(p));
     } catch (err) {
       console.log("Failed to get the data of all products", err);
@@ -74,7 +78,11 @@ export default class ProductServices {
   public async getSellerProducts(id: string) {
     try {
       const products = await this.productRepositroy.getSellerProducts(id);
-      if (!products || products.length === 0) return null;
+      if (!products || products.length === 0) {
+        const error = new Error("No Products found");
+        (error as any).statusCode = 404;
+        throw error;
+      }
       return products.map((p) => this.returnProductData(p));
     } catch (err) {
       console.log("Failed to get the data of all products of a seller", err);
@@ -85,7 +93,11 @@ export default class ProductServices {
   public async getProductById(productid: string) {
     try {
       const product = await this.productRepositroy.getProductById(productid);
-      if (!product) return null;
+      if (!product) {
+        const error = new Error("No Products found");
+        (error as any).statusCode = 404;
+        throw error;
+      }
       return this.returnProductData(product);
     } catch (err) {
       console.log(
@@ -102,10 +114,20 @@ export default class ProductServices {
         ...product,
         sellerid,
       });
-      if (check && Object.keys(check).length > 0) return "productexists";
+
+      if (check && Object.keys(check).length > 0) {
+        const error = new Error("Product already exits");
+        (error as any).statusCode = 409;
+        throw error;
+      }
+
       const newProduct: Product = await this.createProduct(product, sellerid);
       const result = await this.productRepositroy.addProduct(newProduct);
-      if (!result) return null;
+      if (!result) {
+        const error = new Error("Product addition failed");
+        (error as any).statusCode = 500;
+        throw error;
+      }
       return "success";
     } catch (err) {
       console.log("Failed to add a new product", err);
@@ -115,7 +137,6 @@ export default class ProductServices {
 
   public async addProducts(products: AddProduct[], sellerid: string) {
     try {
-      //check if prodcuts already exists in db
       const searchedProducts = await this.productRepositroy.checkProducts(
         products
       );
@@ -131,7 +152,11 @@ export default class ProductServices {
         productList.push(newProduct);
       }
       const result = await this.productRepositroy.addProducts(productList);
-      if (!result || result.length === 0) return null;
+      if (!result || result.length === 0) {
+        const error = new Error("Product addition failed");
+        (error as any).statusCode = 500;
+        throw error;
+      }
       return "success";
     } catch (err) {
       console.log("Failed to add a batch of new products", err);
@@ -150,7 +175,9 @@ export default class ProductServices {
       ) as Partial<UpdateProdcut>;
       const prodcut = await this.getProductById(productid);
       if (!prodcut || prodcut.sellerid !== sellerid) {
-        return null;
+        const error = new Error("No product found");
+        (error as any).statusCode = 404;
+        throw error;
       }
       if (update.category) {
         await this.categoryManager(update.category);
@@ -159,7 +186,11 @@ export default class ProductServices {
         productid,
         updateFields
       );
-      if (!result) return null;
+      if (!result) {
+        const error = new Error("Product update failed");
+        (error as any).statusCode = 500;
+        throw error;
+      }
       return "success";
     } catch (err) {
       console.log("Failed to update a product", err);
@@ -167,20 +198,20 @@ export default class ProductServices {
     }
   }
 
-  public async deleteProduct(
-    productid: string,
-    sellerid: string,
-    role: string
-  ) {
+  public async deleteProduct(productid: string, sellerid: string) {
     try {
       const prodcut = await this.getProductById(productid);
       if (!prodcut || prodcut.sellerid !== sellerid) {
-        if (role !== "Admin") {
-          return null;
-        }
+        const error = new Error("No product found");
+        (error as any).statusCode = 404;
+        throw error;
       }
       const result = await this.productRepositroy.deleteProduct(productid);
-      if (!result || Object.keys(result).length === 0) return null;
+      if (!result || Object.keys(result).length === 0) {
+        const error = new Error("Product delete failed");
+        (error as any).statusCode = 500;
+        throw error;
+      }
       return "success";
     } catch (err) {
       console.log("Failed to delete a product", err);
@@ -191,10 +222,20 @@ export default class ProductServices {
   public async deleteProducts(id: string) {
     try {
       const products = await this.getSellerProducts(id);
-      if (!products || products.length === 0) return "noproducts";
+      if (!products || products.length === 0) {
+        const error = new Error("No products found");
+        (error as any).statusCode = 404;
+        throw error;
+      }
       const deleteIds = products.map((p) => p.id);
       const result = await this.productRepositroy.deleteProducts(deleteIds);
-      if (!result || result.deletedCount === 0) return null;
+      if (!result || result.deletedCount === 0) {
+        {
+          const error = new Error("Products deletion failed");
+          (error as any).statusCode = 500;
+          throw error;
+        }
+      }
       return "success";
     } catch (err) {
       console.log("Failed to delete products", err);
@@ -209,9 +250,15 @@ export default class ProductServices {
   ) {
     try {
       const product = await this.productRepositroy.getProductById(id);
-      if (!product) return "noproduct";
+      if (!product) {
+        const error = new Error("No product found");
+        (error as any).statusCode = 404;
+        throw error;
+      }
       if (modification === "decrease" && product.inventory < quantity) {
-        return "insufficientinventory";
+        const error = new Error("Insufficient inventory");
+        (error as any).statusCode = 404;
+        throw error;
       }
       let newInventory = product.inventory ?? 0;
       if (modification === "increase") {
@@ -220,7 +267,11 @@ export default class ProductServices {
         newInventory -= quantity;
       }
       const result = await this.productRepositroy.manageInventory(id, quantity);
-      if (!result || Object.keys(result).length === 0) return null;
+      if (!result || Object.keys(result).length === 0) {
+        const error = new Error("Product inventory modification failed");
+        (error as any).statusCode = 500;
+        throw error;
+      }
       return "success";
     } catch (err) {
       console.log("Failed to update the inventory of a product", err);

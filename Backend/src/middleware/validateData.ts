@@ -1,46 +1,43 @@
 import { Request, Response, NextFunction } from "express";
-
 import Joi from "joi";
 import { injectable } from "tsyringe";
 
 @injectable()
 export default class DataValidation {
+  private validate(schema: Joi.ObjectSchema, data: any) {
+    const { error } = schema.validate(data, { abortEarly: false });
+    if (error) {
+      const err = new Error("Validation failed");
+      err.name = "ValidationError";
+      (err as any).details = error.details.map((e) => ({
+        field: e.path.join("."),
+        message: e.message,
+      }));
+      return err;
+    }
+    return null;
+  }
+
   public validateBody(schema: Joi.ObjectSchema) {
     return (req: Request, res: Response, next: NextFunction) => {
-      const { error } = schema.validate(req.body, { abortEarly: false });
-      if (error) {
-        res.status(400).json({
-          message: "Validation error",
-          details: error.details.map((err) => err.message),
-        });
-        return;
-      }
+      const err = this.validate(schema, req.body);
+      if (err) return next(err);
       next();
     };
   }
+
   public validateTokenData(schema: Joi.ObjectSchema) {
     return (req: Request, res: Response, next: NextFunction) => {
-      const { error } = schema.validate(req.user, { abortEarly: false });
-      if (error) {
-        res.status(400).json({
-          message: "Validation error",
-          details: error.details.map((err) => err.message),
-        });
-        return;
-      }
+      const err = this.validate(schema, req.user);
+      if (err) return next(err);
       next();
     };
   }
+
   public validateParams(schema: Joi.ObjectSchema) {
     return (req: Request, res: Response, next: NextFunction) => {
-      const { error } = schema.validate(req.params, { abortEarly: false });
-      if (error) {
-        res.status(400).json({
-          message: "Validation error",
-          details: error.details.map((err) => err.message),
-        });
-        return;
-      }
+      const err = this.validate(schema, req.params);
+      if (err) return next(err);
       next();
     };
   }
