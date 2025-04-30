@@ -72,7 +72,6 @@
 - Sign up as a user
 - Sign in as a user
 - Find a user
-- Retrieve all users
 - Update user information
 - Delete a user
 
@@ -83,7 +82,6 @@
 - Update seller information
 - Delete seller account
 - Find a seller
-- Retrieve all sellers
 
 ---
 
