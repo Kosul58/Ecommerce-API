@@ -47,7 +47,8 @@ export default class OrderController {
 
   // Create a single order
   public createOrder: RequestHandler = async (req, res, next) => {
-    const { userid, productid } = req.body;
+    const { productid } = req.body;
+    const userid = req.user.id;
     try {
       const result = await this.orderService.addOrder(userid, productid);
       if (!result || Object.keys(result).length === 0) {
@@ -65,7 +66,8 @@ export default class OrderController {
 
   // Create multiple orders
   public createOrders: RequestHandler = async (req, res, next) => {
-    const { userid, products } = req.body;
+    const { products } = req.body;
+    const userid = req.user.id;
     try {
       const result = await this.orderService.addOrders(userid, products);
       if (!result || Object.keys(result).length === 0) {

@@ -19,20 +19,14 @@ export default class ProductServices {
       "PRODUCT"
     ) as ProductRepository;
   }
-  private async categoryManager(name: string) {
-    if (name) {
-      const newCategory = { name, description: "", parentId: "" };
-      await this.categoryService.createCategory(newCategory);
-    }
+  private async checkCategory(name: string) {
+    return await this.categoryService.checkCategory(name);
   }
   private async createProduct(
     productData: AddProduct,
     sellerid: string
   ): Promise<Product> {
     const { name, price, inventory, description, category } = productData;
-    if (category) {
-      await this.categoryManager(category);
-    }
     return {
       name,
       sellerid,
@@ -95,7 +89,7 @@ export default class ProductServices {
 
   public async getHiddenProducts(id: string) {
     try {
-      const products = await this.getSellerProducts(id);
+      const products = await this.productRepository.getSellerProducts(id);
       if (!products || products.length === 0) {
         // const error = new Error("No Products found");
         // (error as any).statusCode = 404;
@@ -137,6 +131,10 @@ export default class ProductServices {
         throw error;
       }
 
+      const categoryCheck = await this.checkCategory(product.category);
+      if (categoryCheck === "cat") {
+        return null;
+      }
       const newProduct: Product = await this.createProduct(product, sellerid);
       const result = await this.productRepository.addProduct(newProduct);
       if (!result) {
@@ -169,15 +167,25 @@ export default class ProductServices {
       );
 
       let productList: Product[] = [];
-      for (const product of filteredProducts) {
-        const newProduct = await this.createProduct(product, sellerid);
-        productList.push(newProduct);
-      }
-      if (productList.length === 0) {
+      if (filteredProducts.length === 0) {
         const error = new Error("Products already exist");
         (error as any).statusCode = 409;
         throw error;
       }
+      for (const product of filteredProducts) {
+        const categoryCheck = await this.checkCategory(product.category);
+        const newProduct = await this.createProduct(product, sellerid);
+        if (!categoryCheck) {
+          productList.push(newProduct);
+        }
+      }
+      if (productList.length === 0) {
+        const error = new Error("No matching category found for any prodcut");
+        (error as any).statusCode = 404;
+        throw error;
+      }
+      // if (productList.length !== filteredProducts.length)
+      //   console.log("Some category not found");
       const result = await this.productRepository.addProducts(productList);
       if (!result || result.length === 0) {
         const error = new Error("Product addition failed");
@@ -207,7 +215,12 @@ export default class ProductServices {
         throw error;
       }
       if (update.category) {
-        await this.categoryManager(update.category);
+        const category = await this.checkCategory(update.category);
+        if (!category) {
+          const error = new Error("No category found");
+          (error as any).statusCode = 404;
+          throw error;
+        }
       }
       const result = await this.productRepository.updateOne(
         productid,
@@ -284,7 +297,7 @@ export default class ProductServices {
   }
   public async showProducts(productids: string[]) {
     try {
-      const result = await this.productRepository.hideProducts(productids);
+      const result = await this.productRepository.showProducts(productids);
       if (!result || result.modifiedCount === 0) {
         {
           const error = new Error("Product visiblity change failed");

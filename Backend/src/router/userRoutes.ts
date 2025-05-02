@@ -1,10 +1,8 @@
-// routes/userRoutes.ts
 import express from "express";
 import verifyRole from "../middleware/verifyRole.js";
 import verifyToken from "../middleware/verifyToken.js";
 import UserController from "../controllers/userController.js";
 import { container } from "tsyringe";
-// import UserValidation from "../middleware/userValidation.js";
 import DataValidation from "../middleware/validateData.js";
 import {
   idSchema,

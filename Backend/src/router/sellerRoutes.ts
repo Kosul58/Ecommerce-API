@@ -1,4 +1,3 @@
-// routes/userRoutes.ts
 import express from "express";
 import verifyRole from "../middleware/verifyRole.js";
 import verifyToken from "../middleware/verifyToken.js";

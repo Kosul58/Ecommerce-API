@@ -4,12 +4,10 @@ import { DeliveryStatus, OrderProductStatus } from "../common/types/orderType";
 const orderStatusValues = Object.values(DeliveryStatus);
 const productStatusValues = Object.values(OrderProductStatus);
 export const orderSchema = Joi.object({
-  userid: Joi.string().min(15).required(),
   productid: Joi.string().min(15).required(),
 });
 
 export const ordersSchema = Joi.object({
-  userid: Joi.string().min(15).required(),
   products: Joi.array().items(Joi.string()).min(1).required(),
 });
 

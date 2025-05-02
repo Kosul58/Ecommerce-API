@@ -23,10 +23,16 @@ categoryRoutes.post(
 
 // Read category
 categoryRoutes.get(
+  "/sub/:categoryid",
+  verifyRole.verify("Admin"),
+  categoryController.findSub
+);
+categoryRoutes.get(
   "/",
   verifyRole.verify("Admin"),
   categoryController.readCategories
 );
+
 categoryRoutes.get(
   "/:categoryid",
   verifyRole.verify("Admin"),
@@ -35,6 +41,18 @@ categoryRoutes.get(
 );
 
 // Update category
+
+categoryRoutes.put(
+  "/activate/:categoryid",
+  verifyRole.verify("Admin"),
+  categoryController.activateCategory
+);
+categoryRoutes.put(
+  "/deactivate/:categoryid",
+  verifyRole.verify("Admin"),
+  categoryController.deactivateCategory
+);
+
 categoryRoutes.put(
   "/:categoryid",
   verifyRole.verify("Admin"),

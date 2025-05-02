@@ -47,7 +47,6 @@ export default class UserServices {
       throw error;
     }
   }
-
   public async signUp(user: AddUser, role: string) {
     try {
       const [usernameTaken, emailTaken, phoneTaken] = await Promise.all([
@@ -61,13 +60,11 @@ export default class UserServices {
         if (usernameTaken) reasons.push("Username already taken");
         if (emailTaken) reasons.push("Email already registered");
         if (phoneTaken) reasons.push("Phone number already registered");
-
         const error = new Error("User already exists");
         (error as any).statusCode = 409;
         (error as any).details = reasons;
         throw error;
       }
-
       const newUser = await this.generateUser(user, role);
       const result = await this.userRepository.signUp(newUser);
       if (!result || Object.keys(result).length === 0) {

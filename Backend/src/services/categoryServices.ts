@@ -23,15 +23,16 @@ export default class CategoryService {
       isActive: true,
     };
   }
-  private async checkCategory(name: string) {
+  public async checkCategory(name: string) {
     try {
-      const categories = await this.categoryRepository.checkCategory(name);
-      if (categories) return null;
+      const category = await this.categoryRepository.checkCategory(name);
+      if (category) return null;
       return "cat";
     } catch (err) {
       throw err;
     }
   }
+
   public async createCategory(category: CategoryOption) {
     try {
       const isUnique = await this.checkCategory(category.name);
@@ -122,11 +123,90 @@ export default class CategoryService {
       throw err;
     }
   }
+
   public async deleteCategory(categoryid: string) {
     try {
+      const category = await this.readCategory(categoryid);
+      if (!category) {
+        const error = new Error("No category found");
+        (error as any).statusCode = 500;
+        throw error;
+      }
       const result = await this.categoryRepository.deleteOne(categoryid);
       if (!result) {
         const error = new Error("Failed to delete a category");
+        (error as any).statusCode = 500;
+        throw error;
+      }
+      const categories = await this.findSub(categoryid);
+      const categoryList = categories?.map((p: any) => p.id);
+      if (categoryList) await this.categoryRepository.updateMany(categoryList);
+      return "success";
+    } catch (err) {
+      throw err;
+    }
+  }
+
+  public async activateCategory(categoryid: string) {
+    try {
+      const catagory = await this.categoryRepository.findOne(categoryid);
+      if (!catagory) {
+        const error = new Error("No category found");
+        (error as any).statusCode = 500;
+        throw error;
+      }
+      const update = {
+        isActive: true,
+      };
+      const result = await this.categoryRepository.updateOne(
+        categoryid,
+        update
+      );
+      if (!result) {
+        const error = new Error("Failed to activate a category");
+        (error as any).statusCode = 500;
+        throw error;
+      }
+      return "success";
+    } catch (err) {
+      throw err;
+    }
+  }
+  public async findSub(parentid: string) {
+    try {
+      const categories = await this.categoryRepository.findSubs(parentid);
+      if (!categories || categories.length === 0) {
+        const error = new Error("No categories found");
+        (error as any).statusCode = 404;
+        throw error;
+      }
+      return categories.map((c: any) => ({
+        id: c._id.toString(),
+        name: c.name,
+        description: c.description,
+        parentId: c.parentId,
+      }));
+    } catch (err) {
+      throw err;
+    }
+  }
+  public async deactivateCategory(categoryid: string) {
+    try {
+      const catagory = await this.categoryRepository.findOne(categoryid);
+      if (!catagory) {
+        const error = new Error("No category found");
+        (error as any).statusCode = 500;
+        throw error;
+      }
+      const update = {
+        isActive: false,
+      };
+      const result = await this.categoryRepository.updateOne(
+        categoryid,
+        update
+      );
+      if (!result) {
+        const error = new Error("Failed to deactivate a category");
         (error as any).statusCode = 500;
         throw error;
       }

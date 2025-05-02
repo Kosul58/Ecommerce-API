@@ -35,6 +35,9 @@
 - Find a product
 - Find all products
 - Find products added by a specific seller
+- hide products
+- find hidden products
+- make products visible
 
 #### b. **Cart Operations**
 
@@ -115,10 +118,12 @@
 
 - Sign in (JWT issued)
 - View all sellers, users, carts, and orders
-- Delete sellers, users, or specific products
+- Delete sellers, and user.
 - Remove all products of a seller
 - Update order statuses
 - Full CRUD operations on categories (create, read, update, delete)
+- deactivate or activate a catagory
+- hide seller products
 
 ---
 

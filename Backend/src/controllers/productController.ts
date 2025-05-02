@@ -71,7 +71,10 @@ export default class ProductController {
         sellerid
       );
       if (!result) {
-        return this.responseHandler.error(res, "Failed to add product");
+        return this.responseHandler.error(
+          res,
+          "Failed to add product. No category found"
+        );
       }
       return this.responseHandler.created(
         res,
@@ -184,7 +187,7 @@ export default class ProductController {
   public showProducts: RequestHandler = async (req, res, next) => {
     const products = req.body.products;
     try {
-      const result = await this.productService.hideProducts(products);
+      const result = await this.productService.showProducts(products);
       if (!result) {
         return this.responseHandler.error(
           res,

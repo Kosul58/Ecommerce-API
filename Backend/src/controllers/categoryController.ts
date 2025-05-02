@@ -106,4 +106,50 @@ export default class CategoryController {
       return next(err);
     }
   };
+
+  public activateCategory: RequestHandler = async (req, res, next) => {
+    const { categoryid } = req.params;
+    try {
+      const result = await this.categoryServices.activateCategory(categoryid);
+      if (!result) {
+        return this.responseHandler.notFound(res, "Category not found");
+      }
+      return this.responseHandler.success(
+        res,
+        "Category activate successful",
+        result
+      );
+    } catch (err) {
+      return next(err);
+    }
+  };
+  public deactivateCategory: RequestHandler = async (req, res, next) => {
+    const { categoryid } = req.params;
+    try {
+      const result = await this.categoryServices.deactivateCategory(categoryid);
+      if (!result) {
+        return this.responseHandler.notFound(res, "Category not found");
+      }
+      return this.responseHandler.success(
+        res,
+        "Category deactivate successful",
+        result
+      );
+    } catch (err) {
+      return next(err);
+    }
+  };
+
+  public findSub: RequestHandler = async (req, res, next) => {
+    const { categoryid } = req.params;
+    try {
+      const result = await this.categoryServices.findSub(categoryid);
+      if (!result) {
+        return this.responseHandler.notFound(res, "Category not found");
+      }
+      return this.responseHandler.success(res, "Sub Categories found", result);
+    } catch (err) {
+      return next(err);
+    }
+  };
 }

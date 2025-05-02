@@ -15,8 +15,6 @@ export interface UpdateCategory {
   name?: string;
   description?: string;
   parentId?: string;
-  isActive?: boolean;
-  updatedAt?: string;
 }
 
 //type required to add a category

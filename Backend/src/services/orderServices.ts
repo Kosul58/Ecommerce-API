@@ -165,7 +165,7 @@ export default class OrderService {
         (error as any).statusCode = 404;
         throw error;
       }
-      const product = cart.products.find((p) => p.productid === productid);
+      const product = cart.products.find((p: any) => p.productid === productid);
       if (!product) {
         const error = new Error("No product found in cart");
         (error as any).statusCode = 404;
@@ -208,7 +208,7 @@ export default class OrderService {
         (error as any).statusCode = 404;
         throw error;
       }
-      const filteredProducts = searchProducts.products.filter((p) =>
+      const filteredProducts = searchProducts.products.filter((p: any) =>
         products.includes(p.productid)
       );
 
@@ -394,7 +394,6 @@ export default class OrderService {
         throw error;
       }
       order.items.forEach((p: any) => (p.active = false));
-      order.status = DeliveryStatus.CANCELED;
       const data = await this.orderRepository.orderSave(order);
       if (!data || Object.keys(data).length === 0) {
         const error = new Error("Failed to cancel order of products");

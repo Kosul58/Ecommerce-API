@@ -7,6 +7,7 @@ import categoryRoutes from "./categoryRoutes.js";
 import userRoutes from "./userRoutes.js";
 import verifyToken from "../middleware/verifyToken.js";
 import sellerRoutes from "./sellerRoutes.js";
+import adminRoutes from "./adminRoutes.js";
 const router = express.Router();
 
 router.use("/order", verifyToken.verify, orderRoutes);
@@ -15,5 +16,6 @@ router.use("/product", productRoutes);
 router.use("/category", verifyToken.verify, categoryRoutes);
 router.use("/user", userRoutes);
 router.use("/seller", sellerRoutes);
+router.use("/admin", adminRoutes);
 
 export default router;

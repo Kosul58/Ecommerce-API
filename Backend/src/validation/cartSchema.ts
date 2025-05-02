@@ -7,7 +7,6 @@ export const updateSchema = Joi.object({
 
 export const viewCartParamsSchema = Joi.object({
   productid: Joi.string().min(15).required(),
-  userid: Joi.string().min(15).required(),
 });
 
 export const viewUserCartParamsSchema = Joi.object({
