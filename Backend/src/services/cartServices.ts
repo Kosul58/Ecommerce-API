@@ -2,17 +2,23 @@ import { CartProduct } from "../common/types/cartType.js";
 import { inject, injectable } from "tsyringe";
 import CartRepository from "../repository/cartRepository.js";
 import ProductServices from "./productServices.js";
+import FactoryService from "./factoryService.js";
 
 @injectable()
 export default class CartService {
+  private cartRepository: CartRepository;
   constructor(
-    @inject(CartRepository) private cartRepository: CartRepository,
+    @inject(FactoryService) private factoryService: FactoryService,
     @inject(ProductServices) private productServices: ProductServices
-  ) {}
+  ) {
+    this.cartRepository = this.factoryService.getRepository(
+      "CART"
+    ) as CartRepository;
+  }
 
   public async getProducts() {
     try {
-      const carts = await this.cartRepository.getProducts();
+      const carts = await this.cartRepository.findAll();
       if (!carts || carts.length === 0) {
         const error = new Error("No products found in cart");
         (error as any).statusCode = 404;
@@ -35,7 +41,7 @@ export default class CartService {
         (error as any).statusCode = 404;
         throw error;
       }
-      return cart.products.filter((p) => p.productid === productid);
+      return cart.products.filter((p: any) => p.productid === productid);
     } catch (err) {
       throw err;
     }
@@ -105,7 +111,7 @@ export default class CartService {
         throw error;
       }
       const productIndex = cart.products.findIndex(
-        (p) => p.productid === productid
+        (p: any) => p.productid === productid
       );
       if (productIndex >= 0) {
         cart.products[productIndex].quantity += quantity;
@@ -134,7 +140,7 @@ export default class CartService {
         throw error;
       }
       const productIndex = cart.products.findIndex(
-        (p) => p.productid === productid
+        (p: any) => p.productid === productid
       );
       if (productIndex < 0) {
         const error = new Error("No product found in the cart");
@@ -205,7 +211,9 @@ export default class CartService {
         (error as any).statusCode = 404;
         throw error;
       }
-      const productIndex = cart.products.findIndex((p) => p.productid === pid);
+      const productIndex = cart.products.findIndex(
+        (p: any) => p.productid === pid
+      );
       if (productIndex < 0) {
         const error = new Error("No product found in cart");
         (error as any).statusCode = 404;
@@ -232,7 +240,7 @@ export default class CartService {
         (error as any).statusCode = 404;
         throw error;
       }
-      const myCart = data.products.map((p) => ({
+      const myCart = data.products.map((p: any) => ({
         productid: p.productid,
         quantity: p.quantity,
       }));
@@ -242,8 +250,10 @@ export default class CartService {
         (error as any).statusCode = 404;
         throw error;
       }
-      const productMap = new Map(products.map((p) => [p.id, p.price]));
-      return myCart.reduce((sum, item) => {
+      const productMap: Map<string, number> = new Map(
+        products.map((p: any) => [p.id, p.price])
+      );
+      return myCart.reduce((sum: number, item: CartProduct) => {
         const price = productMap.get(item.productid) || 0;
         return sum + price * item.quantity;
       }, 0);
@@ -254,7 +264,7 @@ export default class CartService {
 
   public async deleteCart(userid: string) {
     try {
-      const result = await this.cartRepository.deleteCart(userid);
+      const result = await this.cartRepository.deleteOne(userid);
       if (!result || Object.keys(result).length === 0) {
         const error = new Error("Failed to delete a cart");
         (error as any).statusCode = 500;

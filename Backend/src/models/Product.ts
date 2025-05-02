@@ -1,4 +1,4 @@
-import { required } from "joi";
+import { boolean, required } from "joi";
 import mongoose from "mongoose";
 
 const productSchema = new mongoose.Schema({
@@ -29,6 +29,11 @@ const productSchema = new mongoose.Schema({
   },
   inventory: {
     type: Number,
+    required: true,
+  },
+  active: {
+    type: Boolean,
+    default: true,
     required: true,
   },
 });

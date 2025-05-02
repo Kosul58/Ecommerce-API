@@ -36,6 +36,19 @@ export default class ProductController {
     }
   };
 
+  public getHiddenProducts: RequestHandler = async (req, res, next) => {
+    const sellerid = req.user.id;
+    try {
+      const result = await this.productService.getHiddenProducts(sellerid);
+      if (!result) {
+        return this.responseHandler.notFound(res, "No products found");
+      }
+      return this.responseHandler.success(res, "Products found", result);
+    } catch (err) {
+      return next(err);
+    }
+  };
+
   public getProductById: RequestHandler = async (req, res, next) => {
     const { productid } = req.params;
     try {
@@ -106,7 +119,7 @@ export default class ProductController {
       }
       return this.responseHandler.success(
         res,
-        `Product ${productid} updated successfully`,
+        `Product updated successfully`,
         result
       );
     } catch (err) {
@@ -151,6 +164,58 @@ export default class ProductController {
     }
   };
 
+  public hideProducts: RequestHandler = async (req, res, next) => {
+    const products = req.body.products;
+    try {
+      const result = await this.productService.hideProducts(products);
+      if (!result) {
+        return this.responseHandler.error(res, "Failed to hide products");
+      }
+      return this.responseHandler.success(
+        res,
+        "Products hidden successfully",
+        result
+      );
+    } catch (err) {
+      return next(err);
+    }
+  };
+
+  public showProducts: RequestHandler = async (req, res, next) => {
+    const products = req.body.products;
+    try {
+      const result = await this.productService.hideProducts(products);
+      if (!result) {
+        return this.responseHandler.error(
+          res,
+          "Failed to make products visible"
+        );
+      }
+      return this.responseHandler.success(
+        res,
+        "Products made visible successfully",
+        result
+      );
+    } catch (err) {
+      return next(err);
+    }
+  };
+  public hideSellerProducts: RequestHandler = async (req, res, next) => {
+    try {
+      const sellerid = req.user.id;
+      const result = await this.productService.hideSellerProducts(sellerid);
+      if (!result) {
+        return this.responseHandler.error(res, "Failed to hide products");
+      }
+      return this.responseHandler.success(
+        res,
+        "Seller Products hidden successfully",
+        result
+      );
+    } catch (err) {
+      return next(err);
+    }
+  };
   public modifyInventory: RequestHandler = async (req, res, next) => {
     const { productid } = req.params;
     const { quantity, modification } = req.body;

@@ -1,19 +1,20 @@
 import { Cart, CartDocument, CartProduct } from "../common/types/cartType.js";
+import { CartRepositoryInterface } from "../common/types/classInterfaces.js";
 import CartSchema from "../models/cart.js";
 import { injectable } from "tsyringe";
+import { BaseRepository } from "./baseRepository.js";
 
 @injectable()
-export default class CartRepository {
-  public async getProducts() {
-    try {
-      return await CartSchema.find();
-    } catch (err) {
-      throw err;
-    }
+export default class CartRepository
+  extends BaseRepository
+  implements CartRepositoryInterface
+{
+  constructor() {
+    super(CartSchema);
   }
   public async getCart(userid: string) {
     try {
-      return await CartSchema.findOne({ userid });
+      return await this.model.findOne({ userid });
     } catch (err) {
       throw err;
     }
@@ -107,7 +108,7 @@ export default class CartRepository {
   //   }
   // }
 
-  public async deleteCart(userid: string) {
+  public async deleteOne(userid: string) {
     try {
       return await CartSchema.findOneAndDelete({ userid });
     } catch (err) {

@@ -1,77 +1,50 @@
-import { idText } from "typescript";
-import {
-  Order,
-  OrderType,
-  DeliveryStatus,
-  ReturnStatus,
-  DeliveryOrder,
-  ReturnOrder,
-  OrderProductStatus,
-  OrderDocumnet,
-} from "../common/types/orderType.js";
+import { Order, OrderType, OrderDocumnet } from "../common/types/orderType.js";
 import OrderSchema from "../models/order.js";
 import { injectable } from "tsyringe";
+import {
+  Repository,
+  OrderRepositoryInterface,
+} from "../common/types/classInterfaces.js";
+import { BaseRepository } from "./baseRepository.js";
 
 @injectable()
-export default class OrderRepository {
-  public async getOrders() {
-    try {
-      return await OrderSchema.find();
-    } catch (err) {
-      throw err;
-    }
+export default class OrderRepository
+  extends BaseRepository
+  implements OrderRepositoryInterface
+{
+  constructor() {
+    super(OrderSchema);
   }
-  public async getUserOrders(userid: string) {
+
+  public async getSellerOrders() {
     try {
-      return await OrderSchema.find({ userid });
-    } catch (err) {
-      throw err;
-    }
-  }
-  public async getOrderById(orderid: string): Promise<OrderDocumnet | null> {
-    try {
-      return await OrderSchema.findById(orderid);
-    } catch (err) {
-      throw err;
-    }
-  }
-  public async addOrder(order: Order) {
-    try {
-      const newOrder = new OrderSchema(order);
-      return newOrder.save();
-    } catch (err) {
-      throw err;
-    }
-  }
-  public async addOrders(order: Order) {
-    try {
-      const newOrder = new OrderSchema(order);
-      return await newOrder.save();
+      return await this.model.find({
+        status: { $nin: ["Canceled", "Delivered"] },
+      });
     } catch (err) {
       throw err;
     }
   }
 
-  // public async saveOrder(order: OrderDocumnet, productIndex: number) {
-  //   try {
-  //     order.items[productIndex].active = false;
-  //     order.markModified("items");
-  //     return order.save();
-  //   } catch (err) {
-  //     throw err;
-  //   }
-  // }
+  public async getUserOrders(userid: string) {
+    try {
+      return await this.model.find({ userid });
+    } catch (err) {
+      throw err;
+    }
+  }
 
   public async cancelDeliveryOrder(order: OrderDocumnet, productIndex: number) {
     try {
       order.items[productIndex].active = false;
       order.markModified("items");
-      return order.save();
+      return await order.save();
     } catch (err) {
       throw err;
     }
   }
-  public async cancelDeliveryOrders(order: OrderDocumnet) {
+
+  public async orderSave(order: OrderDocumnet) {
     try {
       order.markModified("items");
       return await order.save();
@@ -80,21 +53,31 @@ export default class OrderRepository {
     }
   }
 
-  public async updateProductStatus(order: OrderDocumnet) {
-    try {
-      order.markModified("items");
-      return await order.save();
-    } catch (err) {
-      throw err;
-    }
-  }
-  public async updateOrderStatus(order: OrderDocumnet) {
-    try {
-      return await order.save();
-    } catch (err) {
-      throw err;
-    }
-  }
+  // public async cancelDeliveryOrders(order: OrderDocumnet) {
+  //   try {
+  //     order.markModified("items");
+  //     return await order.save();
+  //   } catch (err) {
+  //     throw err;
+  //   }
+  // }
+
+  // public async updateProductStatus(order: OrderDocumnet) {
+  //   try {
+  //     order.markModified("items");
+  //     return await order.save();
+  //   } catch (err) {
+  //     throw err;
+  //   }
+  // }
+
+  // public async updateOrderStatus(order: OrderDocumnet) {
+  //   try {
+  //     return await order.save();
+  //   } catch (err) {
+  //     throw err;
+  //   }
+  // }
 
   public async returnOrder(
     orderid: string,
@@ -103,10 +86,10 @@ export default class OrderRepository {
     type: OrderType.REFUND | OrderType.REPLACE
   ) {
     try {
-      // const order = await OrderSchema.findOne({ _id: orderid, userid });
+      // const order = await this.model.findOne({ _id: orderid, userid });
       // const product = order?.items.find((p) => p.productid === productid);
-      // const returnOrder = this.generateOrder(userid, type);
-      // return { orderid, usserid, product };
+      // return { order, product, type };
+      throw new Error("returnOrder not implemented yet.");
     } catch (err) {
       throw err;
     }

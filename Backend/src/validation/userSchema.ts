@@ -34,3 +34,10 @@ export const idSchema = Joi.object({
   iat: Joi.optional(),
   exp: Joi.optional(),
 });
+
+export const hideSchema = Joi.object({
+  products: Joi.array()
+    .items(Joi.string().length(24).hex().required())
+    .min(1)
+    .required(),
+});

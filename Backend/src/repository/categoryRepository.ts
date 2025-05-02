@@ -1,49 +1,29 @@
 import { Category, UpdateCategory } from "../common/types/categoryType.js";
+import { CategoryRepositoryInterface } from "../common/types/classInterfaces.js";
 import CategorySchema from "../models/category.js";
 import { injectable } from "tsyringe";
+import { BaseRepository } from "./baseRepository.js";
 
 @injectable()
-export default class CategoryRepository {
-  public async createCategory(category: Category) {
+export default class CategoryRepository
+  extends BaseRepository
+  implements CategoryRepositoryInterface
+{
+  constructor() {
+    super(CategorySchema);
+  }
+
+  public async checkCategory(name: string) {
     try {
-      const newCategory = new CategorySchema(category);
-      return await newCategory.save();
+      return await this.model.findOne({ name });
     } catch (err) {
       throw err;
     }
   }
 
-  public async readCategories() {
+  public async findAll() {
     try {
-      return await CategorySchema.find({ isActive: true });
-    } catch (err) {
-      throw err;
-    }
-  }
-
-  public async readCategory(categoryid: string) {
-    try {
-      return await CategorySchema.findById(categoryid);
-    } catch (err) {
-      throw err;
-    }
-  }
-
-  public async updateCategory(categoryid: string, update: UpdateCategory) {
-    try {
-      return await CategorySchema.findByIdAndUpdate(
-        categoryid,
-        { $set: update },
-        { new: true }
-      );
-    } catch (err) {
-      throw err;
-    }
-  }
-
-  public async deleteCategory(categoryid: string) {
-    try {
-      return CategorySchema.findByIdAndDelete(categoryid);
+      return await this.model.find({ isActive: true });
     } catch (err) {
       throw err;
     }

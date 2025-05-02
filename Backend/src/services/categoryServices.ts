@@ -5,12 +5,16 @@ import {
 } from "../common/types/categoryType.js";
 import CategoryRepository from "../repository/categoryRepository.js";
 import { inject, injectable } from "tsyringe";
+import FactoryService from "./factoryService.js";
 
 @injectable()
 export default class CategoryService {
-  constructor(
-    @inject(CategoryRepository) private categoryRepository: CategoryRepository
-  ) {}
+  private categoryRepository: CategoryRepository;
+  constructor(@inject(FactoryService) private factoryService: FactoryService) {
+    this.categoryRepository = this.factoryService.getRepository(
+      "CATEGORY"
+    ) as CategoryRepository;
+  }
   private generateCategory(category: CategoryOption): Category {
     return {
       name: category.name,
@@ -21,9 +25,9 @@ export default class CategoryService {
   }
   private async checkCategory(name: string) {
     try {
-      const categories = await this.readCategories();
-      if (!categories) return "nocategories";
-      return !categories.find((c) => c.name === name);
+      const categories = await this.categoryRepository.checkCategory(name);
+      if (categories) return null;
+      return "cat";
     } catch (err) {
       throw err;
     }
@@ -31,14 +35,14 @@ export default class CategoryService {
   public async createCategory(category: CategoryOption) {
     try {
       const isUnique = await this.checkCategory(category.name);
-      if (!isUnique || isUnique === "nocategories") {
+      if (!isUnique) {
         // const error = new Error("Category already exists");
         // (error as any).statusCode = 409;
         // throw error;
         return null;
       }
       const newCategory = this.generateCategory(category);
-      const result = await this.categoryRepository.createCategory(newCategory);
+      const result = await this.categoryRepository.create(newCategory);
       if (!result || Object.keys(result).length === 0) {
         const error = new Error("Failed to create a category");
         (error as any).statusCode = 500;
@@ -51,13 +55,13 @@ export default class CategoryService {
   }
   public async readCategories() {
     try {
-      const categories = await this.categoryRepository.readCategories();
+      const categories = await this.categoryRepository.findAll();
       if (!categories || categories.length === 0) {
         const error = new Error("No categories found");
         (error as any).statusCode = 404;
         throw error;
       }
-      return categories.map((c) => ({
+      return categories.map((c: any) => ({
         name: c.name,
         description: c.description,
         parentId: c.parentId,
@@ -68,7 +72,7 @@ export default class CategoryService {
   }
   public async readCategory(categoryid: string) {
     try {
-      const category = await this.categoryRepository.readCategory(categoryid);
+      const category = await this.categoryRepository.findOne(categoryid);
       if (!category) {
         const error = new Error("Failed to find category");
         (error as any).statusCode = 500;
@@ -104,7 +108,7 @@ export default class CategoryService {
           throw error;
         }
       }
-      const result = await this.categoryRepository.updateCategory(
+      const result = await this.categoryRepository.updateOne(
         categoryid,
         updateFields
       );
@@ -120,7 +124,7 @@ export default class CategoryService {
   }
   public async deleteCategory(categoryid: string) {
     try {
-      const result = await this.categoryRepository.deleteCategory(categoryid);
+      const result = await this.categoryRepository.deleteOne(categoryid);
       if (!result) {
         const error = new Error("Failed to delete a category");
         (error as any).statusCode = 500;

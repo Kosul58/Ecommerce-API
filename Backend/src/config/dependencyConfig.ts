@@ -8,7 +8,7 @@ import CategoryRepository from "../repository/categoryRepository.js";
 import CategoryController from "../controllers/categoryController.js";
 import ProductController from "../controllers/productController.js";
 import ProductServices from "../services/productServices.js";
-import ProductRepository from "../repository/productRepositroy.js";
+import ProductRepository from "../repository/productRepository.js";
 import CartRepository from "../repository/cartRepository.js";
 import CartService from "../services/cartServices.js";
 import CartController from "../controllers/cartController.js";
@@ -23,6 +23,7 @@ import AuthServices from "../services/authServices.js";
 import DataValidation from "../middleware/validateData.js";
 import ResponseHandler from "../utils/apiResponse.js";
 import ErrorMiddleware from "../middleware/errorMiddleware.js";
+import FactoryService from "../services/factoryService.js";
 
 container.register(CategoryController, { useClass: CategoryController });
 container.register(CategoryService, { useClass: CategoryService });
@@ -48,5 +49,8 @@ container.register(AuthServices, { useClass: AuthServices });
 container.register(DataValidation, { useClass: DataValidation });
 container.register(ResponseHandler, { useClass: ResponseHandler });
 container.register(ErrorMiddleware, { useClass: ErrorMiddleware });
+container.register(FactoryService, {
+  useClass: FactoryService,
+});
 // const isRegistered = container.isRegistered(UserController);
 // console.log(isRegistered);

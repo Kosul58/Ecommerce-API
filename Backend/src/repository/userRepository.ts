@@ -1,77 +1,57 @@
 import { inject, injectable } from "tsyringe";
 import { UpdateUser, User } from "../common/types/userType.js";
-import MongoDb from "../config/mongoConfig.js";
+import { UserRepositoryInterface } from "../common/types/classInterfaces.js";
 import UserSchema from "../models/user.js";
+import { BaseRepository } from "./baseRepository.js";
+import { Document } from "mongoose";
 
 @injectable()
-export default class UserRepository {
+export default class UserRepository
+  extends BaseRepository
+  implements UserRepositoryInterface
+{
+  constructor() {
+    super(UserSchema);
+  }
   public async findUserName(username: string, excludeId?: string) {
-    const user = await UserSchema.findOne({ username });
+    const user = await this.model.findOne({ username });
     return user && user._id.toString() !== excludeId;
   }
-
   public async findEmail(email: string, excludeId?: string) {
-    const user = await UserSchema.findOne({ email });
+    const user = await this.model.findOne({ email });
     return user && user._id.toString() !== excludeId;
   }
-
   public async findPhoneNumber(phone: number, excludeId?: string) {
-    const user = await UserSchema.findOne({ phone });
+    const user = await this.model.findOne({ phone });
     return user && user._id.toString() !== excludeId;
   }
-
   public async signIn(username: string, email: string) {
     try {
-      return await UserSchema.findOne({ username, email });
+      return await this.model.findOne({ username, email });
     } catch (err) {
       throw err;
     }
   }
-
   public async signUp(user: User) {
     try {
-      const newUser = new UserSchema(user);
-      return newUser.save();
+      return await this.create(user);
     } catch (err) {
       throw err;
     }
   }
-  public async findUser(userid: string) {
+  public async updatePassword(userid: string, password: string) {
     try {
-      return await UserSchema.findById(userid);
-    } catch (err) {
-      throw err;
-    }
-  }
-  public async findUsers() {
-    try {
-      return await UserSchema.find();
+      return await this.updateOne(userid, { password });
     } catch (err) {
       throw err;
     }
   }
 
-  public async deleteUser(userid: string) {
+  public async updateEmail(userid: string, email: string) {
     try {
-      return await UserSchema.findByIdAndDelete(userid);
+      return await this.updateOne(userid, { email });
     } catch (err) {
       throw err;
     }
   }
-
-  public async updateUser(userid: string, update: UpdateUser) {
-    try {
-      return await UserSchema.findByIdAndUpdate(
-        userid,
-        { $set: update },
-        { new: true }
-      );
-    } catch (err) {
-      throw err;
-    }
-  }
-
-  public async updatePassword(userid: string, password: string) {}
-
-  public async updateEmail(userid: string, email: string) {}
 }

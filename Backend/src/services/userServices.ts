@@ -11,15 +11,22 @@ import CartService from "./cartServices.js";
 import UserRepository from "../repository/userRepository.js";
 import Utills from "../utils/utils.js";
 
+import FactoryService from "./factoryService.js"; // make sure the path is correct
+
 @injectable()
 export default class UserServices {
+  private userRepository: UserRepository;
+
   constructor(
-    @inject(UserRepository) private userRepository: UserRepository,
+    @inject(FactoryService) private factoryService: FactoryService,
     @inject(CartService) private cartService: CartService,
     @inject(AuthServices) private authService: AuthServices,
     @inject(Utills) private utils: Utills
-  ) {}
-
+  ) {
+    this.userRepository = this.factoryService.getRepository(
+      "USER"
+    ) as UserRepository;
+  }
   private async generateUser(user: AddUser, role: string): Promise<User> {
     try {
       const encryptedPassword = await this.utils.encryptPassword(user.password);
@@ -120,7 +127,7 @@ export default class UserServices {
 
   public async getUser(userid: string) {
     try {
-      const result = await this.userRepository.findUser(userid);
+      const result = await this.userRepository.findOne(userid);
       if (!result || Object.keys(result).length === 0) {
         const error = new Error("User not found");
         (error as any).statusCode = 404;
@@ -134,13 +141,13 @@ export default class UserServices {
 
   public async getUsers() {
     try {
-      const result = await this.userRepository.findUsers();
+      const result = await this.userRepository.findAll();
       if (!result || result.length === 0) {
         const error = new Error("No users found");
         (error as any).statusCode = 404;
         throw error;
       }
-      return result.map((user) => this.returnData(user));
+      return result.map((user: any) => this.returnData(user));
     } catch (err) {
       throw err;
     }
@@ -155,7 +162,7 @@ export default class UserServices {
           throw error;
         }
       }
-      const data = await this.userRepository.deleteUser(userid);
+      const data = await this.userRepository.deleteOne(userid);
       if (!data) {
         const error = new Error("User not found or already deleted");
         (error as any).statusCode = 404;
@@ -197,7 +204,7 @@ export default class UserServices {
           throw error;
         }
       }
-      const result = await this.userRepository.updateUser(userid, updateFields);
+      const result = await this.userRepository.updateOne(userid, updateFields);
       if (!result) {
         return;
       }

@@ -1,20 +1,24 @@
 import { injectable, inject } from "tsyringe";
-import categoryService from "./categoryServices.js";
 import {
   AddProduct,
   Product,
   ProductReturn,
   UpdateProdcut,
 } from "../common/types/productType.js";
-import ProductRepository from "../repository/productRepositroy.js";
+import ProductRepository from "../repository/productRepository";
 import CategoryService from "./categoryServices.js";
+import FactoryService from "./factoryService.js";
 @injectable()
 export default class ProductServices {
+  private productRepository: ProductRepository;
   constructor(
-    @inject(CategoryService) private categoryService: CategoryService,
-    @inject(ProductRepository)
-    private productRepositroy: ProductRepository
-  ) {}
+    @inject(FactoryService) private factoryService: FactoryService,
+    @inject(CategoryService) private categoryService: CategoryService
+  ) {
+    this.productRepository = this.factoryService.getRepository(
+      "PRODUCT"
+    ) as ProductRepository;
+  }
   private async categoryManager(name: string) {
     if (name) {
       const newCategory = { name, description: "", parentId: "" };
@@ -61,13 +65,13 @@ export default class ProductServices {
   }
   public async getProducts() {
     try {
-      const products = await this.productRepositroy.getProducts();
+      const products = await this.productRepository.findAll();
       if (!products || products.length === 0) {
         const error = new Error("No Products found");
         (error as any).statusCode = 404;
         throw error;
       }
-      return products.map((p) => this.returnProductData(p));
+      return products.map((p: any) => this.returnProductData(p));
     } catch (err) {
       throw err;
     }
@@ -76,13 +80,31 @@ export default class ProductServices {
   //to get the products of a seller
   public async getSellerProducts(id: string) {
     try {
-      const products = await this.productRepositroy.getSellerProducts(id);
+      const products = await this.productRepository.getSellerProducts(id);
       if (!products || products.length === 0) {
-        const error = new Error("No Products found");
-        (error as any).statusCode = 404;
-        throw error;
+        // const error = new Error("No Products found");
+        // (error as any).statusCode = 404;
+        // throw error;
+        return null;
       }
-      return products.map((p) => this.returnProductData(p));
+      return products.map((p: any) => this.returnProductData(p));
+    } catch (err) {
+      throw err;
+    }
+  }
+
+  public async getHiddenProducts(id: string) {
+    try {
+      const products = await this.getSellerProducts(id);
+      if (!products || products.length === 0) {
+        // const error = new Error("No Products found");
+        // (error as any).statusCode = 404;
+        // throw error;
+        return null;
+      }
+      return products
+        .filter((p: any) => p.active === false)
+        .map((p: any) => this.returnProductData(p));
     } catch (err) {
       throw err;
     }
@@ -90,7 +112,7 @@ export default class ProductServices {
 
   public async getProductById(productid: string) {
     try {
-      const product = await this.productRepositroy.getProductById(productid);
+      const product = await this.productRepository.findOne(productid);
       if (!product) {
         const error = new Error("No Products found");
         (error as any).statusCode = 404;
@@ -104,7 +126,7 @@ export default class ProductServices {
 
   public async addProduct(product: AddProduct, sellerid: string) {
     try {
-      const check = await this.productRepositroy.checkProduct({
+      const check = await this.productRepository.checkProduct({
         ...product,
         sellerid,
       });
@@ -116,7 +138,7 @@ export default class ProductServices {
       }
 
       const newProduct: Product = await this.createProduct(product, sellerid);
-      const result = await this.productRepositroy.addProduct(newProduct);
+      const result = await this.productRepository.addProduct(newProduct);
       if (!result) {
         const error = new Error("Product addition failed");
         (error as any).statusCode = 500;
@@ -130,26 +152,39 @@ export default class ProductServices {
 
   public async addProducts(products: AddProduct[], sellerid: string) {
     try {
-      const searchedProducts = await this.productRepositroy.checkProducts(
-        products
+      const productInputs: Product[] = products.map((p) => ({
+        ...p,
+        sellerid,
+      }));
+
+      const existingProducts = await this.productRepository.checkProducts(
+        productInputs
       );
       const existingSet = new Set(
-        searchedProducts.map((p: any) => `${p.name}-${p.price}`)
+        existingProducts.map((p: any) => `${p.name}-${p.price}-${p.sellerid}`)
       );
-      const filteredProducts = products.filter(
-        (p) => !existingSet.has(`${p.name}-${p.price}`)
+
+      const filteredProducts = productInputs.filter(
+        (p) => !existingSet.has(`${p.name}-${p.price}-${p.sellerid}`)
       );
-      const productList: Product[] = [];
+
+      let productList: Product[] = [];
       for (const product of filteredProducts) {
         const newProduct = await this.createProduct(product, sellerid);
         productList.push(newProduct);
       }
-      const result = await this.productRepositroy.addProducts(productList);
+      if (productList.length === 0) {
+        const error = new Error("Products already exist");
+        (error as any).statusCode = 409;
+        throw error;
+      }
+      const result = await this.productRepository.addProducts(productList);
       if (!result || result.length === 0) {
         const error = new Error("Product addition failed");
         (error as any).statusCode = 500;
         throw error;
       }
+      productList = [];
       return "success";
     } catch (err) {
       throw err;
@@ -174,7 +209,7 @@ export default class ProductServices {
       if (update.category) {
         await this.categoryManager(update.category);
       }
-      const result = await this.productRepositroy.updateProduct(
+      const result = await this.productRepository.updateOne(
         productid,
         updateFields
       );
@@ -193,11 +228,12 @@ export default class ProductServices {
     try {
       const prodcut = await this.getProductById(productid);
       if (!prodcut || prodcut.sellerid !== sellerid) {
-        const error = new Error("No product found");
-        (error as any).statusCode = 404;
-        throw error;
+        // const error = new Error("No product found");
+        // (error as any).statusCode = 404;
+        // throw error;
+        return null;
       }
-      const result = await this.productRepositroy.deleteProduct(productid);
+      const result = await this.productRepository.deleteOne(productid);
       if (!result || Object.keys(result).length === 0) {
         const error = new Error("Product delete failed");
         (error as any).statusCode = 500;
@@ -218,8 +254,8 @@ export default class ProductServices {
         // throw error;
         return null;
       }
-      const deleteIds = products.map((p) => p.id);
-      const result = await this.productRepositroy.deleteProducts(deleteIds);
+      const deleteIds = products.map((p: any) => p.id);
+      const result = await this.productRepository.deleteProducts(deleteIds);
       if (!result || result.deletedCount === 0) {
         {
           const error = new Error("Products deletion failed");
@@ -233,13 +269,62 @@ export default class ProductServices {
     }
   }
 
+  public async hideProducts(productids: string[]) {
+    try {
+      const result = await this.productRepository.hideProducts(productids);
+      if (!result || result.modifiedCount === 0) {
+        {
+          const error = new Error("Product hide failed");
+          (error as any).statusCode = 500;
+          throw error;
+        }
+      }
+      return "success";
+    } catch (err) {}
+  }
+  public async showProducts(productids: string[]) {
+    try {
+      const result = await this.productRepository.hideProducts(productids);
+      if (!result || result.modifiedCount === 0) {
+        {
+          const error = new Error("Product visiblity change failed");
+          (error as any).statusCode = 500;
+          throw error;
+        }
+      }
+      return "success";
+    } catch (err) {}
+  }
+
+  public async hideSellerProducts(sellerid: string) {
+    try {
+      const products = await this.getSellerProducts(sellerid);
+      if (!products || products.length === 0) {
+        // const error = new Error("No products found to hide");
+        // (error as any).statusCode = 404;
+        // throw error;
+        return null;
+      }
+      const deleteIds = products.map((p: any) => p.id);
+      const result = await this.productRepository.hideProducts(deleteIds);
+      if (!result || result.modifiedCount === 0) {
+        {
+          const error = new Error("Product hide failed");
+          (error as any).statusCode = 500;
+          throw error;
+        }
+      }
+      return "success";
+    } catch (err) {}
+  }
+
   public async modifyInventory(
     id: string,
     quantity: number,
     modification: "increase" | "decrease"
   ) {
     try {
-      const product = await this.productRepositroy.getProductById(id);
+      const product = await this.productRepository.findOne(id);
       if (!product) {
         const error = new Error("No product found");
         (error as any).statusCode = 404;
@@ -256,7 +341,7 @@ export default class ProductServices {
       } else {
         newInventory -= quantity;
       }
-      const result = await this.productRepositroy.manageInventory(
+      const result = await this.productRepository.manageInventory(
         id,
         newInventory
       );

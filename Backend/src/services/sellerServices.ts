@@ -5,14 +5,20 @@ import { UserReturn, UserRole } from "../common/types/userType.js";
 import SellerRepository from "../repository/sellerRepository.js";
 import AuthService from "./authServices.js";
 import ProductServices from "./productServices.js";
+import FactoryService from "./factoryService.js";
 @injectable()
 export default class SellerServices {
+  private sellerRepository: SellerRepository;
   constructor(
-    @inject(SellerRepository) private sellerRepository: SellerRepository,
+    @inject(FactoryService) private factoryService: FactoryService,
     @inject(AuthService) private authService: AuthService,
     @inject(Utills) private utils: Utills,
     @inject(ProductServices) private productServices: ProductServices
-  ) {}
+  ) {
+    this.sellerRepository = this.factoryService.getRepository(
+      "SELLER"
+    ) as SellerRepository;
+  }
   private async generateSeller(seller: AddSeller): Promise<Seller> {
     try {
       const encryptedPassword = await this.utils.encryptPassword(
@@ -50,7 +56,7 @@ export default class SellerServices {
   }
   public async getSeller(sellerid: string) {
     try {
-      const seller = await this.sellerRepository.findSeller(sellerid);
+      const seller = await this.sellerRepository.findOne(sellerid);
       if (!seller || Object.keys(seller).length === 0) {
         const error = new Error("No seller found");
         (error as any).statusCode = 404;
@@ -64,13 +70,13 @@ export default class SellerServices {
 
   public async getSellers() {
     try {
-      const sellers = await this.sellerRepository.findSellers();
+      const sellers = await this.sellerRepository.findAll();
       if (!sellers || sellers.length === 0) {
         const error = new Error("No sellers found");
         (error as any).statusCode = 404;
         throw error;
       }
-      return sellers.map((s) => this.returnData(s));
+      return sellers.map((s: any) => this.returnData(s));
     } catch (err) {
       throw err;
     }
@@ -189,7 +195,7 @@ export default class SellerServices {
         }
       }
 
-      const result = await this.sellerRepository.updateSeller(
+      const result = await this.sellerRepository.updateOne(
         sellerid,
         updateFields
       );
@@ -218,9 +224,12 @@ export default class SellerServices {
         (error as any).statusCode = 404;
         throw error;
       }
-      const result = await this.sellerRepository.deleteSeller(sellerid);
-      if (result) {
-        await this.productServices.deleteProducts(sellerid);
+      const result = await this.sellerRepository.deleteOne(sellerid);
+      if (result && role === "Seller") {
+        const data = await this.productServices.deleteProducts(sellerid);
+        return "success";
+      } else if (role === "Admin") {
+        const data = await this.productServices.hideSellerProducts(sellerid);
         return "success";
       }
       return null;

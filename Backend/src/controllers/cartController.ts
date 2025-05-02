@@ -95,7 +95,8 @@ export default class CartController {
 
   // Remove multiple products from cart
   public removeProducts: RequestHandler = async (req, res, next) => {
-    const { userid, products } = req.body;
+    const userid = req.user.id;
+    const { products } = req.body;
     try {
       const result = await this.cartService.removeProducts(userid, products);
       if (!result) {
@@ -116,8 +117,8 @@ export default class CartController {
 
   // Update a product in the cart
   public updateProduct: RequestHandler = async (req, res, next) => {
-    const { userid, productid, quantity } = req.body as {
-      userid: string;
+    const userid = req.user.id;
+    const { productid, quantity } = req.body as {
       productid: string;
       quantity: number;
     };

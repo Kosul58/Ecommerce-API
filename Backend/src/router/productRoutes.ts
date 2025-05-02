@@ -4,7 +4,7 @@ import verifyRole from "../middleware/verifyRole.js";
 import verifyToken from "../middleware/verifyToken.js";
 import { container } from "tsyringe";
 import DataValidation from "../middleware/validateData.js";
-import { idSchema } from "../validation/userSchema.js";
+import { hideSchema, idSchema } from "../validation/userSchema.js";
 import {
   modifySchema,
   productParamsSchema,
@@ -38,9 +38,32 @@ productRoutes.get(
   dataValidation.validateTokenData(idSchema),
   productController.getSellerProducts
 );
+productRoutes.get(
+  "/hiddenproduct",
+  verifyToken.verify,
+  verifyRole.verify("Seller"),
+  dataValidation.validateTokenData(idSchema),
+  productController.getHiddenProducts
+);
 productRoutes.get("/:productid", productController.getProductById);
 
 // Update product
+productRoutes.put(
+  "/hide",
+  verifyToken.verify,
+  verifyRole.verify("Seller"),
+  dataValidation.validateTokenData(idSchema),
+  dataValidation.validateBody(hideSchema),
+  productController.hideProducts
+);
+productRoutes.put(
+  "/show",
+  verifyToken.verify,
+  verifyRole.verify("Seller"),
+  dataValidation.validateTokenData(idSchema),
+  dataValidation.validateBody(hideSchema),
+  productController.showProducts
+);
 productRoutes.put(
   "/:productid",
   verifyToken.verify,

@@ -18,7 +18,7 @@ export default class AuthServices {
         "JWT_SECRET_KEY is not defined in the environment variables"
       );
     }
-    const options: jwt.SignOptions = { expiresIn: "1h" };
+    const options: jwt.SignOptions = { expiresIn: "10h" };
     return jwt.sign(payload, secretKey, options);
   };
 }

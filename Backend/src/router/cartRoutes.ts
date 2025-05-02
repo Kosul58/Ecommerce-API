@@ -6,7 +6,6 @@ import DataValidation from "../middleware/validateData.js";
 import { idSchema } from "../validation/userSchema.js";
 import {
   addCartSchema,
-  removeProductSchema,
   removeProductsSchema,
   updateSchema,
   viewCartParamsSchema,
@@ -63,7 +62,6 @@ cartRoutes.put(
 cartRoutes.delete(
   "/:productid",
   verifyRole.verify("User"),
-  dataValidation.validateBody(removeProductSchema),
   cartController.removeProduct
 );
 
