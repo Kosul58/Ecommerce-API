@@ -8,6 +8,7 @@ import userRoutes from "./userRoutes.js";
 import verifyToken from "../middleware/verifyToken.js";
 import sellerRoutes from "./sellerRoutes.js";
 import adminRoutes from "./adminRoutes.js";
+import mailRoutes from "./mailRoutes.js";
 const router = express.Router();
 
 router.use("/order", verifyToken.verify, orderRoutes);
@@ -17,5 +18,6 @@ router.use("/category", verifyToken.verify, categoryRoutes);
 router.use("/user", userRoutes);
 router.use("/seller", sellerRoutes);
 router.use("/admin", adminRoutes);
+router.use("/mail", mailRoutes);
 
 export default router;

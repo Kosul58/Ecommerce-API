@@ -49,21 +49,28 @@ export default class ProductRepository
     return await this.model.deleteMany({ _id: { $in: objectIds } });
   }
 
-  public async hideProducts(ids: string[]) {
+  public async updateStatus(ids: string[], status: boolean) {
     const objectIds = ids.map((id) => new mongoose.Types.ObjectId(id));
     return await this.model.updateMany(
       { _id: { $in: objectIds } },
-      { $set: { active: false } }
+      { $set: { active: status } }
     );
   }
+  // public async hideProducts(ids: string[]) {
+  //   const objectIds = ids.map((id) => new mongoose.Types.ObjectId(id));
+  //   return await this.model.updateMany(
+  //     { _id: { $in: objectIds } },
+  //     { $set: { active: false } }
+  //   );
+  // }
 
-  public async showProducts(ids: string[]) {
-    const objectIds = ids.map((id) => new mongoose.Types.ObjectId(id));
-    return await this.model.updateMany(
-      { _id: { $in: objectIds } },
-      { $set: { active: true } }
-    );
-  }
+  // public async showProducts(ids: string[]) {
+  //   const objectIds = ids.map((id) => new mongoose.Types.ObjectId(id));
+  //   return await this.model.updateMany(
+  //     { _id: { $in: objectIds } },
+  //     { $set: { active: true } }
+  //   );
+  // }
 
   public async manageInventory(id: string, quantity: number) {
     const product = await this.model.findById(id);

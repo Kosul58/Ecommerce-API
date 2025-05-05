@@ -1,4 +1,4 @@
-import { injectable, inject } from "tsyringe";
+import { injectable, inject, container } from "tsyringe";
 import {
   AddProduct,
   Product,
@@ -7,17 +7,26 @@ import {
 } from "../common/types/productType.js";
 import ProductRepository from "../repository/productRepository";
 import CategoryService from "./categoryServices.js";
-import FactoryService from "./factoryService.js";
+
+@injectable()
+class Factory {
+  private storageType: string;
+  constructor() {
+    this.storageType = process.env.STORAGE_TYPE || "MONGO";
+  }
+  getRepository() {
+    return container.resolve(ProductRepository);
+  }
+}
 @injectable()
 export default class ProductServices {
   private productRepository: ProductRepository;
   constructor(
-    @inject(FactoryService) private factoryService: FactoryService,
+    @inject(Factory) private factoryService: Factory,
     @inject(CategoryService) private categoryService: CategoryService
   ) {
-    this.productRepository = this.factoryService.getRepository(
-      "PRODUCT"
-    ) as ProductRepository;
+    this.productRepository =
+      this.factoryService.getRepository() as ProductRepository;
   }
   private async checkCategory(name: string) {
     return await this.categoryService.checkCategory(name);
@@ -282,12 +291,15 @@ export default class ProductServices {
     }
   }
 
-  public async hideProducts(productids: string[]) {
+  public async updateStatus(productids: string[], status: boolean) {
     try {
-      const result = await this.productRepository.hideProducts(productids);
+      const result = await this.productRepository.updateStatus(
+        productids,
+        status
+      );
       if (!result || result.modifiedCount === 0) {
         {
-          const error = new Error("Product hide failed");
+          const error = new Error("Product status update failed");
           (error as any).statusCode = 500;
           throw error;
         }
@@ -295,19 +307,33 @@ export default class ProductServices {
       return "success";
     } catch (err) {}
   }
-  public async showProducts(productids: string[]) {
-    try {
-      const result = await this.productRepository.showProducts(productids);
-      if (!result || result.modifiedCount === 0) {
-        {
-          const error = new Error("Product visiblity change failed");
-          (error as any).statusCode = 500;
-          throw error;
-        }
-      }
-      return "success";
-    } catch (err) {}
-  }
+
+  // public async hideProducts(productids: string[]) {
+  //   try {
+  //     const result = await this.productRepository.hideProducts(productids);
+  //     if (!result || result.modifiedCount === 0) {
+  //       {
+  //         const error = new Error("Product hide failed");
+  //         (error as any).statusCode = 500;
+  //         throw error;
+  //       }
+  //     }
+  //     return "success";
+  //   } catch (err) {}
+  // }
+  // public async showProducts(productids: string[]) {
+  //   try {
+  //     const result = await this.productRepository.showProducts(productids);
+  //     if (!result || result.modifiedCount === 0) {
+  //       {
+  //         const error = new Error("Product visiblity change failed");
+  //         (error as any).statusCode = 500;
+  //         throw error;
+  //       }
+  //     }
+  //     return "success";
+  //   } catch (err) {}
+  // }
 
   public async hideSellerProducts(sellerid: string) {
     try {
@@ -319,7 +345,10 @@ export default class ProductServices {
         return null;
       }
       const deleteIds = products.map((p: any) => p.id);
-      const result = await this.productRepository.hideProducts(deleteIds);
+      const result = await this.productRepository.updateStatus(
+        deleteIds,
+        false
+      );
       if (!result || result.modifiedCount === 0) {
         {
           const error = new Error("Product hide failed");

@@ -6,6 +6,10 @@ export const updateSchema = Joi.object({
   parentId: Joi.optional(),
 });
 
+export const StatusSchema = Joi.object({
+  status: Joi.boolean().required(),
+  categoryid: Joi.string().min(15).required(),
+});
 export const createSchema = Joi.object({
   name: Joi.string().min(3).required(),
   description: Joi.string().required(),

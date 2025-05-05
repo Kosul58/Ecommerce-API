@@ -60,7 +60,11 @@ export interface ProductRepositoryInteface {
   checkProduct(product: Product): Promise<any>;
   checkProducts(products: Product[]): Promise<any>;
   deleteProducts(ids: string[]): Promise<{ deletedCount?: number }>;
-  hideProducts(ids: string[]): Promise<{ modifiedCount?: number }>;
-  showProducts(ids: string[]): Promise<{ modifiedCount?: number }>;
+  updateStatus(
+    ids: string[],
+    status: boolean
+  ): Promise<{ modifiedCount?: number }>;
+  // hideProducts(ids: string[]): Promise<{ modifiedCount?: number }>;
+  // showProducts(ids: string[]): Promise<{ modifiedCount?: number }>;
   manageInventory(id: string, quantity: number): Promise<any>;
 }

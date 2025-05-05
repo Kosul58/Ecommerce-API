@@ -167,10 +167,11 @@ export default class ProductController {
     }
   };
 
-  public hideProducts: RequestHandler = async (req, res, next) => {
+  public updateStatus: RequestHandler = async (req, res, next) => {
     const products = req.body.products;
+    const status: boolean = req.body.status;
     try {
-      const result = await this.productService.hideProducts(products);
+      const result = await this.productService.updateStatus(products, status);
       if (!result) {
         return this.responseHandler.error(res, "Failed to hide products");
       }
@@ -184,25 +185,25 @@ export default class ProductController {
     }
   };
 
-  public showProducts: RequestHandler = async (req, res, next) => {
-    const products = req.body.products;
-    try {
-      const result = await this.productService.showProducts(products);
-      if (!result) {
-        return this.responseHandler.error(
-          res,
-          "Failed to make products visible"
-        );
-      }
-      return this.responseHandler.success(
-        res,
-        "Products made visible successfully",
-        result
-      );
-    } catch (err) {
-      return next(err);
-    }
-  };
+  // public showProducts: RequestHandler = async (req, res, next) => {
+  //   const products = req.body.products;
+  //   try {
+  //     const result = await this.productService.showProducts(products);
+  //     if (!result) {
+  //       return this.responseHandler.error(
+  //         res,
+  //         "Failed to make products visible"
+  //       );
+  //     }
+  //     return this.responseHandler.success(
+  //       res,
+  //       "Products made visible successfully",
+  //       result
+  //     );
+  //   } catch (err) {
+  //     return next(err);
+  //   }
+  // };
   public hideSellerProducts: RequestHandler = async (req, res, next) => {
     try {
       const sellerid = req.user.id;

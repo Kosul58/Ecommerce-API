@@ -1,19 +1,25 @@
 import { CartProduct } from "../common/types/cartType.js";
-import { inject, injectable } from "tsyringe";
+import { inject, injectable, container } from "tsyringe";
 import CartRepository from "../repository/cartRepository.js";
 import ProductServices from "./productServices.js";
-import FactoryService from "./factoryService.js";
-
+@injectable()
+class Factory {
+  private storageType: string;
+  constructor() {
+    this.storageType = process.env.STORAGE_TYPE || "MONGO";
+  }
+  getRepository() {
+    return container.resolve(CartRepository);
+  }
+}
 @injectable()
 export default class CartService {
   private cartRepository: CartRepository;
   constructor(
-    @inject(FactoryService) private factoryService: FactoryService,
+    @inject(Factory) private factoryService: Factory,
     @inject(ProductServices) private productServices: ProductServices
   ) {
-    this.cartRepository = this.factoryService.getRepository(
-      "CART"
-    ) as CartRepository;
+    this.cartRepository = this.factoryService.getRepository() as CartRepository;
   }
 
   public async getProducts() {

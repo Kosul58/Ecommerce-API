@@ -11,22 +11,29 @@ import {
 import CartService from "./cartServices.js";
 import ProductServices from "./productServices.js";
 import { CartProduct } from "../common/types/cartType.js";
-import { inject, injectable } from "tsyringe";
+import { inject, injectable, container } from "tsyringe";
 import OrderRepository from "../repository/orderRepository.js";
-import { object } from "joi";
-import FactoryService from "./factoryService.js";
 
+@injectable()
+class Factory {
+  private storageType: string;
+  constructor() {
+    this.storageType = process.env.STORAGE_TYPE || "MONGO";
+  }
+  getRepository() {
+    return container.resolve(OrderRepository);
+  }
+}
 @injectable()
 export default class OrderService {
   private orderRepository: OrderRepository;
   constructor(
-    @inject(FactoryService) private factoryService: FactoryService,
+    @inject(Factory) private factoryService: Factory,
     @inject(ProductServices) private productService: ProductServices,
     @inject(CartService) private cartService: CartService
   ) {
-    this.orderRepository = this.factoryService.getRepository(
-      "ORDER"
-    ) as OrderRepository;
+    this.orderRepository =
+      this.factoryService.getRepository() as OrderRepository;
   }
   private generateOrder(
     userid: string,

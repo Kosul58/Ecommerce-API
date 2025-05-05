@@ -1,23 +1,32 @@
-import { inject, injectable } from "tsyringe";
+import { inject, injectable, container } from "tsyringe";
 import { AddSeller, Seller, SellerUpadte } from "../common/types/sellerType.js";
 import Utills from "../utils/utils.js";
 import { UserReturn, UserRole } from "../common/types/userType.js";
 import SellerRepository from "../repository/sellerRepository.js";
 import AuthService from "./authServices.js";
 import ProductServices from "./productServices.js";
-import FactoryService from "./factoryService.js";
+
+@injectable()
+class Factory {
+  private storageType: string;
+  constructor() {
+    this.storageType = process.env.STORAGE_TYPE || "MONGO";
+  }
+  getRepository() {
+    return container.resolve(SellerRepository);
+  }
+}
 @injectable()
 export default class SellerServices {
   private sellerRepository: SellerRepository;
   constructor(
-    @inject(FactoryService) private factoryService: FactoryService,
+    @inject(Factory) private factoryService: Factory,
     @inject(AuthService) private authService: AuthService,
     @inject(Utills) private utils: Utills,
     @inject(ProductServices) private productServices: ProductServices
   ) {
-    this.sellerRepository = this.factoryService.getRepository(
-      "SELLER"
-    ) as SellerRepository;
+    this.sellerRepository =
+      this.factoryService.getRepository() as SellerRepository;
   }
   private async generateSeller(seller: AddSeller): Promise<Seller> {
     try {

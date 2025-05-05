@@ -107,4 +107,36 @@ export default class UserController {
       return next(err);
     }
   };
+
+  public sendMail: RequestHandler = async (req, res, next) => {
+    try {
+      const result = await this.userServices.sendMail();
+      if (!result) {
+        return this.responseHandler.error(res, "Failed to send mail");
+      }
+      return this.responseHandler.success(
+        res,
+        "Mail sent successfully",
+        result
+      );
+    } catch (err) {
+      return next(err);
+    }
+  };
+
+  public pdf: RequestHandler = async (req, res, next) => {
+    try {
+      const result = await this.userServices.pdf();
+      if (!result) {
+        return this.responseHandler.error(res, "Failed to create pdf");
+      }
+      return this.responseHandler.success(
+        res,
+        "pdf created successfully",
+        result
+      );
+    } catch (err) {
+      return next(err);
+    }
+  };
 }

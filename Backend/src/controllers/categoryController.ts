@@ -107,32 +107,21 @@ export default class CategoryController {
     }
   };
 
-  public activateCategory: RequestHandler = async (req, res, next) => {
-    const { categoryid } = req.params;
+  public updateStatus: RequestHandler = async (req, res, next) => {
+    const { categoryid, status }: { categoryid: string; status: boolean } =
+      req.body;
+
     try {
-      const result = await this.categoryServices.activateCategory(categoryid);
-      if (!result) {
-        return this.responseHandler.notFound(res, "Category not found");
-      }
-      return this.responseHandler.success(
-        res,
-        "Category activate successful",
-        result
+      const result = await this.categoryServices.updateStatus(
+        categoryid,
+        status
       );
-    } catch (err) {
-      return next(err);
-    }
-  };
-  public deactivateCategory: RequestHandler = async (req, res, next) => {
-    const { categoryid } = req.params;
-    try {
-      const result = await this.categoryServices.deactivateCategory(categoryid);
       if (!result) {
         return this.responseHandler.notFound(res, "Category not found");
       }
       return this.responseHandler.success(
         res,
-        "Category deactivate successful",
+        "Category active status update successful",
         result
       );
     } catch (err) {

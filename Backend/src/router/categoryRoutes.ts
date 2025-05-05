@@ -6,6 +6,7 @@ import DataValidation from "../middleware/validateData.js";
 import {
   categoryParamsSchema,
   createSchema,
+  StatusSchema,
   updateSchema,
 } from "../validation/catagorySchema.js";
 const categoryRoutes = express.Router();
@@ -43,16 +44,11 @@ categoryRoutes.get(
 // Update category
 
 categoryRoutes.put(
-  "/activate/:categoryid",
+  "/status",
   verifyRole.verify("Admin"),
-  categoryController.activateCategory
+  dataValidation.validateBody(StatusSchema),
+  categoryController.updateStatus
 );
-categoryRoutes.put(
-  "/deactivate/:categoryid",
-  verifyRole.verify("Admin"),
-  categoryController.deactivateCategory
-);
-
 categoryRoutes.put(
   "/:categoryid",
   verifyRole.verify("Admin"),

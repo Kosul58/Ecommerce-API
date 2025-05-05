@@ -23,7 +23,9 @@ import AuthServices from "../services/authServices.js";
 import DataValidation from "../middleware/validateData.js";
 import ResponseHandler from "../utils/apiResponse.js";
 import ErrorMiddleware from "../middleware/errorMiddleware.js";
-import FactoryService from "../services/factoryService.js";
+import EmailService from "../services/emailService1.js";
+import PdfService from "../services/pdfService.js";
+// import FactoryService from "../services/factoryService.js";
 
 container.register(CategoryController, { useClass: CategoryController });
 container.register(CategoryService, { useClass: CategoryService });
@@ -49,8 +51,10 @@ container.register(AuthServices, { useClass: AuthServices });
 container.register(DataValidation, { useClass: DataValidation });
 container.register(ResponseHandler, { useClass: ResponseHandler });
 container.register(ErrorMiddleware, { useClass: ErrorMiddleware });
-container.register(FactoryService, {
-  useClass: FactoryService,
-});
+container.register(EmailService, { useClass: EmailService });
+container.register(PdfService, { useClass: PdfService });
+// container.register(FactoryService, {
+//   useClass: FactoryService,
+// });
 // const isRegistered = container.isRegistered(UserController);
 // console.log(isRegistered);

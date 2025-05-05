@@ -30,15 +30,27 @@ export default class CategoryRepository
     }
   }
 
-  public async findAll() {
+  public async findUserName(name: string, excludeId?: string) {
+    const category = await this.model.findOne({ name });
+    return category && category._id.toString() !== excludeId;
+  }
+
+  public async findActive() {
     try {
       return await this.model.find({ isActive: true });
     } catch (err) {
       throw err;
     }
   }
+  public async findAll() {
+    try {
+      return await this.model.find();
+    } catch (err) {
+      throw err;
+    }
+  }
 
-  public async updateMany(categoryIds: string[]) {
+  public async updateManyParent(categoryIds: string[]) {
     try {
       const objectIds = categoryIds.map(
         (id) => new mongoose.Types.ObjectId(id)
@@ -46,6 +58,20 @@ export default class CategoryRepository
       return await this.model.updateMany(
         { _id: { $in: objectIds } },
         { $set: { parentId: "" } }
+      );
+    } catch (err) {
+      throw err;
+    }
+  }
+
+  public async updateManyStatus(categoryIds: string[], status: boolean) {
+    try {
+      const objectIds = categoryIds.map(
+        (id) => new mongoose.Types.ObjectId(id)
+      );
+      return await this.model.updateMany(
+        { _id: { $in: objectIds } },
+        { $set: { isActive: status } }
       );
     } catch (err) {
       throw err;

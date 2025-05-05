@@ -49,21 +49,14 @@ productRoutes.get("/:productid", productController.getProductById);
 
 // Update product
 productRoutes.put(
-  "/hide",
+  "/status",
   verifyToken.verify,
   verifyRole.verify("Seller"),
   dataValidation.validateTokenData(idSchema),
   dataValidation.validateBody(hideSchema),
-  productController.hideProducts
+  productController.updateStatus
 );
-productRoutes.put(
-  "/show",
-  verifyToken.verify,
-  verifyRole.verify("Seller"),
-  dataValidation.validateTokenData(idSchema),
-  dataValidation.validateBody(hideSchema),
-  productController.showProducts
-);
+
 productRoutes.put(
   "/:productid",
   verifyToken.verify,

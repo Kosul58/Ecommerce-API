@@ -1,4 +1,4 @@
-import { inject, injectable } from "tsyringe";
+import { inject, injectable, container } from "tsyringe";
 import {
   AddUser,
   UpdateUser,
@@ -10,22 +10,31 @@ import AuthServices from "./authServices.js";
 import CartService from "./cartServices.js";
 import UserRepository from "../repository/userRepository.js";
 import Utills from "../utils/utils.js";
-
-import FactoryService from "./factoryService.js"; // make sure the path is correct
+import EmailService from "./emailService1.js";
+import PdfService from "./pdfService.js";
+@injectable()
+class Factory {
+  private storageType: string;
+  constructor() {
+    this.storageType = process.env.STORAGE_TYPE || "MONGO";
+  }
+  getRepository() {
+    return container.resolve(UserRepository);
+  }
+}
 
 @injectable()
 export default class UserServices {
   private userRepository: UserRepository;
-
   constructor(
-    @inject(FactoryService) private factoryService: FactoryService,
+    @inject(Factory) private factoryService: Factory,
+    @inject(EmailService) private emailService: EmailService,
+    @inject(PdfService) private pdfService: PdfService,
     @inject(CartService) private cartService: CartService,
     @inject(AuthServices) private authService: AuthServices,
     @inject(Utills) private utils: Utills
   ) {
-    this.userRepository = this.factoryService.getRepository(
-      "USER"
-    ) as UserRepository;
+    this.userRepository = this.factoryService.getRepository() as UserRepository;
   }
   private async generateUser(user: AddUser, role: string): Promise<User> {
     try {
@@ -211,12 +220,38 @@ export default class UserServices {
     }
   }
 
-  public async updatePassword() {
-    throw new Error("updatePassword not implemented");
+  public async updatePassword() {}
+
+  public async updateEmail() {}
+
+  public async sendMail() {
+    try {
+      const data = await this.emailService.sendMail(
+        "gurungkosul@gmail.com",
+        "Signup complete",
+        "Thank you for creating an account. Hope you enjoy your shopping.",
+        { username: "Kosul", email: "kosulgrg@gmail.com" }
+      );
+      return data;
+    } catch (err) {}
   }
 
-  public async updateEmail() {
-    throw new Error("updateEmail not implemented");
+  public async pdf() {
+    try {
+      const data = await this.pdfService.generatePDF({
+        username: "Kosul",
+        email: "kosulgrg@gmail.com",
+        orderid: "681478c9716d460249dc6fa6",
+        products: ["68145bfe8a486d9766ec9b68"],
+        total: 7980,
+        paymentType: "Cash on delivery",
+        deliveryTime: Date.now(),
+      });
+      return data;
+    } catch (err) {
+      console.error(err);
+      throw err;
+    }
   }
 
   private returnData<
