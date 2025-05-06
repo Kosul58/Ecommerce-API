@@ -1,8 +1,8 @@
 import express from "express";
 import CategoryController from "../controllers/categoryController.js";
-import verifyRole from "../middleware/verifyRole.js";
+import verifyRole from "../middlewares/verifyRole.js";
 import { container } from "tsyringe";
-import DataValidation from "../middleware/validateData.js";
+import DataValidation from "../middlewares/validateData.js";
 import {
   categoryParamsSchema,
   createSchema,

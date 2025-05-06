@@ -36,10 +36,6 @@ export default class ProductRepository
     });
   }
 
-  public async addProduct(product: Product) {
-    return await this.create(product);
-  }
-
   public async addProducts(products: Product[]) {
     return await this.model.insertMany(products);
   }

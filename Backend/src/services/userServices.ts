@@ -8,33 +8,25 @@ import {
 } from "../common/types/userType.js";
 import AuthServices from "./authServices.js";
 import CartService from "./cartServices.js";
-import UserRepository from "../repository/userRepository.js";
+import { UserRepositoryInterface } from "../common/types/classInterfaces.js";
 import Utills from "../utils/utils.js";
 import EmailService from "./emailService1.js";
 import PdfService from "./pdfService.js";
-@injectable()
-class Factory {
-  private storageType: string;
-  constructor() {
-    this.storageType = process.env.STORAGE_TYPE || "MONGO";
-  }
-  getRepository() {
-    return container.resolve(UserRepository);
-  }
-}
+import UserFactory from "../factories/userRepositoryFactory.js";
 
 @injectable()
 export default class UserServices {
-  private userRepository: UserRepository;
+  private userRepository: UserRepositoryInterface;
   constructor(
-    @inject(Factory) private factoryService: Factory,
+    @inject(UserFactory) private userFactory: UserFactory,
     @inject(EmailService) private emailService: EmailService,
     @inject(PdfService) private pdfService: PdfService,
     @inject(CartService) private cartService: CartService,
     @inject(AuthServices) private authService: AuthServices,
     @inject(Utills) private utils: Utills
   ) {
-    this.userRepository = this.factoryService.getRepository() as UserRepository;
+    this.userRepository =
+      this.userFactory.getRepository() as UserRepositoryInterface;
   }
   private async generateUser(user: AddUser, role: string): Promise<User> {
     try {
@@ -241,8 +233,8 @@ export default class UserServices {
       const data = await this.pdfService.generatePDF({
         username: "Kosul",
         email: "kosulgrg@gmail.com",
-        orderid: "681478c9716d460249dc6fa6",
-        products: ["68145bfe8a486d9766ec9b68"],
+        orderid: "681478c9716d460249dc6fk6",
+        products: ["68145bfe8a486d9766ec9b88"],
         total: 7980,
         paymentType: "Cash on delivery",
         deliveryTime: Date.now(),

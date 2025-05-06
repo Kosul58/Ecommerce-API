@@ -1,9 +1,9 @@
 import express from "express";
 import ProductController from "../controllers/productController.js";
-import verifyRole from "../middleware/verifyRole.js";
-import verifyToken from "../middleware/verifyToken.js";
+import verifyRole from "../middlewares/verifyRole.js";
+import verifyToken from "../middlewares/verifyToken.js";
 import { container } from "tsyringe";
-import DataValidation from "../middleware/validateData.js";
+import DataValidation from "../middlewares/validateData.js";
 import { hideSchema, idSchema } from "../validation/userSchema.js";
 import {
   modifySchema,

@@ -12,28 +12,19 @@ import CartService from "./cartServices.js";
 import ProductServices from "./productServices.js";
 import { CartProduct } from "../common/types/cartType.js";
 import { inject, injectable, container } from "tsyringe";
-import OrderRepository from "../repository/orderRepository.js";
+import OrderFactory from "../factories/orderRepositoryFactory.js";
+import { OrderRepositoryInterface } from "../common/types/classInterfaces.js";
 
 @injectable()
-class Factory {
-  private storageType: string;
-  constructor() {
-    this.storageType = process.env.STORAGE_TYPE || "MONGO";
-  }
-  getRepository() {
-    return container.resolve(OrderRepository);
-  }
-}
-@injectable()
 export default class OrderService {
-  private orderRepository: OrderRepository;
+  private orderRepository: OrderRepositoryInterface;
   constructor(
-    @inject(Factory) private factoryService: Factory,
+    @inject(OrderFactory) private orderFactory: OrderFactory,
     @inject(ProductServices) private productService: ProductServices,
     @inject(CartService) private cartService: CartService
   ) {
     this.orderRepository =
-      this.factoryService.getRepository() as OrderRepository;
+      this.orderFactory.getRepository() as OrderRepositoryInterface;
   }
   private generateOrder(
     userid: string,
@@ -447,7 +438,7 @@ export default class OrderService {
       if (removed) {
         await this.manageInventory([removed], "increase");
       }
-      const remainingItems = result.items.filter((p) => p.active === true);
+      const remainingItems = result.items.filter((p: any) => p.active === true);
       if (remainingItems.length === 0)
         await this.updateOrderStatus(orderid, "Canceled");
 

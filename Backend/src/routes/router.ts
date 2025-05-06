@@ -5,7 +5,7 @@ import cartRoutes from "./cartRoutes.js";
 import productRoutes from "./productRoutes.js";
 import categoryRoutes from "./categoryRoutes.js";
 import userRoutes from "./userRoutes.js";
-import verifyToken from "../middleware/verifyToken.js";
+import verifyToken from "../middlewares/verifyToken.js";
 import sellerRoutes from "./sellerRoutes.js";
 import adminRoutes from "./adminRoutes.js";
 import mailRoutes from "./mailRoutes.js";

@@ -1,10 +1,10 @@
 import "reflect-metadata";
 import express from "express";
 import cors from "cors";
-import routes from "./src/router/router.js";
+import routes from "./src/routes/router.js";
 import db from "./src/config/index.js";
 import "./src/config/dependencyConfig.js";
-import ErrorMiddleware from "./src/middleware/errorMiddleware.js";
+import ErrorMiddleware from "./src/middlewares/errorMiddleware.js";
 import { container } from "tsyringe";
 import dotenv from "dotenv";
 dotenv.config();

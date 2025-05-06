@@ -1,6 +1,6 @@
 import express from "express";
 import { container } from "tsyringe";
-import DataValidation from "../middleware/validateData.js";
+import DataValidation from "../middlewares/validateData.js";
 import { signUpSchema } from "../validation/userSchema.js";
 import AdminController from "../controllers/adminController.js";
 const adminController = container.resolve(AdminController);

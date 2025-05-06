@@ -5,28 +5,19 @@ import {
   ProductReturn,
   UpdateProdcut,
 } from "../common/types/productType.js";
-import ProductRepository from "../repository/productRepository";
 import CategoryService from "./categoryServices.js";
+import ProductFactory from "../factories/productRepositoryFactory.js";
+import { ProductRepositoryInteface } from "../common/types/classInterfaces.js";
 
 @injectable()
-class Factory {
-  private storageType: string;
-  constructor() {
-    this.storageType = process.env.STORAGE_TYPE || "MONGO";
-  }
-  getRepository() {
-    return container.resolve(ProductRepository);
-  }
-}
-@injectable()
 export default class ProductServices {
-  private productRepository: ProductRepository;
+  private productRepository: ProductRepositoryInteface;
   constructor(
-    @inject(Factory) private factoryService: Factory,
+    @inject(ProductFactory) private productFacotry: ProductFactory,
     @inject(CategoryService) private categoryService: CategoryService
   ) {
     this.productRepository =
-      this.factoryService.getRepository() as ProductRepository;
+      this.productFacotry.getRepository() as ProductRepositoryInteface;
   }
   private async checkCategory(name: string) {
     return await this.categoryService.checkCategory(name);
@@ -145,7 +136,7 @@ export default class ProductServices {
         return null;
       }
       const newProduct: Product = await this.createProduct(product, sellerid);
-      const result = await this.productRepository.addProduct(newProduct);
+      const result = await this.productRepository.create(newProduct);
       if (!result) {
         const error = new Error("Product addition failed");
         (error as any).statusCode = 500;

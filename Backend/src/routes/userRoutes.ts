@@ -1,9 +1,9 @@
 import express from "express";
-import verifyRole from "../middleware/verifyRole.js";
-import verifyToken from "../middleware/verifyToken.js";
+import verifyRole from "../middlewares/verifyRole.js";
+import verifyToken from "../middlewares/verifyToken.js";
 import UserController from "../controllers/userController.js";
 import { container } from "tsyringe";
-import DataValidation from "../middleware/validateData.js";
+import DataValidation from "../middlewares/validateData.js";
 import {
   idSchema,
   signInSchema,

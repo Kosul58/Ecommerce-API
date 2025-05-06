@@ -73,7 +73,6 @@ export default class PdfService {
             <h1>Order Confirmation 🎉</h1>
             <p>Hi <span class="highlight">${data.username}</span>,</p>
             <p>Your order has been successfully processed!</p>
-
             <div class="order-summary">
               <h3>Order Details</h3>
               <p><strong>Order ID:</strong> ${data.orderid}</p>

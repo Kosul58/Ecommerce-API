@@ -3,24 +3,19 @@ import {
   CategoryOption,
   UpdateCategory,
 } from "../common/types/categoryType.js";
-import CategoryRepository from "../repository/categoryRepository.js";
+import { CategoryRepositoryInterface } from "../common/types/classInterfaces.js";
+import CategoryFactory from "../factories/categoryRepositoryFactory.js";
+import CategoryRepository from "../repositories/categoryRepository.js";
 import { inject, injectable, container } from "tsyringe";
-@injectable()
-class Factory {
-  private storageType: string;
-  constructor() {
-    this.storageType = process.env.STORAGE_TYPE || "MONGO";
-  }
-  getRepository() {
-    return container.resolve(CategoryRepository);
-  }
-}
+
 @injectable()
 export default class CategoryService {
-  private categoryRepository: CategoryRepository;
-  constructor(@inject(Factory) private factoryService: Factory) {
+  private categoryRepository: CategoryRepositoryInterface;
+  constructor(
+    @inject(CategoryFactory) private categoryFactory: CategoryFactory
+  ) {
     this.categoryRepository =
-      this.factoryService.getRepository() as CategoryRepository;
+      this.categoryFactory.getRepository() as CategoryRepositoryInterface;
   }
   private generateCategory(category: CategoryOption): Category {
     return {
