@@ -24,7 +24,7 @@ import DataValidation from "../middlewares/validateData.js";
 import ResponseHandler from "../utils/apiResponse.js";
 import ErrorMiddleware from "../middlewares/errorMiddleware.js";
 import EmailService from "../services/emailService1.js";
-import PdfService from "../services/pdfService.js";
+import PdfService from "../services/uploadService.js";
 // import FactoryService from "../services/factoryService.js";
 
 container.register(CategoryController, { useClass: CategoryController });

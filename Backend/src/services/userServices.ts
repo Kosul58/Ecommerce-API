@@ -11,7 +11,7 @@ import CartService from "./cartServices.js";
 import { UserRepositoryInterface } from "../common/types/classInterfaces.js";
 import Utills from "../utils/utils.js";
 import EmailService from "./emailService1.js";
-import PdfService from "./pdfService.js";
+import UploadService from "./uploadService.js";
 import UserFactory from "../factories/userRepositoryFactory.js";
 
 @injectable()
@@ -20,7 +20,7 @@ export default class UserServices {
   constructor(
     @inject(UserFactory) private userFactory: UserFactory,
     @inject(EmailService) private emailService: EmailService,
-    @inject(PdfService) private pdfService: PdfService,
+    @inject(UploadService) private uploadService: UploadService,
     @inject(CartService) private cartService: CartService,
     @inject(AuthServices) private authService: AuthServices,
     @inject(Utills) private utils: Utills
@@ -230,7 +230,7 @@ export default class UserServices {
 
   public async pdf() {
     try {
-      const data = await this.pdfService.generatePDF({
+      const data = await this.uploadService.generatePDF({
         username: "Kosul",
         email: "kosulgrg@gmail.com",
         orderid: "681478c9716d460249dc6fk6",
@@ -239,6 +239,16 @@ export default class UserServices {
         paymentType: "Cash on delivery",
         deliveryTime: Date.now(),
       });
+      return data;
+    } catch (err) {
+      console.error(err);
+      throw err;
+    }
+  }
+
+  public async uploadImages(files: Express.Multer.File[]) {
+    try {
+      const data = await this.uploadService.uploadImages(files);
       return data;
     } catch (err) {
       console.error(err);

@@ -11,7 +11,7 @@ cloudinary.config({
 });
 
 @injectable()
-export default class PdfService {
+export default class UploadService {
   public async generatePDF(data: any): Promise<string> {
     try {
       const browser = await puppeteer.launch();
@@ -37,11 +37,29 @@ export default class PdfService {
         unique_filename: false,
       });
       // Optional: delete local file after upload
-      //fs.unlinkSync(outputPath);
+      fs.unlinkSync(outputPath);
       return result.secure_url;
     } catch (error) {
       console.error("PDF generation or upload failed:", error);
       throw error;
+    }
+  }
+  public async uploadImages(files: Express.Multer.File[]): Promise<string[]> {
+    try {
+      const urls = await Promise.all(
+        files.map(async (file) => {
+          const result = await cloudinary.uploader.upload(file.path, {
+            folder: "uploads",
+          });
+          fs.unlinkSync(file.path);
+          return result.secure_url;
+        })
+      );
+      console.log(urls);
+      return urls;
+    } catch (err) {
+      console.error("Image upload failed:", err);
+      throw err;
     }
   }
 

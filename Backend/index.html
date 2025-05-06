@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Upload Multiple Images</title>
+    <style>
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background-color: #f2f4f8;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        margin: 0;
+      }
+
+      .container {
+        background-color: #fff;
+        padding: 40px;
+        border-radius: 12px;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+        text-align: center;
+        width: 100%;
+        max-width: 400px;
+      }
+
+      h1 {
+        margin-bottom: 20px;
+        color: #333;
+      }
+
+      input[type="file"] {
+        display: block;
+        margin: 20px auto;
+        padding: 10px;
+        border-radius: 6px;
+        border: 1px solid #ccc;
+      }
+
+      button {
+        padding: 12px 24px;
+        background-color: #4caf50;
+        color: white;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 16px;
+      }
+
+      button:hover {
+        background-color: #45a049;
+      }
+
+      .success,
+      .error {
+        margin-top: 20px;
+        font-weight: 600;
+      }
+
+      .success {
+        color: green;
+      }
+
+      .error {
+        color: red;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Upload Images</h1>
+      <form id="uploadForm" enctype="multipart/form-data">
+        <input type="file" name="images" accept="image/*" multiple required />
+        <button type="submit">Upload</button>
+        <div id="message"></div>
+      </form>
+    </div>
+
+    <script>
+      const form = document.getElementById("uploadForm");
+      const message = document.getElementById("message");
+
+      form.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const formData = new FormData(form);
+
+        try {
+          const response = await fetch("http://localhost:3000/api/mail/image", {
+            method: "POST",
+            body: formData,
+          });
+        } catch (err) {
+          message.textContent = "Error: " + err.message;
+          message.className = "error";
+        }
+      });
+    </script>
+  </body>
+</html>

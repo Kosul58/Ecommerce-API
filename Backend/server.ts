@@ -7,30 +7,39 @@ import "./src/config/dependencyConfig.js";
 import ErrorMiddleware from "./src/middlewares/errorMiddleware.js";
 import { container } from "tsyringe";
 import dotenv from "dotenv";
+import morganMiddleware from "./src/middlewares/morganMiddleware.js";
+import logger from "./src/utils/logger.js";
+
 dotenv.config();
+
 const app = express();
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
+
 app.use(cors());
 app.use(express.json());
+app.use(morganMiddleware);
 app.use("/api", routes);
+
+// Error handling
 const errorMiddleware = container.resolve(ErrorMiddleware);
 app.use(errorMiddleware.notFoundHandler.bind(errorMiddleware));
 app.use(errorMiddleware.handle.bind(errorMiddleware));
 
 const server = app.listen(PORT, async () => {
   try {
+    logger.info(`Server running on port ${PORT}`);
     await db.connectDB();
-    console.log(`Server running on port ${PORT}`);
-  } catch (err) {
-    console.error("Failed to connect to the database:", err);
+  } catch (err: any) {
+    logger.error("Failed to connect to the database: " + err.message);
     process.exit(1);
   }
 });
 
+// Graceful shutdown
 process.on("SIGINT", async () => {
   await db.closeConn();
   server.close(() => {
-    console.log("Server and DB connection closed");
+    logger.info("Server and DB connection closed");
     process.exit(0);
   });
 });

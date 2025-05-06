@@ -1,0 +1,15 @@
+{
+    "keep": {
+        "days": true,
+        "amount": 30
+    },
+    "auditLog": "C:\\Users\\kosul\\Desktop\\Ecommerce\\Backend\\logs\\.3203ae757bf7a66fe09d788df2dd753ec96409f8-audit.json",
+    "files": [
+        {
+            "date": 1746525202859,
+            "name": "C:\\Users\\kosul\\Desktop\\Ecommerce\\Backend\\logs\\error-2025-05-06.log",
+            "hash": "83f4fb74706d495dbfe05c00a05ca3880fbecdc3a26b6a961b631261149ca105"
+        }
+    ],
+    "hashType": "sha256"
+}

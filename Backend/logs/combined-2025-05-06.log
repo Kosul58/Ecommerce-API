@@ -1,0 +1,24 @@
+2025-05-06 15:38:23 [INFO]: Server running on port 3000
+2025-05-06 15:38:31 [INFO]: Fetching all products
+2025-05-06 15:38:31 [INFO]: Products fetched successfully
+2025-05-06 15:38:31 [HTTP]: GET /api/product/ 200 1579 - 59.290 ms
+2025-05-06 15:38:47 [INFO]: Fetching product with id: 68133ba4825f101f749s6d52
+2025-05-06 15:38:47 [ERROR]: Error fetching product with id: 68133ba4825f101f749s6d52
+2025-05-06 15:38:47 [HTTP]: GET /api/product/68133ba4825f101f749s6d52 500 176 - 16.633 ms
+2025-05-06 15:41:03 [INFO]: Server and DB connection closed
+2025-05-06 15:41:09 [INFO]: Server running on port 3000
+2025-05-06 15:41:12 [INFO]: Fetching product with id: 68133ba4825f101f749s6d52
+2025-05-06 15:41:12 [ERROR]: Error fetching product with id: 68133ba4825f101f749s6d52
+2025-05-06 15:41:12 [HTTP]: GET /api/product/68133ba4825f101f749s6d52 500 176 - 15.267 ms
+2025-05-06 16:00:58 [INFO]: Server and DB connection closed
+2025-05-06 16:06:51 [INFO]: Server running on port 3000
+2025-05-06 16:06:57 [INFO]: Fetching product with id: 68133ba4825f101f749s6d52
+2025-05-06 16:06:57 [ERROR]: Error fetching product with id: 68133ba4825f101f749s6d52
+2025-05-06 16:06:57 [HTTP]: GET /api/product/68133ba4825f101f749s6d52 500 176 - 12.744 ms
+2025-05-06 16:07:25 [INFO]: Fetching product with id: 68133ba4825f101f749e6d52
+2025-05-06 16:07:25 [INFO]: Product found with id: 68133ba4825f101f749e6d52
+2025-05-06 16:07:25 [HTTP]: GET /api/product/68133ba4825f101f749e6d52 200 217 - 90.948 ms
+2025-05-06 16:07:32 [INFO]: Fetching all products
+2025-05-06 16:07:32 [INFO]: Products fetched successfully
+2025-05-06 16:07:32 [HTTP]: GET /api/product/ 200 1579 - 79.421 ms
+2025-05-06 16:07:47 [INFO]: Server and DB connection closed

@@ -33,7 +33,6 @@ export default class Utills {
   public generateId = (): string => {
     return Date.now().toString(36) + Math.random().toString(36).slice(2);
   };
-
   public getCurrentDateTimeStamp(): string {
     const now = new Date();
     const year = now.getFullYear();

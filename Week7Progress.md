@@ -10,11 +10,16 @@
 
 ## Tuesday
 
+-> created a factories folder to store multiple repository facotry
+-> image upload service
+-> logger (winston)
+-> audit trails
+
 ## Wednusday
 
 ## Friday
 
 # to do
 
-- looger(winston),audittrails,notification
+- logger(winston),audittrails,notification
 - instead of uploading same pdf format with new data to the cloud, fetch a pdf format from the cloud change its data and provide a download link to the user

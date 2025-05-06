@@ -1,0 +1,15 @@
+{
+    "keep": {
+        "days": true,
+        "amount": 14
+    },
+    "auditLog": "C:\\Users\\kosul\\Desktop\\Ecommerce\\Backend\\logs\\.8064a7036e91684973ad2243c33771ce5914a6b0-audit.json",
+    "files": [
+        {
+            "date": 1746525202857,
+            "name": "C:\\Users\\kosul\\Desktop\\Ecommerce\\Backend\\logs\\combined-2025-05-06.log",
+            "hash": "1315f002b88bef01b970d3a7954ed1e3bf8e45d919e90a122ddc8d90951f6638"
+        }
+    ],
+    "hashType": "sha256"
+}
