@@ -20,7 +20,6 @@ app.use(express.json());
 app.use(morganMiddleware);
 app.use("/api", routes);
 
-// Error handling
 const errorMiddleware = container.resolve(ErrorMiddleware);
 app.use(errorMiddleware.notFoundHandler.bind(errorMiddleware));
 app.use(errorMiddleware.handle.bind(errorMiddleware));
@@ -35,7 +34,6 @@ const server = app.listen(PORT, async () => {
   }
 });
 
-// Graceful shutdown
 process.on("SIGINT", async () => {
   await db.closeConn();
   server.close(() => {

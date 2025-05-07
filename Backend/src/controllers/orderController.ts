@@ -11,14 +11,6 @@ export default class OrderController {
     @inject(ResponseHandler) private responseHandler: ResponseHandler
   ) {}
 
-  private logError(context: string, err: unknown, extra?: object) {
-    if (err instanceof Error) {
-      logger.error(context, { error: err.message });
-    } else {
-      logger.error(`${context} - Unknown error`, { error: err, ...extra });
-    }
-  }
-
   // View all the orders of a user
   public viewUserOrders: RequestHandler = async (req, res, next) => {
     const userid = req.user.id;
@@ -36,7 +28,7 @@ export default class OrderController {
         result
       );
     } catch (err) {
-      this.logError(`Error fetching orders for user with id: ${userid}`, err);
+      logger.error(`Error fetching orders for user with id: ${userid}`, err);
       return next(err);
     }
   };
@@ -57,7 +49,7 @@ export default class OrderController {
         result
       );
     } catch (err) {
-      this.logError("Error fetching all orders", err);
+      logger.error(`Error fetching all orders`, err);
       return next(err);
     }
   };
@@ -86,7 +78,7 @@ export default class OrderController {
         result
       );
     } catch (err) {
-      this.logError(
+      logger.error(
         `Error creating order for user ${userid} with product id: ${productid}`,
         err
       );
@@ -106,17 +98,21 @@ export default class OrderController {
     try {
       const result = await this.orderService.addOrders(userid, products);
       if (!result || Object.keys(result).length === 0) {
-        logger.warn(`Multiple order creation failed for user ${userid}`);
+        logger.warn(
+          `Multiple product order creation failed for user ${userid}`
+        );
         return this.responseHandler.error(res, "Order creation unsuccessful");
       }
-      logger.info(`Multiple orders created successfully for user ${userid}`);
+      logger.info(
+        `Multiple product order created successfully for user ${userid}`
+      );
       return this.responseHandler.created(
         res,
         "Order creation successful",
         result
       );
     } catch (err) {
-      this.logError(`Error creating multiple orders for user ${userid}`, err);
+      logger.error(`Error creating multiple orders for user ${userid}`, err);
       return next(err);
     }
   };
@@ -134,7 +130,7 @@ export default class OrderController {
       logger.info(`Ordered products fetched successfully for user ${id}`);
       return this.responseHandler.success(res, "Search successful", result);
     } catch (err) {
-      this.logError(`Error fetching ordered products for user ${id}`, err);
+      logger.error(`Error fetching ordered products for user ${id}`, err);
       return next(err);
     }
   };
@@ -159,10 +155,7 @@ export default class OrderController {
         result
       );
     } catch (err) {
-      this.logError(
-        `Error updating order status for order id: ${orderid}`,
-        err
-      );
+      logger.error(`Error updating order status for order id: ${orderid}`, err);
       return next(err);
     }
   };
@@ -184,7 +177,7 @@ export default class OrderController {
         result
       );
     } catch (err) {
-      this.logError(`Error canceling order with id: ${orderid}`, err);
+      logger.error(`Error canceling order with id: ${orderid}`, err);
       return next(err);
     }
   };
@@ -218,7 +211,7 @@ export default class OrderController {
         result
       );
     } catch (err) {
-      this.logError(
+      logger.error(
         `Error canceling product with id: ${productid} in order id: ${orderid}`,
         err
       );
@@ -246,7 +239,7 @@ export default class OrderController {
       logger.info(`Order with id: ${orderid} returned successfully`);
       return this.responseHandler.success(res, "Return successful", result);
     } catch (err) {
-      this.logError(`Error returning order with id: ${orderid}`, err);
+      logger.error(`Error returning order with id: ${orderid}`, err);
       return next(err);
     }
   };
@@ -283,7 +276,7 @@ export default class OrderController {
         result
       );
     } catch (err) {
-      this.logError(
+      logger.error(
         `Error updating product status for product id: ${productid} in order id: ${orderid}`,
         err
       );

@@ -15,14 +15,6 @@ export default class CategoryController {
     @inject(ResponseHandler) private responseHandler: ResponseHandler
   ) {}
 
-  private logError(context: string, err: unknown, extra?: object) {
-    if (err instanceof Error) {
-      logger.error(context, { error: err.message });
-    } else {
-      logger.error(`${context} - Unknown error`, { error: err, ...extra });
-    }
-  }
-
   // Create Category
   public createCategory: RequestHandler = async (req, res, next) => {
     const category: CategoryOption = req.body;
@@ -40,7 +32,7 @@ export default class CategoryController {
         result
       );
     } catch (err) {
-      this.logError("Error creating category", err);
+      logger.error("Error creating category", err);
       return next(err);
     }
   };
@@ -61,7 +53,7 @@ export default class CategoryController {
         result
       );
     } catch (err) {
-      this.logError("Error reading categories", err);
+      logger.error("Error reading categories", err);
       return next(err);
     }
   };
@@ -83,7 +75,7 @@ export default class CategoryController {
         result
       );
     } catch (err) {
-      this.logError("Error reading category", err, { categoryid });
+      logger.error("Error reading category", err);
       return next(err);
     }
   };
@@ -109,7 +101,7 @@ export default class CategoryController {
         result
       );
     } catch (err) {
-      this.logError("Error updating category", err, { categoryid });
+      logger.error("Error updating category", err);
       return next(err);
     }
   };
@@ -131,7 +123,7 @@ export default class CategoryController {
         result
       );
     } catch (err) {
-      this.logError("Error deleting category", err, { categoryid });
+      logger.error("Error deleting category", err);
       return next(err);
     }
   };
@@ -155,11 +147,11 @@ export default class CategoryController {
       logger.info("Category status update successful", { result });
       return this.responseHandler.success(
         res,
-        "Category active status update successful",
+        "Category status update successful",
         result
       );
     } catch (err) {
-      this.logError("Error updating category status", err);
+      logger.error("Error updating category status", err);
       return next(err);
     }
   };
@@ -176,7 +168,7 @@ export default class CategoryController {
       logger.info("Subcategories found", { result });
       return this.responseHandler.success(res, "Sub Categories found", result);
     } catch (err) {
-      this.logError("Error finding subcategories", err, { categoryid });
+      logger.error("Error finding subcategories", err);
       return next(err);
     }
   };

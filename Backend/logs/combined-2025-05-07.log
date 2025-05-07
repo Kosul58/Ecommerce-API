@@ -1,0 +1,257 @@
+2025-05-07 13:24:28 [INFO]: Server running on port 3000
+2025-05-07 13:24:40 [INFO]: Fetching product with id: 68133ba4825f101f749a6d52
+2025-05-07 13:24:40 [ERROR]: Error fetching product with id: 68133ba4825f101f749a6d52
+2025-05-07 13:24:40 [HTTP]: GET /api/product/68133ba4825f101f749a6d52 404 47 - 69.323 ms
+2025-05-07 13:26:39 [INFO]: Server and DB connection closed
+2025-05-07 13:26:44 [INFO]: Server running on port 3000
+2025-05-07 13:26:51 [INFO]: Fetching product with id: 68133ba4825f101f749a6d52
+2025-05-07 13:26:51 [ERROR]: Error fetching product with id: 68133ba4825f101f749a6d52
+2025-05-07 13:26:51 [HTTP]: GET /api/product/68133ba4825f101f749a6d52 404 47 - 61.777 ms
+2025-05-07 13:28:58 [INFO]: Server and DB connection closed
+2025-05-07 13:29:03 [INFO]: Server running on port 3000
+2025-05-07 13:29:08 [INFO]: Fetching product with id: 68133ba4825f101f749a6d52
+2025-05-07 13:29:08 [ERROR]: Error fetching product with id: 68133ba4825f101f749a6d52
+2025-05-07 13:29:08 [HTTP]: GET /api/product/68133ba4825f101f749a6d52 404 47 - 60.669 ms
+2025-05-07 13:30:09 [INFO]: Server and DB connection closed
+2025-05-07 13:30:14 [INFO]: Server running on port 3000
+2025-05-07 13:30:18 [INFO]: Fetching product with id: 68133ba4825f101f749a6d52
+2025-05-07 13:30:18 [ERROR]: Error fetching product with id: 68133ba4825f101f749a6d52 No Products found
+Error: No Products found
+    at ProductServices.getProductById (C:\Users\kosul\Desktop\Ecommerce\Backend\src\services\productServices.ts:111:23)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async getProductById (C:\Users\kosul\Desktop\Ecommerce\Backend\src\controllers\productController.ts:75:20)
+2025-05-07 13:30:18 [HTTP]: GET /api/product/68133ba4825f101f749a6d52 404 47 - 60.161 ms
+2025-05-07 13:40:23 [INFO]: Server and DB connection closed
+2025-05-07 13:40:27 [INFO]: Server running on port 3000
+2025-05-07 13:40:32 [INFO]: Fetching product with id: 68133ba4825f101f749a6d52
+2025-05-07 13:40:32 [ERROR]: Error fetching product with id: 68133ba4825f101f749a6d52 No Products found
+Error: No Products found
+    at ProductServices.getProductById (C:\Users\kosul\Desktop\Ecommerce\Backend\src\services\productServices.ts:111:23)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async getProductById (C:\Users\kosul\Desktop\Ecommerce\Backend\src\controllers\productController.ts:75:20)
+2025-05-07 13:40:32 [ERROR]: Error with status code 404 No Products found
+Error: No Products found
+    at ProductServices.getProductById (C:\Users\kosul\Desktop\Ecommerce\Backend\src\services\productServices.ts:111:23)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async getProductById (C:\Users\kosul\Desktop\Ecommerce\Backend\src\controllers\productController.ts:75:20)
+2025-05-07 13:40:32 [ERROR]: Error occurred No Products found
+Error: No Products found
+    at ProductServices.getProductById (C:\Users\kosul\Desktop\Ecommerce\Backend\src\services\productServices.ts:111:23)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async getProductById (C:\Users\kosul\Desktop\Ecommerce\Backend\src\controllers\productController.ts:75:20)
+2025-05-07 13:40:32 [HTTP]: GET /api/product/68133ba4825f101f749a6d52 404 47 - 77.154 ms
+2025-05-07 13:41:04 [INFO]: Fetching product with id: 68133ba4825f101f749a6d52
+2025-05-07 13:41:04 [ERROR]: Error fetching product with id: 68133ba4825f101f749a6d52 No Products found
+Error: No Products found
+    at ProductServices.getProductById (C:\Users\kosul\Desktop\Ecommerce\Backend\src\services\productServices.ts:111:23)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async getProductById (C:\Users\kosul\Desktop\Ecommerce\Backend\src\controllers\productController.ts:75:20)
+2025-05-07 13:41:04 [ERROR]: Error with status code 404 No Products found
+Error: No Products found
+    at ProductServices.getProductById (C:\Users\kosul\Desktop\Ecommerce\Backend\src\services\productServices.ts:111:23)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async getProductById (C:\Users\kosul\Desktop\Ecommerce\Backend\src\controllers\productController.ts:75:20)
+2025-05-07 13:41:04 [ERROR]: Error occurred No Products found
+Error: No Products found
+    at ProductServices.getProductById (C:\Users\kosul\Desktop\Ecommerce\Backend\src\services\productServices.ts:111:23)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async getProductById (C:\Users\kosul\Desktop\Ecommerce\Backend\src\controllers\productController.ts:75:20)
+2025-05-07 13:41:04 [HTTP]: GET /api/product/68133ba4825f101f749a6d52 404 47 - 66.123 ms
+2025-05-07 13:41:10 [INFO]: Server and DB connection closed
+2025-05-07 13:41:24 [INFO]: Server running on port 3000
+2025-05-07 13:41:29 [INFO]: Fetching product with id: 68133ba4825f101f749a6d52
+2025-05-07 13:41:29 [ERROR]: Error fetching product with id: 68133ba4825f101f749a6d52 No Products found
+Error: No Products found
+    at ProductServices.getProductById (C:\Users\kosul\Desktop\Ecommerce\Backend\src\services\productServices.ts:111:23)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async getProductById (C:\Users\kosul\Desktop\Ecommerce\Backend\src\controllers\productController.ts:75:20)
+2025-05-07 13:41:29 [ERROR]: Error with status code 404 No Products found
+Error: No Products found
+    at ProductServices.getProductById (C:\Users\kosul\Desktop\Ecommerce\Backend\src\services\productServices.ts:111:23)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async getProductById (C:\Users\kosul\Desktop\Ecommerce\Backend\src\controllers\productController.ts:75:20)
+2025-05-07 13:41:29 [ERROR]: Error occurred No Products found
+Error: No Products found
+    at ProductServices.getProductById (C:\Users\kosul\Desktop\Ecommerce\Backend\src\services\productServices.ts:111:23)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async getProductById (C:\Users\kosul\Desktop\Ecommerce\Backend\src\controllers\productController.ts:75:20)
+2025-05-07 13:41:29 [HTTP]: GET /api/product/68133ba4825f101f749a6d52 404 47 - 71.906 ms
+2025-05-07 13:41:40 [INFO]: Server and DB connection closed
+2025-05-07 13:41:45 [INFO]: Server running on port 3000
+2025-05-07 13:41:49 [INFO]: Fetching product with id: 68133ba4825f101f749a6d52
+2025-05-07 13:41:49 [ERROR]: Error fetching product with id: 68133ba4825f101f749a6d52 No Products found
+Error: No Products found
+    at ProductServices.getProductById (C:\Users\kosul\Desktop\Ecommerce\Backend\src\services\productServices.ts:111:23)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async getProductById (C:\Users\kosul\Desktop\Ecommerce\Backend\src\controllers\productController.ts:75:20)
+2025-05-07 13:41:49 [HTTP]: GET /api/product/68133ba4825f101f749a6d52 404 47 - 62.062 ms
+2025-05-07 13:56:38 [INFO]: Server and DB connection closed
+2025-05-07 13:56:42 [INFO]: Server running on port 3000
+2025-05-07 13:56:57 [INFO]: Validation passed for body in request: POST /api/seller/signin/
+2025-05-07 13:56:57 [INFO]: Attempting to sign in seller: shopx
+2025-05-07 13:56:57 [ERROR]: Error during seller sign in JWT_SECRET_KEY is not defined in the environment variables
+Error: JWT_SECRET_KEY is not defined in the environment variables
+    at AuthServices.generateToken (C:\Users\kosul\Desktop\Ecommerce\Backend\src\services\authServices.ts:17:13)
+    at SellerServices.signIn (C:\Users\kosul\Desktop\Ecommerce\Backend\src\services\sellerServices.ts:151:33)
+    at async signIn (C:\Users\kosul\Desktop\Ecommerce\Backend\src\controllers\sellerController.ts:76:33)
+2025-05-07 13:56:57 [HTTP]: POST /api/seller/signin/ 500 120 - 120.038 ms
+2025-05-07 13:57:13 [INFO]: Validation passed for body in request: POST /api/seller/signup/
+2025-05-07 13:57:13 [INFO]: Attempting to sign up seller: shopy
+2025-05-07 13:57:13 [ERROR]: Error during seller signup Username is already taken
+Error: Username is already taken
+    at SellerServices.signUp (C:\Users\kosul\Desktop\Ecommerce\Backend\src\services\sellerServices.ts:93:23)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async signUp (C:\Users\kosul\Desktop\Ecommerce\Backend\src\controllers\sellerController.ts:52:33)
+2025-05-07 13:57:13 [HTTP]: POST /api/seller/signup/ 409 55 - 65.628 ms
+2025-05-07 13:57:58 [INFO]: Server and DB connection closed
+2025-05-07 13:58:03 [INFO]: Server running on port 3000
+2025-05-07 13:58:07 [INFO]: Validation passed for body in request: POST /api/seller/signin/
+2025-05-07 13:58:07 [INFO]: Attempting to sign in seller: shopx
+2025-05-07 13:58:07 [INFO]: Seller sign-in successful: shopx
+2025-05-07 13:58:07 [HTTP]: POST /api/seller/signin/ 200 452 - 131.560 ms
+2025-05-07 13:58:33 [INFO]: Validation passed for body in request: POST /api/seller/signup/
+2025-05-07 13:58:33 [INFO]: Attempting to sign up seller: shopy
+2025-05-07 13:58:34 [ERROR]: Error during seller signup Username is already taken
+Error: Username is already taken
+    at SellerServices.signUp (C:\Users\kosul\Desktop\Ecommerce\Backend\src\services\sellerServices.ts:93:23)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async signUp (C:\Users\kosul\Desktop\Ecommerce\Backend\src\controllers\sellerController.ts:52:33)
+2025-05-07 13:58:34 [HTTP]: POST /api/seller/signup/ 409 55 - 73.604 ms
+2025-05-07 13:58:52 [INFO]: Validation passed for body in request: POST /api/user/signup/
+2025-05-07 13:58:52 [INFO]: Attempting to register user: kosulg22
+2025-05-07 13:58:52 [INFO]: Attempting signup for username: %s
+2025-05-07 13:58:52 [DEBUG]: Generating user with username: %s
+2025-05-07 13:58:52 [INFO]: Cart created for new user: %s
+2025-05-07 13:58:52 [INFO]: kosulg22 signed up successfully
+2025-05-07 13:58:52 [HTTP]: POST /api/user/signup/ 201 467 - 367.551 ms
+2025-05-07 14:13:09 [INFO]: Server and DB connection closed
+2025-05-07 14:13:13 [INFO]: Server running on port 3000
+2025-05-07 14:13:15 [INFO]: Validation passed for body in request: POST /api/user/signup/
+2025-05-07 14:13:15 [INFO]: Attempting to register user: kosulg22
+2025-05-07 14:13:15 [INFO]: Attempting signup for username:kosulg22
+2025-05-07 14:13:15 [ERROR]: User creation failed due to duplicate data User already exists
+Error: User already exists
+    at UserServices.signUp (C:\Users\kosul\Desktop\Ecommerce\Backend\src\services\userServices.ts:72:23)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async signUp (C:\Users\kosul\Desktop\Ecommerce\Backend\src\controllers\userController.ts:19:20)
+2025-05-07 14:13:15 [ERROR]: Error during sign-up process User already exists
+Error: User already exists
+    at UserServices.signUp (C:\Users\kosul\Desktop\Ecommerce\Backend\src\services\userServices.ts:72:23)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async signUp (C:\Users\kosul\Desktop\Ecommerce\Backend\src\controllers\userController.ts:19:20)
+2025-05-07 14:13:15 [ERROR]: Signup failed for kosulg22 User already exists
+Error: User already exists
+    at UserServices.signUp (C:\Users\kosul\Desktop\Ecommerce\Backend\src\services\userServices.ts:72:23)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async signUp (C:\Users\kosul\Desktop\Ecommerce\Backend\src\controllers\userController.ts:19:20)
+2025-05-07 14:13:15 [HTTP]: POST /api/user/signup/ 409 49 - 68.444 ms
+2025-05-07 14:15:30 [INFO]: Server and DB connection closed
+2025-05-07 14:15:35 [INFO]: Server running on port 3000
+2025-05-07 14:15:41 [INFO]: Validation passed for body in request: POST /api/seller/signup/
+2025-05-07 14:15:41 [INFO]: Attempting to sign up seller: shopy
+2025-05-07 14:15:41 [ERROR]: Failed to sign up seller Username is already taken
+Error: Username is already taken
+    at SellerServices.signUp (C:\Users\kosul\Desktop\Ecommerce\Backend\src\services\sellerServices.ts:102:23)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async signUp (C:\Users\kosul\Desktop\Ecommerce\Backend\src\controllers\sellerController.ts:52:33)
+2025-05-07 14:15:41 [ERROR]: Error during seller signup Username is already taken
+Error: Username is already taken
+    at SellerServices.signUp (C:\Users\kosul\Desktop\Ecommerce\Backend\src\services\sellerServices.ts:102:23)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async signUp (C:\Users\kosul\Desktop\Ecommerce\Backend\src\controllers\sellerController.ts:52:33)
+2025-05-07 14:15:41 [HTTP]: POST /api/seller/signup/ 409 55 - 64.923 ms
+2025-05-07 14:15:57 [INFO]: Validation passed for body in request: POST /api/seller/signin/
+2025-05-07 14:15:57 [INFO]: Attempting to sign in seller: shopx
+2025-05-07 14:15:57 [INFO]: Seller sign-in successful: shopx
+2025-05-07 14:15:57 [HTTP]: POST /api/seller/signin/ 200 452 - 107.935 ms
+2025-05-07 14:16:00 [INFO]: Validation passed for body in request: POST /api/seller/signin/
+2025-05-07 14:16:00 [INFO]: Attempting to sign in seller: shopx
+2025-05-07 14:16:00 [ERROR]: Failed to sign in seller Signin failed. Incorrect password
+Error: Signin failed. Incorrect password
+    at SellerServices.signIn (C:\Users\kosul\Desktop\Ecommerce\Backend\src\services\sellerServices.ts:152:23)
+    at async signIn (C:\Users\kosul\Desktop\Ecommerce\Backend\src\controllers\sellerController.ts:76:33)
+2025-05-07 14:16:00 [ERROR]: Error during seller sign in Signin failed. Incorrect password
+Error: Signin failed. Incorrect password
+    at SellerServices.signIn (C:\Users\kosul\Desktop\Ecommerce\Backend\src\services\sellerServices.ts:152:23)
+    at async signIn (C:\Users\kosul\Desktop\Ecommerce\Backend\src\controllers\sellerController.ts:76:33)
+2025-05-07 14:16:00 [HTTP]: POST /api/seller/signin/ 401 63 - 109.483 ms
+2025-05-07 14:18:52 [INFO]: Server and DB connection closed
+2025-05-07 15:03:56 [INFO]: Server running on port 3000
+2025-05-07 15:04:02 [INFO]: Validation passed for body in request: POST /api/user/signin/
+2025-05-07 15:04:02 [INFO]: User attempting to sign in: admin1
+2025-05-07 15:04:02 [INFO]: admin1 signed in successfully
+2025-05-07 15:04:02 [HTTP]: POST /api/user/signin/ 200 449 - 116.587 ms
+2025-05-07 15:04:30 [INFO]: Verifying token for user, Token: present
+2025-05-07 15:04:30 [INFO]: Token verified successfully for user: [object Object]
+2025-05-07 15:04:30 [INFO]: Checking role for user: 680b0d2b4f9904c610769730, Role: Admin
+2025-05-07 15:04:30 [INFO]: Access granted for user: 680b0d2b4f9904c610769730, Role: Admin
+2025-05-07 15:04:30 [INFO]: Validation passed for body in request: POST /api/category/
+2025-05-07 15:04:30 [INFO]: Attempting to create category
+2025-05-07 15:04:30 [INFO]: Checking if category with name category1 exists
+2025-05-07 15:04:30 [INFO]: Generating category with name: category1
+2025-05-07 15:04:30 [INFO]: Category creation successful
+2025-05-07 15:04:30 [HTTP]: POST /api/category/ 201 74 - 177.870 ms
+2025-05-07 15:04:33 [INFO]: Verifying token for user, Token: present
+2025-05-07 15:04:33 [INFO]: Token verified successfully for user: [object Object]
+2025-05-07 15:04:33 [INFO]: Checking role for user: 680b0d2b4f9904c610769730, Role: Admin
+2025-05-07 15:04:33 [INFO]: Access granted for user: 680b0d2b4f9904c610769730, Role: Admin
+2025-05-07 15:04:33 [INFO]: Validation passed for params in request: GET /api/category/6813344bf06aaf25d615ae76
+2025-05-07 15:04:33 [INFO]: Fetching category
+2025-05-07 15:04:33 [INFO]: Category read successful
+2025-05-07 15:04:33 [HTTP]: GET /api/category/6813344bf06aaf25d615ae76 200 115 - 93.870 ms
+2025-05-07 15:04:43 [INFO]: Verifying token for user, Token: present
+2025-05-07 15:04:43 [INFO]: Token verified successfully for user: [object Object]
+2025-05-07 15:04:43 [INFO]: Checking role for user: 680b0d2b4f9904c610769730, Role: Admin
+2025-05-07 15:04:43 [INFO]: Access granted for user: 680b0d2b4f9904c610769730, Role: Admin
+2025-05-07 15:04:43 [INFO]: Validation passed for params in request: PUT /api/category/68185b02a8771c2e5ea172e0
+2025-05-07 15:04:43 [INFO]: Validation passed for body in request: PUT /api/category/68185b02a8771c2e5ea172e0
+2025-05-07 15:04:43 [INFO]: Attempting to update category
+2025-05-07 15:04:43 [WARN]: Category name categoryx1 already taken
+2025-05-07 15:04:43 [ERROR]: Error updating category with ID: 68185b02a8771c2e5ea172e0
+2025-05-07 15:04:43 [ERROR]: Error updating category Category already exists
+Error: Category already exists
+    at CategoryService.updateCategory (C:\Users\kosul\Desktop\Ecommerce\Backend\src\services\categoryServices.ts:121:25)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async updateCategory (C:\Users\kosul\Desktop\Ecommerce\Backend\src\controllers\categoryController.ts:89:22)
+2025-05-07 15:04:43 [HTTP]: PUT /api/category/68185b02a8771c2e5ea172e0 409 53 - 81.790 ms
+2025-05-07 15:04:48 [INFO]: Verifying token for user, Token: present
+2025-05-07 15:04:48 [INFO]: Token verified successfully for user: [object Object]
+2025-05-07 15:04:48 [INFO]: Checking role for user: 680b0d2b4f9904c610769730, Role: Admin
+2025-05-07 15:04:48 [INFO]: Access granted for user: 680b0d2b4f9904c610769730, Role: Admin
+2025-05-07 15:04:48 [INFO]: Fetching all categories
+2025-05-07 15:04:48 [INFO]: Categories read successful
+2025-05-07 15:04:48 [HTTP]: GET /api/category/ 200 488 - 76.114 ms
+2025-05-07 15:05:02 [INFO]: Verifying token for user, Token: present
+2025-05-07 15:05:02 [INFO]: Token verified successfully for user: [object Object]
+2025-05-07 15:05:02 [INFO]: Checking role for user: 680b0d2b4f9904c610769730, Role: Admin
+2025-05-07 15:05:02 [INFO]: Access granted for user: 680b0d2b4f9904c610769730, Role: Admin
+2025-05-07 15:05:02 [INFO]: Fetching subcategories
+2025-05-07 15:05:02 [INFO]: Subcategories found
+2025-05-07 15:05:02 [HTTP]: GET /api/category/sub/68145bc88a486d9766ec9b61 200 159 - 76.836 ms
+2025-05-07 15:05:12 [INFO]: Verifying token for user, Token: present
+2025-05-07 15:05:12 [INFO]: Token verified successfully for user: [object Object]
+2025-05-07 15:05:12 [INFO]: Checking role for user: 680b0d2b4f9904c610769730, Role: Admin
+2025-05-07 15:05:12 [INFO]: Access granted for user: 680b0d2b4f9904c610769730, Role: Admin
+2025-05-07 15:05:12 [INFO]: Validation passed for body in request: PUT /api/category/status/
+2025-05-07 15:05:12 [INFO]: Attempting to update category status
+2025-05-07 15:05:13 [INFO]: Finding related categories for category ID: 68145c3c8a486d9766ec9b6f
+2025-05-07 15:05:13 [INFO]: Category status update successful
+2025-05-07 15:05:13 [HTTP]: PUT /api/category/status/ 200 79 - 277.609 ms
+2025-05-07 15:05:23 [INFO]: Verifying token for user, Token: present
+2025-05-07 15:05:23 [INFO]: Token verified successfully for user: [object Object]
+2025-05-07 15:05:23 [INFO]: Checking role for user: 680b0d2b4f9904c610769730, Role: Admin
+2025-05-07 15:05:23 [INFO]: Access granted for user: 680b0d2b4f9904c610769730, Role: Admin
+2025-05-07 15:05:23 [INFO]: Validation passed for params in request: DELETE /api/category/681334e5f06aaf25d615ae7d
+2025-05-07 15:05:23 [INFO]: Attempting to delete category
+2025-05-07 15:05:23 [INFO]: Attempting to delete category with ID: 681334e5f06aaf25d615ae7d
+2025-05-07 15:05:24 [WARN]: Category with ID: 681334e5f06aaf25d615ae7d not found
+2025-05-07 15:05:24 [ERROR]: Error fetching category with ID: 681334e5f06aaf25d615ae7d
+2025-05-07 15:05:24 [ERROR]: Error deleting category with ID: 681334e5f06aaf25d615ae7d
+2025-05-07 15:05:24 [ERROR]: Error deleting category Failed to find category
+Error: Failed to find category
+    at CategoryService.readCategory (C:\Users\kosul\Desktop\Ecommerce\Backend\src\services\categoryServices.ts:93:23)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async CategoryService.deleteCategory (C:\Users\kosul\Desktop\Ecommerce\Backend\src\services\categoryServices.ts:158:24)
+    at async deleteCategory (C:\Users\kosul\Desktop\Ecommerce\Backend\src\controllers\categoryController.ts:114:22)
+2025-05-07 15:05:24 [HTTP]: DELETE /api/category/681334e5f06aaf25d615ae7d 500 85 - 61.788 ms
+2025-05-07 15:18:49 [INFO]: Server and DB connection closed

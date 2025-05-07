@@ -14,6 +14,7 @@ import { CartProduct } from "../common/types/cartType.js";
 import { inject, injectable, container } from "tsyringe";
 import OrderFactory from "../factories/orderRepositoryFactory.js";
 import { OrderRepositoryInterface } from "../common/types/classInterfaces.js";
+import logger from "../utils/logger.js";
 
 @injectable()
 export default class OrderService {
@@ -30,6 +31,7 @@ export default class OrderService {
     userid: string,
     type: OrderType
   ): DeliveryOrder | ReturnOrder {
+    logger.info(`Generating order for ${userid}`);
     if (type === OrderType.DELIVERY) {
       return {
         userid,
@@ -59,6 +61,7 @@ export default class OrderService {
       };
     }
     const error = new Error("Invalid order type");
+    logger.error("Invalid order type");
     (error as any).statusCode = 400;
     throw error;
   }
@@ -122,6 +125,7 @@ export default class OrderService {
     try {
       const orders = await this.orderRepository.findAll();
       if (!orders || orders.length === 0) {
+        logger.warn("No orders found");
         const error = new Error("No orders found");
         (error as any).statusCode = 404;
         throw error;
@@ -146,6 +150,7 @@ export default class OrderService {
   }
 
   private async manageCart(items: CartProduct[], userid: string) {
+    logger.info("Removing products from cart");
     if (!items || items.length === 0) return;
     const productIds = items.map((p) => p.productid);
     try {
@@ -160,12 +165,14 @@ export default class OrderService {
       const cart = await this.cartService.getCart(userid);
       if (!cart) {
         const error = new Error("No Cart found");
+        logger.error("No cart found");
         (error as any).statusCode = 404;
         throw error;
       }
       const product = cart.products.find((p: any) => p.productid === productid);
       if (!product) {
         const error = new Error("No product found in cart");
+        logger.error("No product found in the user cart");
         (error as any).statusCode = 404;
         throw error;
       }
@@ -175,6 +182,7 @@ export default class OrderService {
       );
       if (!productItem) {
         const error = new Error("Product not in product database");
+        logger.warn("Product not in product database");
         (error as any).statusCode = 404;
         throw error;
       }
@@ -211,7 +219,7 @@ export default class OrderService {
       );
 
       if (!filteredProducts || filteredProducts.length === 0) {
-        const error = new Error("Products donot match with cart");
+        const error = new Error("Products do not match with cart");
         (error as any).statusCode = 404;
         throw error;
       }
@@ -378,6 +386,7 @@ export default class OrderService {
     items: CartProduct[],
     target: "increase" | "decrease"
   ) {
+    logger.info("Changing product inventory");
     for (let { productid, quantity } of items) {
       await this.productService.modifyInventory(productid, quantity, target);
     }
@@ -435,15 +444,18 @@ export default class OrderService {
       const removed = result.items.find(
         (item: any) => item.productid === productid
       );
+
       if (removed) {
         await this.manageInventory([removed], "increase");
       }
       const remainingItems = result.items.filter((p: any) => p.active === true);
-      if (remainingItems.length === 0)
+      if (remainingItems.length === 0) {
         await this.updateOrderStatus(orderid, "Canceled");
+      }
 
       return "success";
     } catch (err) {
+      logger.error("failed ot cancel a order");
       throw err;
     }
   }

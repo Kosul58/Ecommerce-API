@@ -22,3 +22,14 @@
 2025-05-06 16:07:32 [INFO]: Products fetched successfully
 2025-05-06 16:07:32 [HTTP]: GET /api/product/ 200 1579 - 79.421 ms
 2025-05-06 16:07:47 [INFO]: Server and DB connection closed
+2025-05-06 16:18:43 [INFO]: Server running on port 3000
+2025-05-06 16:18:47 [INFO]: Fetching all products
+2025-05-06 16:18:47 [INFO]: Products fetched successfully
+2025-05-06 16:18:47 [HTTP]: GET /api/product/ 200 1579 - 108.820 ms
+2025-05-06 16:18:55 [HTTP]: GET /api/prosduct/68133ba4825f101f749e6d52 404 48 - 1.104 ms
+2025-05-06 16:19:13 [INFO]: Fetching product with id: 68133ba4825f101f749a6d52
+2025-05-06 16:19:13 [ERROR]: Error fetching product with id: 68133ba4825f101f749a6d52
+2025-05-06 16:19:13 [HTTP]: GET /api/product/68133ba4825f101f749a6d52 404 47 - 112.747 ms
+2025-05-06 16:19:26 [INFO]: Server and DB connection closed
+2025-05-06 17:35:59 [INFO]: Server running on port 3000
+2025-05-06 17:49:24 [INFO]: Server and DB connection closed

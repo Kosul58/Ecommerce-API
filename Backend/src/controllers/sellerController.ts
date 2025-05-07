@@ -12,18 +12,10 @@ export default class SellerController {
     @inject(ResponseHandler) private responseHandler: ResponseHandler
   ) {}
 
-  private logError(context: string, err: unknown, extra?: object) {
-    if (err instanceof Error) {
-      logger.error(context, { error: err.message });
-    } else {
-      logger.error(`${context} - Unknown error`, { error: err, ...extra });
-    }
-  }
-
   public getSeller: RequestHandler = async (req, res, next) => {
     const sellerid = req.user.id;
     try {
-      logger.info(`Fetching seller with id: ${sellerid}`);
+      logger.info(`Attempting to fetch seller with id: ${sellerid}`);
       const seller = await this.sellerServices.getSeller(sellerid);
       if (!seller) {
         logger.warn(`No seller found with id: ${sellerid}`);
@@ -32,7 +24,7 @@ export default class SellerController {
       logger.info(`Seller found with id: ${sellerid}`);
       return this.responseHandler.success(res, "Seller found", seller);
     } catch (err) {
-      this.logError(`Error fetching seller with id: ${sellerid}`, err);
+      logger.error(`Error fetching seller with id: ${sellerid}`, err);
       return next(err);
     }
   };
@@ -48,7 +40,7 @@ export default class SellerController {
       logger.info("Sellers fetched successfully");
       return this.responseHandler.success(res, "Sellers found", sellers);
     } catch (err) {
-      this.logError("Error fetching all sellers", err);
+      logger.error("Error fetching sellers", err);
       return next(err);
     }
   };
@@ -56,22 +48,23 @@ export default class SellerController {
   public signUp: RequestHandler = async (req, res, next) => {
     const seller: AddSeller = req.body;
     try {
-      logger.info(`Attempting to register seller: ${seller.username}`);
+      logger.info(`Attempting to sign up seller: ${seller.username}`);
       const { result, token } = await this.sellerServices.signUp(
         seller,
         "Seller"
       );
       if (!result) {
-        logger.warn(`Seller signup failed: ${seller.username}`);
+        logger.error("Failed to sign up seller", { seller });
         return this.responseHandler.error(res, "Failed to sign up seller");
       }
-      logger.info(`Seller signed up successfully: ${seller.username}`);
+
+      logger.info(`Seller created successfully: ${seller.username}`);
       return this.responseHandler.created(res, "Seller created successfully", {
         result,
         token,
       });
     } catch (err) {
-      this.logError("Error during seller signup", err, { seller });
+      logger.error("Error during seller signup", err);
       return next(err);
     }
   };
@@ -79,23 +72,24 @@ export default class SellerController {
   public signIn: RequestHandler = async (req, res, next) => {
     const { username, email, password } = req.body;
     try {
-      logger.info(`Seller login attempt: ${username || email}`);
+      logger.info(`Attempting to sign in seller: ${username || email}`);
       const { result, token } = await this.sellerServices.signIn(
         username,
         email,
         password
       );
       if (!result) {
-        logger.warn(`Invalid seller credentials: ${username || email}`);
+        logger.warn(`No seller found for credentials: ${username || email}`);
         return this.responseHandler.error(res, "No seller found");
       }
-      logger.info(`Seller logged in successfully: ${username || email}`);
+
+      logger.info(`Seller sign-in successful: ${username || email}`);
       return this.responseHandler.success(res, "Seller sign in successful", {
         result,
         token,
       });
     } catch (err) {
-      this.logError("Error during seller sign in", err);
+      logger.error("Error during seller sign in", err);
       return next(err);
     }
   };
@@ -103,21 +97,22 @@ export default class SellerController {
   public updateSeller: RequestHandler = async (req, res, next) => {
     const sellerid = req.user.id;
     const update: SellerUpadte = req.body;
+
     try {
-      logger.info(`Updating seller with id: ${sellerid}`);
+      logger.info(`Attempting to update seller with id: ${sellerid}`);
       const result = await this.sellerServices.updateSeller(sellerid, update);
       if (!result) {
-        logger.warn(`Seller update failed for id: ${sellerid}`);
+        logger.error(`Failed to update seller with id: ${sellerid}`);
         return this.responseHandler.error(res, "Failed to update seller data");
       }
-      logger.info(`Seller updated successfully: ${sellerid}`);
+      logger.info(`Seller with id: ${sellerid} updated successfully`);
       return this.responseHandler.success(
         res,
         "Updated seller successfully",
         result
       );
     } catch (err) {
-      this.logError(`Error updating seller with id: ${sellerid}`, err);
+      logger.error(`Error updating seller with id: ${sellerid}`, err);
       return next(err);
     }
   };
@@ -127,21 +122,21 @@ export default class SellerController {
     const { id, role } = req.user;
     try {
       logger.info(
-        `User ${id} (role: ${role}) attempting to delete seller with id: ${sellerid}`
+        `Attempting to delete seller with id: ${sellerid} by user ${id} with role ${role}`
       );
       const result = await this.sellerServices.deleteSeller(sellerid, id, role);
       if (!result) {
-        logger.warn(`Seller deletion failed for id: ${sellerid}`);
+        logger.error(`Failed to delete seller with id: ${sellerid}`);
         return this.responseHandler.error(res, "Failed to delete seller");
       }
-      logger.info(`Seller deleted successfully: ${sellerid}`);
+      logger.info(`Seller with id: ${sellerid} deleted successfully`);
       return this.responseHandler.success(
         res,
         "Seller deleted successfully",
         result
       );
     } catch (err) {
-      this.logError(`Error deleting seller with id: ${sellerid}`, err);
+      logger.error(`Error deleting seller with id: ${sellerid}`, err);
       return next(err);
     }
   };

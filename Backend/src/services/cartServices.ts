@@ -3,6 +3,7 @@ import { inject, injectable, container } from "tsyringe";
 import ProductServices from "./productServices.js";
 import CartFactory from "../factories/cartRepositoryFactory.js";
 import { CartRepositoryInterface } from "../common/types/classInterfaces.js";
+import logger from "../utils/logger.js";
 
 @injectable()
 export default class CartService {
@@ -20,6 +21,7 @@ export default class CartService {
       const carts = await this.cartRepository.findAll();
       if (!carts || carts.length === 0) {
         const error = new Error("No products found in cart");
+        logger.error("No products found in cart");
         (error as any).statusCode = 404;
         throw error;
       }
@@ -29,19 +31,23 @@ export default class CartService {
       }
       return products;
     } catch (err) {
+      logger.error(`Error in getProducts`);
       throw err;
     }
   }
+
   public async getProductById(productid: string, userid: string) {
     try {
       const cart = await this.cartRepository.getCart(userid);
       if (!cart || Object.keys(cart).length === 0) {
         const error = new Error("No product found in cart");
+        logger.error(`No product found for user: ${userid}`);
         (error as any).statusCode = 404;
         throw error;
       }
       return cart.products.filter((p: any) => p.productid === productid);
     } catch (err) {
+      logger.error(`Error in getProductById`);
       throw err;
     }
   }
@@ -51,11 +57,13 @@ export default class CartService {
       const cart = await this.cartRepository.getCart(userid);
       if (!cart || Object.keys(cart).length === 0) {
         const error = new Error("No cart found");
+        logger.error(`No cart found for user: ${userid}`);
         (error as any).statusCode = 404;
         throw error;
       }
       return cart;
     } catch (err) {
+      logger.error(`Error in getCart`);
       throw err;
     }
   }
@@ -75,17 +83,20 @@ export default class CartService {
       const cart = await this.cartRepository.getCart(userid);
       if (cart) {
         const error = new Error("Cart already exists");
+        logger.error(`Cart already exists for user: ${userid}`);
         (error as any).statusCode = 409;
         throw error;
       }
       const result = await this.cartRepository.createCart(userid);
       if (!result || Object.keys(result).length === 0) {
         const error = new Error("Failed to create a cart");
+        logger.error(`Failed to create a cart for user: ${userid}`);
         (error as any).statusCode = 500;
         throw error;
       }
       return "success";
     } catch (err) {
+      logger.error(`Error in createCart`);
       throw err;
     }
   }
@@ -95,17 +106,20 @@ export default class CartService {
       const product = await this.productServices.getProductById(productid);
       if (!product) {
         const error = new Error("No product found");
+        logger.error(`Product not found: ${productid}`);
         (error as any).statusCode = 404;
         throw error;
       }
       if (product.inventory < quantity) {
         const error = new Error("Insufficient product inventory");
+        logger.error(`Insufficient inventory for product: ${productid}`);
         (error as any).statusCode = 400;
         throw error;
       }
       const cart = await this.getCart(userid);
       if (!cart) {
         const error = new Error("No cart found");
+        logger.error(`No cart found for user: ${userid}`);
         (error as any).statusCode = 404;
         throw error;
       }
@@ -121,11 +135,13 @@ export default class CartService {
       const result = await this.cartRepository.saveCart(cart);
       if (!result || Object.keys(result).length === 0) {
         const error = new Error("Failed to add a product to the cart");
+        logger.error(`Failed to add product: ${productid} to cart`);
         (error as any).statusCode = 500;
         throw error;
       }
       return "success";
     } catch (err) {
+      logger.error(`Error in addProduct`);
       throw err;
     }
   }
@@ -135,6 +151,7 @@ export default class CartService {
       const cart = await this.getCart(userid);
       if (!cart) {
         const error = new Error("No cart found");
+        logger.error(`No cart found for user: ${userid}`);
         (error as any).statusCode = 404;
         throw error;
       }
@@ -143,6 +160,7 @@ export default class CartService {
       );
       if (productIndex < 0) {
         const error = new Error("No product found in the cart");
+        logger.error(`Product not found in cart for user: ${userid}`);
         (error as any).statusCode = 404;
         throw error;
       }
@@ -150,11 +168,13 @@ export default class CartService {
       const result = await this.cartRepository.saveCart(cart);
       if (!result || Object.keys(result).length === 0) {
         const error = new Error("Failed to remove a product from the cart");
+        logger.error(`Failed to remove product: ${productid} from cart`);
         (error as any).statusCode = 500;
         throw error;
       }
       return "success";
     } catch (err) {
+      logger.error(`Error in removeProduct`);
       throw err;
     }
   }
@@ -164,6 +184,7 @@ export default class CartService {
       const cart = await this.getCart(userid);
       if (!cart) {
         const error = new Error("No cart found");
+        logger.error(`No cart found for user: ${userid}`);
         (error as any).statusCode = 404;
         throw error;
       }
@@ -176,17 +197,20 @@ export default class CartService {
       const length2 = cart.products.length;
       if (length1 === length2) {
         const error = new Error("No product found in the cart");
+        logger.error(`No products found in cart for user: ${userid}`);
         (error as any).statusCode = 404;
         throw error;
       }
       const result = await this.cartRepository.saveCart(cart);
       if (!result || Object.keys(result).length === 0) {
         const error = new Error("Failed to remove products from the cart");
+        logger.error(`Failed to remove products for user: ${userid}`);
         (error as any).statusCode = 500;
         throw error;
       }
       return "success";
     } catch (err) {
+      logger.error(`Error in removeProducts`);
       throw err;
     }
   }
@@ -196,17 +220,20 @@ export default class CartService {
       const product = await this.productServices.getProductById(pid);
       if (!product) {
         const error = new Error("No product found in product database");
+        logger.error(`Product not found in product database: ${pid}`);
         (error as any).statusCode = 404;
         throw error;
       }
       if (product.inventory < quantity) {
         const error = new Error("Insufficient inventory");
+        logger.error(`Insufficient inventory for product: ${pid}`);
         (error as any).statusCode = 400;
         throw error;
       }
       const cart = await this.getCart(uid);
       if (!cart) {
         const error = new Error("No cart found");
+        logger.error(`No cart found for user: ${uid}`);
         (error as any).statusCode = 404;
         throw error;
       }
@@ -215,6 +242,7 @@ export default class CartService {
       );
       if (productIndex < 0) {
         const error = new Error("No product found in cart");
+        logger.error(`No product found in cart for user: ${uid}`);
         (error as any).statusCode = 404;
         throw error;
       }
@@ -222,11 +250,15 @@ export default class CartService {
       const result = await this.cartRepository.saveCart(cart);
       if (!result || Object.keys(result).length === 0) {
         const error = new Error("Failed to update a product in the cart");
+        logger.error(
+          `Failed to update product: ${pid} in cart for user: ${uid}`
+        );
         (error as any).statusCode = 500;
         throw error;
       }
       return "success";
     } catch (err) {
+      logger.error(`Error in updateProduct`);
       throw err;
     }
   }
@@ -236,6 +268,7 @@ export default class CartService {
       const data = await this.cartRepository.getCart(userid);
       if (!data || Object.keys(data).length === 0) {
         const error = new Error("No cart found");
+        logger.error(`No cart found for user: ${userid}`);
         (error as any).statusCode = 404;
         throw error;
       }
@@ -246,6 +279,7 @@ export default class CartService {
       const products = await this.productServices.getProducts();
       if (!products) {
         const error = new Error("No product found in product database");
+        logger.error(`No products found in product database`);
         (error as any).statusCode = 404;
         throw error;
       }
@@ -257,6 +291,7 @@ export default class CartService {
         return sum + price * item.quantity;
       }, 0);
     } catch (err) {
+      logger.error(`Error in cartTotal`);
       throw err;
     }
   }
@@ -266,11 +301,13 @@ export default class CartService {
       const result = await this.cartRepository.deleteOne(userid);
       if (!result || Object.keys(result).length === 0) {
         const error = new Error("Failed to delete a cart");
+        logger.error(`Failed to delete cart for user: ${userid}`);
         (error as any).statusCode = 500;
         throw error;
       }
       return "success";
     } catch (err) {
+      logger.error(`Error in deleteCart`);
       throw err;
     }
   }

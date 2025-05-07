@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import Joi from "joi";
 import { injectable } from "tsyringe";
+import logger from "../utils/logger";
 
 @injectable()
 export default class DataValidation {
@@ -13,6 +14,11 @@ export default class DataValidation {
         field: e.path.join("."),
         message: e.message,
       }));
+
+      logger.warn("Validation failed", {
+        errorDetails: (err as any).details,
+      });
+
       return err;
     }
     return null;
@@ -21,7 +27,19 @@ export default class DataValidation {
   public validateBody(schema: Joi.ObjectSchema) {
     return (req: Request, res: Response, next: NextFunction) => {
       const err = this.validate(schema, req.body);
-      if (err) return next(err);
+      if (err) {
+        logger.warn(
+          `Validation error in body for request: ${req.method} ${req.originalUrl}`,
+          {
+            errorDetails: (err as any).details,
+          }
+        );
+        return next(err);
+      }
+
+      logger.info(
+        `Validation passed for body in request: ${req.method} ${req.originalUrl}`
+      );
       next();
     };
   }
@@ -29,7 +47,19 @@ export default class DataValidation {
   public validateTokenData(schema: Joi.ObjectSchema) {
     return (req: Request, res: Response, next: NextFunction) => {
       const err = this.validate(schema, req.user);
-      if (err) return next(err);
+      if (err) {
+        logger.warn(
+          `Validation error in token data for request: ${req.method} ${req.originalUrl}`,
+          {
+            errorDetails: (err as any).details,
+          }
+        );
+        return next(err);
+      }
+
+      logger.info(
+        `Validation passed for token data in request: ${req.method} ${req.originalUrl}`
+      );
       next();
     };
   }
@@ -37,7 +67,19 @@ export default class DataValidation {
   public validateParams(schema: Joi.ObjectSchema) {
     return (req: Request, res: Response, next: NextFunction) => {
       const err = this.validate(schema, req.params);
-      if (err) return next(err);
+      if (err) {
+        logger.warn(
+          `Validation error in params for request: ${req.method} ${req.originalUrl}`,
+          {
+            errorDetails: (err as any).details,
+          }
+        );
+        return next(err);
+      }
+
+      logger.info(
+        `Validation passed for params in request: ${req.method} ${req.originalUrl}`
+      );
       next();
     };
   }

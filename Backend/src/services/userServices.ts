@@ -11,16 +11,18 @@ import CartService from "./cartServices.js";
 import { UserRepositoryInterface } from "../common/types/classInterfaces.js";
 import Utills from "../utils/utils.js";
 import EmailService from "./emailService1.js";
-import UploadService from "./uploadService.js";
+import CloudService from "./cloudService.js";
 import UserFactory from "../factories/userRepositoryFactory.js";
+import logger from "../utils/logger.js";
 
 @injectable()
 export default class UserServices {
   private userRepository: UserRepositoryInterface;
+
   constructor(
     @inject(UserFactory) private userFactory: UserFactory,
     @inject(EmailService) private emailService: EmailService,
-    @inject(UploadService) private uploadService: UploadService,
+    @inject(CloudService) private cloudService: CloudService,
     @inject(CartService) private cartService: CartService,
     @inject(AuthServices) private authService: AuthServices,
     @inject(Utills) private utils: Utills
@@ -28,6 +30,7 @@ export default class UserServices {
     this.userRepository =
       this.userFactory.getRepository() as UserRepositoryInterface;
   }
+
   private async generateUser(user: AddUser, role: string): Promise<User> {
     try {
       const encryptedPassword = await this.utils.encryptPassword(user.password);
@@ -42,12 +45,17 @@ export default class UserServices {
         address: user.address,
         role: userRole,
       };
-    } catch {
+    } catch (err) {
+      logger.error(
+        `Password encryption failed for user: ${user.username}`,
+        err
+      );
       const error = new Error("Password encryption failed");
       (error as any).statusCode = 500;
       throw error;
     }
   }
+
   public async signUp(user: AddUser, role: string) {
     try {
       const [usernameTaken, emailTaken, phoneTaken] = await Promise.all([
@@ -55,7 +63,6 @@ export default class UserServices {
         this.userRepository.findEmail(user.email),
         this.userRepository.findPhoneNumber(user.phone),
       ]);
-
       if (usernameTaken || emailTaken || phoneTaken) {
         const reasons = [];
         if (usernameTaken) reasons.push("Username already taken");
@@ -64,10 +71,13 @@ export default class UserServices {
         const error = new Error("User already exists");
         (error as any).statusCode = 409;
         (error as any).details = reasons;
+        logger.error("User creation failed due to duplicate data");
         throw error;
       }
+
       const newUser = await this.generateUser(user, role);
       const result = await this.userRepository.signUp(newUser);
+
       if (!result || Object.keys(result).length === 0) {
         const error = new Error("User creation failed");
         (error as any).statusCode = 500;
@@ -88,6 +98,7 @@ export default class UserServices {
         ),
       };
     } catch (err) {
+      logger.error("Error during sign-up process");
       throw err;
     }
   }
@@ -95,7 +106,6 @@ export default class UserServices {
   public async signIn(username: string, email: string, password: string) {
     try {
       const result = await this.userRepository.signIn(username, email);
-
       if (!result || Object.keys(result).length === 0) {
         const error = new Error("Signin failed. User not found");
         (error as any).statusCode = 404;
@@ -119,6 +129,7 @@ export default class UserServices {
         ),
       };
     } catch (err) {
+      logger.error("Error during sign-in process");
       throw err;
     }
   }
@@ -133,6 +144,7 @@ export default class UserServices {
       }
       return this.returnData(result);
     } catch (err) {
+      logger.error("Error fetching user data for userId:");
       throw err;
     }
   }
@@ -147,18 +159,18 @@ export default class UserServices {
       }
       return result.map((user: any) => this.returnData(user));
     } catch (err) {
+      logger.error("Error fetching all users");
       throw err;
     }
   }
 
   public async deleteUser(userid: string, id: string, role: string) {
     try {
-      if (role === "User") {
-        if (userid !== id) {
-          const error = new Error("User not authorized to delete others");
-          (error as any).statusCode = 401;
-          throw error;
-        }
+      if (role === "User" && userid !== id) {
+        logger.warn(`User ${userid} not authorized to delete others`);
+        const error = new Error("User not authorized to delete others");
+        (error as any).statusCode = 401;
+        throw error;
       }
       const data = await this.userRepository.deleteOne(userid);
       if (!data) {
@@ -166,10 +178,12 @@ export default class UserServices {
         (error as any).statusCode = 404;
         throw error;
       }
-
       await this.cartService.deleteCart(userid);
+      logger.info(`User deleted successfully. User cart also deleted`);
+
       return "success";
     } catch (err) {
+      logger.error("Error deleting user with userId:");
       throw err;
     }
   }
@@ -191,6 +205,7 @@ export default class UserServices {
           throw error;
         }
       }
+
       if (updateFields.phone) {
         const phoneTaken = await this.userRepository.findPhoneNumber(
           updateFields.phone,
@@ -202,19 +217,19 @@ export default class UserServices {
           throw error;
         }
       }
+
       const result = await this.userRepository.updateOne(userid, updateFields);
       if (!result) {
+        logger.error("Failed to update user data for userId:", userid);
         return;
       }
+      logger.info(`User ${result.username} updated successfully`);
       return "success";
     } catch (err) {
+      logger.error("Error updating user info for userId:");
       throw err;
     }
   }
-
-  public async updatePassword() {}
-
-  public async updateEmail() {}
 
   public async sendMail() {
     try {
@@ -224,13 +239,22 @@ export default class UserServices {
         "Thank you for creating an account. Hope you enjoy your shopping.",
         { username: "Kosul", email: "kosulgrg@gmail.com" }
       );
-      return data;
-    } catch (err) {}
+      if (!data) {
+        const error = new Error("Failed to send email");
+        (error as any).statusCode = 500;
+        throw error;
+      }
+      logger.info("Email sent successfully");
+      return "Email sent successfully";
+    } catch (err) {
+      logger.error("Error sending email");
+      throw err;
+    }
   }
 
   public async pdf() {
     try {
-      const data = await this.uploadService.generatePDF({
+      const data = await this.cloudService.uploadPDF({
         username: "Kosul",
         email: "kosulgrg@gmail.com",
         orderid: "681478c9716d460249dc6fk6",
@@ -239,19 +263,31 @@ export default class UserServices {
         paymentType: "Cash on delivery",
         deliveryTime: Date.now(),
       });
+      if (!data || data.length === 0) {
+        const error = new Error("Failed to upload PDF");
+        (error as any).statusCode = 500;
+        throw error;
+      }
+      logger.info("Uploaded pdf successfully");
       return data;
     } catch (err) {
-      console.error(err);
+      logger.error("Error uploading PDF");
       throw err;
     }
   }
 
   public async uploadImages(files: Express.Multer.File[]) {
     try {
-      const data = await this.uploadService.uploadImages(files);
+      const data = await this.cloudService.uploadImages(files);
+      if (!data || data.length === 0) {
+        const error = new Error("Failed to upload images to the cloud");
+        (error as any).statusCode = 500;
+        throw error;
+      }
+      logger.info("Uploaded images successfully");
       return data;
     } catch (err) {
-      console.error(err);
+      logger.error("Error uploading images");
       throw err;
     }
   }

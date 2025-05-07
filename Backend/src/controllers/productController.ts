@@ -3,7 +3,7 @@ import { RequestHandler } from "express";
 import { inject, injectable } from "tsyringe";
 import ProductServices from "../services/productServices.js";
 import ResponseHandler from "../utils/apiResponse";
-import logger from "../utils/logger";
+import logger from "../utils/logger"; // Assuming logger is set up
 
 @injectable()
 export default class ProductController {
@@ -12,13 +12,6 @@ export default class ProductController {
     @inject(ResponseHandler) private responseHandler: ResponseHandler
   ) {}
 
-  private logError(context: string, err: unknown, extra?: object) {
-    if (err instanceof Error) {
-      logger.error(context, { error: err.message });
-    } else {
-      logger.error(`${context} - Unknown error`, { error: err, ...extra });
-    }
-  }
   public getProducts: RequestHandler = async (req, res, next) => {
     try {
       logger.info("Fetching all products");
@@ -30,7 +23,7 @@ export default class ProductController {
       logger.info("Products fetched successfully");
       return this.responseHandler.success(res, "Products found", response);
     } catch (err) {
-      this.logError(`Error fetching products from the database`, err);
+      logger.error("Error fetching products", err);
       return next(err);
     }
   };
@@ -47,7 +40,7 @@ export default class ProductController {
       logger.info(`Products found for seller with id: ${sellerid}`);
       return this.responseHandler.success(res, "Products found", result);
     } catch (err) {
-      this.logError(
+      logger.error(
         `Error fetching products for seller with id: ${sellerid}`,
         err
       );
@@ -67,7 +60,7 @@ export default class ProductController {
       logger.info(`Hidden products found for seller with id: ${sellerid}`);
       return this.responseHandler.success(res, "Products found", result);
     } catch (err) {
-      this.logError(
+      logger.error(
         `Error fetching hidden products for seller with id: ${sellerid}`,
         err
       );
@@ -87,7 +80,7 @@ export default class ProductController {
       logger.info(`Product found with id: ${productid}`);
       return this.responseHandler.success(res, "Product found", data);
     } catch (err) {
-      this.logError(`Error fetching product with id: ${productid}`, err);
+      logger.error(`Error fetching product with id: ${productid}`, err);
       return next(err);
     }
   };
@@ -121,7 +114,7 @@ export default class ProductController {
         result
       );
     } catch (err) {
-      this.logError(
+      logger.error(
         `Error adding product: ${productData.name} for seller with id: ${sellerid}`,
         err
       );
@@ -150,7 +143,7 @@ export default class ProductController {
         data
       );
     } catch (err) {
-      this.logError(
+      logger.error(
         `Error adding multiple products for seller with id: ${sellerid}`,
         err
       );
@@ -189,7 +182,7 @@ export default class ProductController {
         result
       );
     } catch (err) {
-      this.logError(
+      logger.error(
         `Error updating product with id: ${productid} for seller with id: ${sellerid}`,
         err
       );
@@ -226,7 +219,7 @@ export default class ProductController {
         result
       );
     } catch (err) {
-      this.logError(
+      logger.error(
         `Error deleting product with id: ${productid} for seller with id: ${sellerid}`,
         err
       );
@@ -246,7 +239,7 @@ export default class ProductController {
       logger.info(`Products deleted successfully for seller with id: ${id}`);
       return this.responseHandler.success(res, "Products deleted successfully");
     } catch (err) {
-      this.logError(`Error deleting products for seller with id: ${id}`, err);
+      logger.error(`Error deleting products for seller with id: ${id}`, err);
       return next(err);
     }
   };
@@ -270,7 +263,7 @@ export default class ProductController {
         result
       );
     } catch (err) {
-      this.logError("Error updating product status", err);
+      logger.error("Error updating product status", err);
       return next(err);
     }
   };
@@ -295,7 +288,7 @@ export default class ProductController {
         result
       );
     } catch (err) {
-      this.logError(
+      logger.error(
         `Error hiding seller products for seller with id: ${req.user.id}`,
         err
       );
@@ -331,7 +324,7 @@ export default class ProductController {
         result
       );
     } catch (err) {
-      this.logError(
+      logger.error(
         `Error modifying inventory for product with id: ${productid}`,
         err
       );

@@ -1,4 +1,4 @@
-import { injectable, inject, container } from "tsyringe";
+import { injectable, inject } from "tsyringe";
 import {
   AddProduct,
   Product,
@@ -8,6 +8,7 @@ import {
 import CategoryService from "./categoryServices.js";
 import ProductFactory from "../factories/productRepositoryFactory.js";
 import { ProductRepositoryInteface } from "../common/types/classInterfaces.js";
+import logger from "../utils/logger.js";
 
 @injectable()
 export default class ProductServices {
@@ -19,14 +20,18 @@ export default class ProductServices {
     this.productRepository =
       this.productFacotry.getRepository() as ProductRepositoryInteface;
   }
+
   private async checkCategory(name: string) {
+    logger.info(`Checking if category '${name}' exists`);
     return await this.categoryService.checkCategory(name);
   }
+
   private async createProduct(
     productData: AddProduct,
     sellerid: string
   ): Promise<Product> {
     const { name, price, inventory, description, category } = productData;
+    logger.info(`Creating product with name: ${name}`);
     return {
       name,
       sellerid,
@@ -36,6 +41,7 @@ export default class ProductServices {
       category,
     };
   }
+
   private returnProductData<
     T extends {
       _id: any;
@@ -47,6 +53,7 @@ export default class ProductServices {
       inventory: number;
     }
   >(product: T): ProductReturn {
+    logger.debug(`Returning product data for: ${product.name}`);
     return {
       id: product._id.toString(),
       name: product.name,
@@ -57,8 +64,10 @@ export default class ProductServices {
       inventory: product.inventory,
     };
   }
+
   public async getProducts() {
     try {
+      logger.info("Fetching all products");
       const products = await this.productRepository.findAll();
       if (!products || products.length === 0) {
         const error = new Error("No Products found");
@@ -67,45 +76,45 @@ export default class ProductServices {
       }
       return products.map((p: any) => this.returnProductData(p));
     } catch (err) {
+      logger.error("Error fetching products");
       throw err;
     }
   }
 
-  //to get the products of a seller
   public async getSellerProducts(id: string) {
     try {
+      logger.info(`Fetching products for seller: ${id}`);
       const products = await this.productRepository.getSellerProducts(id);
       if (!products || products.length === 0) {
-        // const error = new Error("No Products found");
-        // (error as any).statusCode = 404;
-        // throw error;
+        logger.warn(`No products found for seller: ${id}`);
         return null;
       }
       return products.map((p: any) => this.returnProductData(p));
     } catch (err) {
+      logger.error(`Error fetching seller products for seller: ${id}`);
       throw err;
     }
   }
 
   public async getHiddenProducts(id: string) {
     try {
+      logger.info(`Fetching hidden products for seller: ${id}`);
       const products = await this.productRepository.getSellerProducts(id);
       if (!products || products.length === 0) {
-        // const error = new Error("No Products found");
-        // (error as any).statusCode = 404;
-        // throw error;
         return null;
       }
       return products
         .filter((p: any) => p.active === false)
         .map((p: any) => this.returnProductData(p));
     } catch (err) {
+      logger.error(`Error fetching hidden products for seller: ${id}`);
       throw err;
     }
   }
 
   public async getProductById(productid: string) {
     try {
+      logger.info(`Fetching product by ID: ${productid}`);
       const product = await this.productRepository.findOne(productid);
       if (!product) {
         const error = new Error("No Products found");
@@ -114,27 +123,31 @@ export default class ProductServices {
       }
       return this.returnProductData(product);
     } catch (err) {
+      logger.error(`Error fetching product by ID: ${productid}`);
       throw err;
     }
   }
 
   public async addProduct(product: AddProduct, sellerid: string) {
     try {
+      logger.info(`Adding product for seller: ${sellerid}`);
       const check = await this.productRepository.checkProduct({
         ...product,
         sellerid,
       });
 
       if (check && Object.keys(check).length > 0) {
-        const error = new Error("Product already exits");
+        const error = new Error("Product already exists");
         (error as any).statusCode = 409;
         throw error;
       }
 
       const categoryCheck = await this.checkCategory(product.category);
       if (categoryCheck === "cat") {
+        logger.warn(`Category ${product.category} not found`);
         return null;
       }
+
       const newProduct: Product = await this.createProduct(product, sellerid);
       const result = await this.productRepository.create(newProduct);
       if (!result) {
@@ -142,14 +155,17 @@ export default class ProductServices {
         (error as any).statusCode = 500;
         throw error;
       }
+      logger.info(`Product added successfully for seller: ${sellerid}`);
       return "success";
     } catch (err) {
+      logger.error("Error adding product");
       throw err;
     }
   }
 
   public async addProducts(products: AddProduct[], sellerid: string) {
     try {
+      logger.info(`Adding multiple products for seller: ${sellerid}`);
       const productInputs: Product[] = products.map((p) => ({
         ...p,
         sellerid,
@@ -172,29 +188,33 @@ export default class ProductServices {
         (error as any).statusCode = 409;
         throw error;
       }
+
       for (const product of filteredProducts) {
         const categoryCheck = await this.checkCategory(product.category);
-        const newProduct = await this.createProduct(product, sellerid);
         if (!categoryCheck) {
-          productList.push(newProduct);
+          productList.push(await this.createProduct(product, sellerid));
         }
       }
+
       if (productList.length === 0) {
-        const error = new Error("No matching category found for any prodcut");
+        const error = new Error("No matching category found for any product");
         (error as any).statusCode = 404;
         throw error;
       }
-      // if (productList.length !== filteredProducts.length)
-      //   console.log("Some category not found");
+
       const result = await this.productRepository.addProducts(productList);
       if (!result || result.length === 0) {
         const error = new Error("Product addition failed");
         (error as any).statusCode = 500;
         throw error;
       }
-      productList = [];
+
+      logger.info(
+        `Multiple products added successfully for seller: ${sellerid}`
+      );
       return "success";
     } catch (err) {
+      logger.error("Error adding multiple products");
       throw err;
     }
   }
@@ -205,15 +225,18 @@ export default class ProductServices {
     update: UpdateProdcut
   ) {
     try {
+      logger.info(`Updating product with ID: ${productid}`);
       const updateFields = Object.fromEntries(
         Object.entries(update).filter(([_, value]) => value !== undefined)
       ) as Partial<UpdateProdcut>;
-      const prodcut = await this.getProductById(productid);
-      if (!prodcut || prodcut.sellerid !== sellerid) {
+
+      const product = await this.getProductById(productid);
+      if (!product || product.sellerid !== sellerid) {
         const error = new Error("No product found");
         (error as any).statusCode = 404;
         throw error;
       }
+
       if (update.category) {
         const category = await this.checkCategory(update.category);
         if (!category) {
@@ -222,6 +245,7 @@ export default class ProductServices {
           throw error;
         }
       }
+
       const result = await this.productRepository.updateOne(
         productid,
         updateFields
@@ -231,124 +255,110 @@ export default class ProductServices {
         (error as any).statusCode = 500;
         throw error;
       }
+
+      logger.info(`Product updated successfully with ID: ${productid}`);
       return "success";
     } catch (err) {
+      logger.error("Error updating product");
       throw err;
     }
   }
 
   public async deleteProduct(productid: string, sellerid: string) {
     try {
-      const prodcut = await this.getProductById(productid);
-      if (!prodcut || prodcut.sellerid !== sellerid) {
-        // const error = new Error("No product found");
-        // (error as any).statusCode = 404;
-        // throw error;
+      logger.info(`Deleting product with ID: ${productid}`);
+      const product = await this.getProductById(productid);
+      if (!product || product.sellerid !== sellerid) {
         return null;
       }
+
       const result = await this.productRepository.deleteOne(productid);
       if (!result || Object.keys(result).length === 0) {
         const error = new Error("Product delete failed");
         (error as any).statusCode = 500;
         throw error;
       }
+
+      logger.info(`Product with ID: ${productid} deleted successfully`);
       return "success";
     } catch (err) {
+      logger.error("Error deleting product");
       throw err;
     }
   }
 
   public async deleteProducts(id: string) {
     try {
+      logger.info(`Deleting products for seller: ${id}`);
       const products = await this.getSellerProducts(id);
       if (!products || products.length === 0) {
-        // const error = new Error("No products found to delete");
-        // (error as any).statusCode = 404;
-        // throw error;
         return null;
       }
+
       const deleteIds = products.map((p: any) => p.id);
       const result = await this.productRepository.deleteProducts(deleteIds);
       if (!result || result.deletedCount === 0) {
-        {
-          const error = new Error("Products deletion failed");
-          (error as any).statusCode = 500;
-          throw error;
-        }
+        const error = new Error("Products deletion failed");
+        (error as any).statusCode = 500;
+        throw error;
       }
+
+      logger.info(`Products deleted successfully for seller: ${id}`);
       return "success";
     } catch (err) {
+      logger.error("Error deleting products");
       throw err;
     }
   }
 
   public async updateStatus(productids: string[], status: boolean) {
     try {
+      logger.info(`Updating status for products: ${productids.join(", ")}`);
       const result = await this.productRepository.updateStatus(
         productids,
         status
       );
       if (!result || result.modifiedCount === 0) {
-        {
-          const error = new Error("Product status update failed");
-          (error as any).statusCode = 500;
-          throw error;
-        }
+        const error = new Error("Product status update failed");
+        (error as any).statusCode = 500;
+        throw error;
       }
-      return "success";
-    } catch (err) {}
-  }
 
-  // public async hideProducts(productids: string[]) {
-  //   try {
-  //     const result = await this.productRepository.hideProducts(productids);
-  //     if (!result || result.modifiedCount === 0) {
-  //       {
-  //         const error = new Error("Product hide failed");
-  //         (error as any).statusCode = 500;
-  //         throw error;
-  //       }
-  //     }
-  //     return "success";
-  //   } catch (err) {}
-  // }
-  // public async showProducts(productids: string[]) {
-  //   try {
-  //     const result = await this.productRepository.showProducts(productids);
-  //     if (!result || result.modifiedCount === 0) {
-  //       {
-  //         const error = new Error("Product visiblity change failed");
-  //         (error as any).statusCode = 500;
-  //         throw error;
-  //       }
-  //     }
-  //     return "success";
-  //   } catch (err) {}
-  // }
+      logger.info(
+        `Status updated successfully for products: ${productids.join(", ")}`
+      );
+      return "success";
+    } catch (err) {
+      logger.error("Error updating product status");
+      throw err;
+    }
+  }
 
   public async hideSellerProducts(sellerid: string) {
     try {
+      logger.info(`Hiding products for seller: ${sellerid}`);
       const products = await this.getSellerProducts(sellerid);
       if (!products || products.length === 0) {
-        // const error = new Error("No products found to hide");
-        // (error as any).statusCode = 404;
-        // throw error;
         return null;
       }
+
       const deleteIds = products.map((p: any) => p.id);
       const result = await this.productRepository.updateStatus(
         deleteIds,
         false
       );
       if (!result || result.modifiedCount === 0) {
-        {
-          const error = new Error("Product hide failed");
-          (error as any).statusCode = 500;
-          throw error;
-        }
+        const error = new Error("Product hide failed");
+        (error as any).statusCode = 500;
+        throw error;
       }
+
+      logger.info(`Products hidden successfully for seller: ${sellerid}`);
       return "success";
-    } catch (err) {}
+    } catch (err) {
+      logger.error("Error hiding seller products");
+      throw err;
+    }
   }
 
   public async modifyInventory(
@@ -357,6 +367,7 @@ export default class ProductServices {
     modification: "increase" | "decrease"
   ) {
     try {
+      logger.info(`Modifying inventory for product ID: ${id}`);
       const product = await this.productRepository.findOne(id);
       if (!product) {
         const error = new Error("No product found");
@@ -368,12 +379,14 @@ export default class ProductServices {
         (error as any).statusCode = 404;
         throw error;
       }
+
       let newInventory = product.inventory ?? 0;
       if (modification === "increase") {
         newInventory += quantity;
       } else {
         newInventory -= quantity;
       }
+
       const result = await this.productRepository.manageInventory(
         id,
         newInventory
@@ -383,8 +396,11 @@ export default class ProductServices {
         (error as any).statusCode = 500;
         throw error;
       }
+
+      logger.info(`Inventory modified successfully for product ID: ${id}`);
       return "success";
     } catch (err) {
+      logger.error("Error modifying product inventory");
       throw err;
     }
   }

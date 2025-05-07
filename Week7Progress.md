@@ -13,7 +13,7 @@
 -> created a factories folder to store multiple repository facotry
 -> image upload service
 -> logger (winston)
--> audit trails
+-> fixed mail and pdf.
 
 ## Wednusday
 
