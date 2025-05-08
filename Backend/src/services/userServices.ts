@@ -258,27 +258,32 @@ export default class UserServices {
         username: "Kosul",
         email: "kosulgrg@gmail.com",
         orderid: "6814790a716d460249dc6fb1",
-        userid: "6814671ea1815d08f1ecc20a",
+        userid: "6814671ea1815d08f1ecc30a",
         products: ["68145bfe8a486d9766ec9b88"],
         total: 7980,
         paymentType: "Cash on delivery",
         deliveryTime: Date.now(),
       };
-
       const buffer = await this.utils.generatePDFBuffer(userInfo);
-      const { userid } = userInfo;
-      const fileExtension = "pdf";
-      const fileName = `${userid}.${fileExtension}`;
+      const fileName = `${userInfo.orderid}.pdf`;
       const folderPath = `orders/${this.utils.generatePath()}`;
-
-      const uploadResult = await this.cloudService.uploadFile(buffer, {
-        folder: folderPath,
-        public_id: fileName,
-        resource_type: "raw",
-        use_filename: true,
-        unique_filename: false,
-        type: "private",
-      });
+      const uploadResult = await this.cloudService.uploadFile(
+        buffer,
+        {
+          folder: folderPath,
+          public_id: fileName,
+          resource_type: "raw",
+          use_filename: true,
+          unique_filename: false,
+          type: "private",
+        },
+        {
+          id: userInfo.orderid,
+          type: "private",
+          size: buffer.length,
+          mimetype: "orders/pdf",
+        }
+      );
 
       if (!uploadResult) {
         const error = new Error("Failed to upload PDF");
@@ -297,28 +302,30 @@ export default class UserServices {
 
   public async uploadImages(files: Express.Multer.File[]): Promise<string[]> {
     try {
-      if (!files || files.length === 0) {
-        const error = new Error("No files provided for upload");
-        (error as any).statusCode = 400;
-        throw error;
-      }
       const sellerId = "6814671ea1815d08f1ecc20a";
       const filePath = this.utils.generatePath();
       const results = await Promise.allSettled(
         files.map((file, index) =>
-          this.cloudService.uploadFile(file.buffer, {
-            resource_type: "image",
-            folder: `products/${filePath}`,
-            public_id: `${sellerId}_${index}`,
-            use_filename: true,
-            unique_filename: false,
-          })
+          this.cloudService.uploadFile(
+            file.buffer,
+            {
+              resource_type: "image",
+              folder: `products/${filePath}`,
+              public_id: `${sellerId}_${index}_${Date.now()}`,
+              use_filename: true,
+              unique_filename: false,
+            },
+            {
+              id: file.originalname,
+              type: "upload",
+              mimetype: file.mimetype,
+              size: file.size,
+            }
+          )
         )
       );
-
       const successfulUploads: string[] = [];
       const failedUploads: { index: number; reason: any }[] = [];
-
       results.forEach((result, index) => {
         if (result.status === "fulfilled") {
           successfulUploads.push(result.value);
@@ -329,13 +336,11 @@ export default class UserServices {
           });
         }
       });
-
       if (successfulUploads.length === 0) {
         const error = new Error("All image uploads failed");
         (error as any).statusCode = 500;
         throw error;
       }
-
       const links = successfulUploads.map((url, index) => ({
         [`image_${index + 1}`]: url,
       }));

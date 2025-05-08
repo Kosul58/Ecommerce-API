@@ -10,6 +10,7 @@ import {
   signUpSchema,
   updateSchema,
 } from "../validation/userSchema.js";
+import { createAudit } from "../middlewares/auditMiddleware.js";
 const userController = container.resolve(UserController);
 const dataValidation = container.resolve(DataValidation);
 const userRoutes = express.Router();
@@ -18,6 +19,7 @@ userRoutes.get(
   verifyToken.verify,
   verifyRole.verify("Admin", "User"),
   dataValidation.validateTokenData(idSchema),
+  createAudit({ action: "get user" }),
   userController.getUser
 );
 userRoutes.get(
@@ -25,6 +27,7 @@ userRoutes.get(
   verifyToken.verify,
   verifyRole.verify("Admin"),
   dataValidation.validateTokenData(idSchema),
+  createAudit({ action: "get users" }),
   userController.getUsers
 );
 userRoutes.post(

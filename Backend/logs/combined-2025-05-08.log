@@ -131,3 +131,472 @@
 2025-05-08 11:59:45 [INFO]: PDF created successfully
 2025-05-08 11:59:45 [HTTP]: POST /api/mail 200 340 - 5051.411 ms
 2025-05-08 12:01:48 [INFO]: MongoDB connection closed
+2025-05-08 12:04:15 [INFO]: Server running on port 3000
+2025-05-08 12:04:16 [INFO]: MongoDB connected successfully
+2025-05-08 12:04:20 [INFO]: Attempting to create pdf
+2025-05-08 12:04:21 [INFO]: Generating pdf buffer
+2025-05-08 12:04:25 [INFO]: PDF uploaded successfully| Data: {"signedURL":"https://api.cloudinary.com/v1_1/dyhju2mcs/raw/download?timestamp=1746685165&public_id=orders%2F2025%2F05%2F08%2F6814671ea1815d08f1ecc20a.pdf&format=pdf&type=private&expires_at=1746685225&signature=5ffc5bd5161a7d02fabd7e3039ddb67af12b00e9&api_key=484822588963412"}
+2025-05-08 12:04:25 [INFO]: PDF created successfully
+2025-05-08 12:04:25 [HTTP]: POST /api/mail 200 324 - 4975.661 ms
+2025-05-08 13:19:56 [INFO]: MongoDB connection closed
+2025-05-08 13:27:54 [INFO]: Server running on port 3000
+2025-05-08 13:27:55 [INFO]: MongoDB connected successfully
+2025-05-08 13:28:01 [INFO]: Attempting to upload images
+2025-05-08 13:28:12 [INFO]: Some or all images uploaded successfully.| Data: {"links":[{"image_1":"https://res.cloudinary.com/dyhju2mcs/image/upload/v1746690191/products/2025/05/08/6814671ea1815d08f1ecc20a_0.jpg"}],"failedUploads":[]}
+2025-05-08 13:28:12 [INFO]: Uploaded 1 image(s) successfully
+2025-05-08 13:28:12 [HTTP]: POST /api/mail/image 200 181 - 10317.070 ms
+2025-05-08 13:37:20 [INFO]: MongoDB connection closed
+2025-05-08 13:37:25 [INFO]: Server running on port 3000
+2025-05-08 13:37:26 [INFO]: MongoDB connected successfully
+2025-05-08 13:37:32 [INFO]: Attempting to create pdf
+2025-05-08 13:37:32 [INFO]: Generating pdf buffer
+2025-05-08 13:37:37 [INFO]: PDF uploaded successfully| Data: {"signedURL":"https://api.cloudinary.com/v1_1/dyhju2mcs/raw/download?timestamp=1746690757&public_id=orders%2F2025%2F05%2F08%2F6814671ea1815d08f1ecc20a.pdf&format=pdf&type=private&expires_at=1746690877&signature=7c33d1430d1542fab07a7d0c296f67c8f0ca3957&api_key=484822588963412"}
+2025-05-08 13:37:37 [INFO]: PDF created successfully
+2025-05-08 13:37:37 [HTTP]: POST /api/mail 200 324 - 4942.421 ms
+2025-05-08 13:38:10 [INFO]: Attempting to upload images
+2025-05-08 13:38:15 [INFO]: Some or all images uploaded successfully.| Data: {"links":[{"image_1":"https://res.cloudinary.com/dyhju2mcs/image/upload/v1746690794/products/2025/05/08/6814671ea1815d08f1ecc20a_0.jpg"}],"failedUploads":[]}
+2025-05-08 13:38:15 [INFO]: Uploaded 1 image(s) successfully
+2025-05-08 13:38:15 [HTTP]: POST /api/mail/image 200 181 - 4775.651 ms
+2025-05-08 14:24:58 [INFO]: Attempting to upload images
+2025-05-08 14:25:01 [INFO]: Some or all images uploaded successfully.| Data: {"links":[{"image_1":"https://res.cloudinary.com/dyhju2mcs/image/upload/v1746693601/products/2025/05/08/6814671ea1815d08f1ecc20a_0.jpg"}],"failedUploads":[]}
+2025-05-08 14:25:01 [INFO]: Uploaded 1 image(s) successfully
+2025-05-08 14:25:01 [HTTP]: POST /api/mail/image 200 181 - 3128.491 ms
+2025-05-08 14:26:20 [INFO]: Attempting to upload images
+2025-05-08 14:26:23 [INFO]: Some or all images uploaded successfully.| Data: {"links":[{"image_1":"https://res.cloudinary.com/dyhju2mcs/image/upload/v1746693683/products/2025/05/08/6814671ea1815d08f1ecc20a_0.jpg"}],"failedUploads":[]}
+2025-05-08 14:26:23 [INFO]: Uploaded 1 image(s) successfully
+2025-05-08 14:26:23 [HTTP]: POST /api/mail/image 200 181 - 3125.514 ms
+2025-05-08 14:26:24 [INFO]: MongoDB connection closed
+2025-05-08 14:27:18 [INFO]: Server running on port 3000
+2025-05-08 14:27:19 [INFO]: MongoDB connected successfully
+2025-05-08 14:27:20 [INFO]: Attempting to upload images
+2025-05-08 14:27:23 [INFO]: Some or all images uploaded successfully.| Data: {"links":[{"image_1":"https://res.cloudinary.com/dyhju2mcs/image/upload/v1746693743/products/2025/05/08/6814671ea1815d08f1ecc20a_0.jpg"}],"failedUploads":[]}
+2025-05-08 14:27:23 [INFO]: Uploaded 1 image(s) successfully
+2025-05-08 14:27:23 [HTTP]: POST /api/mail/image 200 181 - 2870.466 ms
+2025-05-08 14:29:00 [INFO]: Attempting to upload images
+2025-05-08 14:29:04 [INFO]: Some or all images uploaded successfully.| Data: {"links":[{"image_1":"https://res.cloudinary.com/dyhju2mcs/image/upload/v1746693843/products/2025/05/08/6814671ea1815d08f1ecc20a_0.png"}],"failedUploads":[]}
+2025-05-08 14:29:04 [INFO]: Uploaded 1 image(s) successfully
+2025-05-08 14:29:04 [HTTP]: POST /api/mail/image 200 181 - 3316.010 ms
+2025-05-08 14:29:51 [INFO]: Attempting to upload images
+2025-05-08 14:29:58 [INFO]: Some or all images uploaded successfully.| Data: {"links":[{"image_1":"https://res.cloudinary.com/dyhju2mcs/image/upload/v1746693897/products/2025/05/08/6814671ea1815d08f1ecc20a_0.png"}],"failedUploads":[]}
+2025-05-08 14:29:58 [INFO]: Uploaded 1 image(s) successfully
+2025-05-08 14:29:58 [HTTP]: POST /api/mail/image 200 181 - 6583.898 ms
+2025-05-08 14:33:41 [INFO]: MongoDB connection closed
+2025-05-08 14:33:47 [INFO]: Server running on port 3000
+2025-05-08 14:33:48 [INFO]: MongoDB connected successfully
+2025-05-08 14:34:22 [INFO]: Attempting to upload images
+2025-05-08 14:34:29 [INFO]: Some or all images uploaded successfully.| Data: {"links":[{"image_1":"https://res.cloudinary.com/dyhju2mcs/image/upload/v1746694167/products/2025/05/08/6814671ea1815d08f1ecc20a_0_1746694162328.jpg"},{"image_2":"https://res.cloudinary.com/dyhju2mcs/image/upload/v1746694168/products/2025/05/08/6814671ea1815d08f1ecc20a_1_1746694162332.jpg"},{"image_3":"https://res.cloudinary.com/dyhju2mcs/image/upload/v1746694169/products/2025/05/08/6814671ea1815d08f1ecc20a_2_1746694162333.jpg"}],"failedUploads":[]}
+2025-05-08 14:34:29 [INFO]: Uploaded 3 image(s) successfully
+2025-05-08 14:34:29 [HTTP]: POST /api/mail/image 200 453 - 7283.762 ms
+2025-05-08 14:35:10 [INFO]: Attempting to upload images
+2025-05-08 14:35:15 [INFO]: Some or all images uploaded successfully.| Data: {"links":[{"image_1":"https://res.cloudinary.com/dyhju2mcs/image/upload/v1746694213/products/2025/05/08/6814671ea1815d08f1ecc20a_0_1746694210437.jpg"},{"image_2":"https://res.cloudinary.com/dyhju2mcs/image/upload/v1746694215/products/2025/05/08/6814671ea1815d08f1ecc20a_1_1746694210438.png"}],"failedUploads":[]}
+2025-05-08 14:35:15 [INFO]: Uploaded 2 image(s) successfully
+2025-05-08 14:35:15 [HTTP]: POST /api/mail/image 200 324 - 5235.991 ms
+2025-05-08 14:36:25 [INFO]: Attempting to create pdf
+2025-05-08 14:36:25 [INFO]: Generating pdf buffer
+2025-05-08 14:36:32 [INFO]: PDF uploaded successfully| Data: {"signedURL":"https://api.cloudinary.com/v1_1/dyhju2mcs/raw/download?timestamp=1746694292&public_id=orders%2F2025%2F05%2F08%2F6814671ea1815d08f1ecc20a.pdf&format=pdf&type=private&expires_at=1746694412&signature=fb3d95fef388ce753680d58c746f531390c703f5&api_key=484822588963412"}
+2025-05-08 14:36:32 [INFO]: PDF created successfully
+2025-05-08 14:36:32 [HTTP]: POST /api/mail 200 324 - 6869.476 ms
+2025-05-08 14:41:02 [INFO]: Fetching file data from database
+2025-05-08 14:41:02 [INFO]: Data fetched successfully
+2025-05-08 14:41:02 [HTTP]: GET /api/admin/data 200 1658 - 61.663 ms
+2025-05-08 14:45:04 [INFO]: Getting a file info
+2025-05-08 14:45:06 [ERROR]: Error fetching file metadata
+2025-05-08 14:45:06 [ERROR]: Error in getCloudFile| Data: {"request_options":{"protocol":"https:","slashes":true,"auth":"484822588963412:teb4pGz2Mqmk0-8lNgo29LfsMSI","host":"api.cloudinary.com","port":null,"hostname":"api.cloudinary.com","hash":null,"search":"?","query":"","pathname":"/v1_1/dyhju2mcs/resources/raw/upload/products%2F2025%2F05%2F08%2Fundefined","path":"/v1_1/dyhju2mcs/resources/raw/upload/products%2F2025%2F05%2F08%2Fundefined?","href":"https://api.cloudinary.com/v1_1/dyhju2mcs/resources/raw/upload/products%2F2025%2F05%2F08%2Fundefined?","method":"GET","headers":{"Content-Type":"application/x-www-form-urlencoded","User-Agent":"CloudinaryNodeJS/2.6.0 (Node 23.11.0)"}},"query_params":"","error":{"message":"Resource not found - products/2025/05/08/undefined","http_code":404}}
+2025-05-08 14:45:06 [HTTP]: GET /api/admin/cloudFile 500 90 - 2066.864 ms
+2025-05-08 14:46:54 [INFO]: Getting a file info
+2025-05-08 14:46:56 [ERROR]: Error fetching file metadata
+2025-05-08 14:46:56 [ERROR]: Error in getCloudFile| Data: {"request_options":{"protocol":"https:","slashes":true,"auth":"484822588963412:teb4pGz2Mqmk0-8lNgo29LfsMSI","host":"api.cloudinary.com","port":null,"hostname":"api.cloudinary.com","hash":null,"search":"?","query":"","pathname":"/v1_1/dyhju2mcs/resources/raw/upload/products%2F2025%2F05%2F08%2Fundefined","path":"/v1_1/dyhju2mcs/resources/raw/upload/products%2F2025%2F05%2F08%2Fundefined?","href":"https://api.cloudinary.com/v1_1/dyhju2mcs/resources/raw/upload/products%2F2025%2F05%2F08%2Fundefined?","method":"GET","headers":{"Content-Type":"application/x-www-form-urlencoded","User-Agent":"CloudinaryNodeJS/2.6.0 (Node 23.11.0)"}},"query_params":"","error":{"message":"Resource not found - products/2025/05/08/undefined","http_code":404}}
+2025-05-08 14:46:56 [HTTP]: GET /api/admin/cloudFile 500 90 - 2197.597 ms
+2025-05-08 14:49:17 [INFO]: Getting a file info
+2025-05-08 14:49:19 [ERROR]: Error fetching file metadata
+2025-05-08 14:49:19 [ERROR]: Error in getCloudFile| Data: {"request_options":{"protocol":"https:","slashes":true,"auth":"484822588963412:teb4pGz2Mqmk0-8lNgo29LfsMSI","host":"api.cloudinary.com","port":null,"hostname":"api.cloudinary.com","hash":null,"search":"?","query":"","pathname":"/v1_1/dyhju2mcs/resources/raw/upload/products%2F2025%2F05%2F08%2Fundefined","path":"/v1_1/dyhju2mcs/resources/raw/upload/products%2F2025%2F05%2F08%2Fundefined?","href":"https://api.cloudinary.com/v1_1/dyhju2mcs/resources/raw/upload/products%2F2025%2F05%2F08%2Fundefined?","method":"GET","headers":{"Content-Type":"application/x-www-form-urlencoded","User-Agent":"CloudinaryNodeJS/2.6.0 (Node 23.11.0)"}},"query_params":"","error":{"message":"Resource not found - products/2025/05/08/undefined","http_code":404}}
+2025-05-08 14:49:19 [HTTP]: GET /api/admin/cloudFile 500 90 - 2103.475 ms
+2025-05-08 14:50:36 [INFO]: MongoDB connection closed
+2025-05-08 14:50:41 [INFO]: Server running on port 3000
+2025-05-08 14:50:42 [INFO]: MongoDB connected successfully
+2025-05-08 14:50:45 [INFO]: Getting a file info
+2025-05-08 14:50:48 [ERROR]: Error fetching file metadata
+2025-05-08 14:50:48 [ERROR]: Error in getCloudFile| Data: {"request_options":{"protocol":"https:","slashes":true,"auth":"484822588963412:teb4pGz2Mqmk0-8lNgo29LfsMSI","host":"api.cloudinary.com","port":null,"hostname":"api.cloudinary.com","hash":null,"search":"?","query":"","pathname":"/v1_1/dyhju2mcs/resources/image/upload/products%2F2025%2F05%2F08","path":"/v1_1/dyhju2mcs/resources/image/upload/products%2F2025%2F05%2F08?","href":"https://api.cloudinary.com/v1_1/dyhju2mcs/resources/image/upload/products%2F2025%2F05%2F08?","method":"GET","headers":{"Content-Type":"application/x-www-form-urlencoded","User-Agent":"CloudinaryNodeJS/2.6.0 (Node 23.11.0)"}},"query_params":"","error":{"message":"Resource not found - products/2025/05/08","http_code":404}}
+2025-05-08 14:50:48 [HTTP]: GET /api/admin/cloudFile 500 90 - 2207.557 ms
+2025-05-08 14:51:11 [INFO]: MongoDB connection closed
+2025-05-08 14:51:16 [INFO]: Server running on port 3000
+2025-05-08 14:51:17 [INFO]: MongoDB connected successfully
+2025-05-08 14:51:18 [INFO]: Getting a file info
+2025-05-08 14:51:20 [INFO]: File info fetched successfully
+2025-05-08 14:51:20 [HTTP]: GET /api/admin/cloudFile 200 890 - 2180.179 ms
+2025-05-08 15:04:45 [INFO]: Getting files info
+2025-05-08 15:04:47 [ERROR]: Error listing files
+2025-05-08 15:04:47 [ERROR]: Error in getCloudFiles| Data: {"request_options":{"protocol":"https:","slashes":true,"auth":"484822588963412:teb4pGz2Mqmk0-8lNgo29LfsMSI","host":"api.cloudinary.com","port":null,"hostname":"api.cloudinary.com","hash":null,"search":"?prefix=products%2F2025%2F05%2F08","query":"prefix=products%2F2025%2F05%2F08","pathname":"/v1_1/dyhju2mcs/resources/raw/order","path":"/v1_1/dyhju2mcs/resources/raw/order?prefix=products%2F2025%2F05%2F08","href":"https://api.cloudinary.com/v1_1/dyhju2mcs/resources/raw/order?prefix=products%2F2025%2F05%2F08","method":"GET","headers":{"Content-Type":"application/x-www-form-urlencoded","User-Agent":"CloudinaryNodeJS/2.6.0 (Node 23.11.0)"}},"query_params":"prefix=products%2F2025%2F05%2F08","error":{"message":"Invalid value order for parameter type","http_code":400}}
+2025-05-08 15:04:47 [HTTP]: GET /api/admin/cloudFiles 500 90 - 2373.880 ms
+2025-05-08 15:05:04 [INFO]: Getting files info
+2025-05-08 15:05:06 [ERROR]: Error listing files
+2025-05-08 15:05:06 [ERROR]: Error in getCloudFiles| Data: {"request_options":{"protocol":"https:","slashes":true,"auth":"484822588963412:teb4pGz2Mqmk0-8lNgo29LfsMSI","host":"api.cloudinary.com","port":null,"hostname":"api.cloudinary.com","hash":null,"search":"?prefix=products%2F2025%2F05%2F08","query":"prefix=products%2F2025%2F05%2F08","pathname":"/v1_1/dyhju2mcs/resources/raw/order","path":"/v1_1/dyhju2mcs/resources/raw/order?prefix=products%2F2025%2F05%2F08","href":"https://api.cloudinary.com/v1_1/dyhju2mcs/resources/raw/order?prefix=products%2F2025%2F05%2F08","method":"GET","headers":{"Content-Type":"application/x-www-form-urlencoded","User-Agent":"CloudinaryNodeJS/2.6.0 (Node 23.11.0)"}},"query_params":"prefix=products%2F2025%2F05%2F08","error":{"message":"Invalid value order for parameter type","http_code":400}}
+2025-05-08 15:05:06 [HTTP]: GET /api/admin/cloudFiles 500 90 - 2319.000 ms
+2025-05-08 15:05:23 [INFO]: MongoDB connection closed
+2025-05-08 15:05:28 [INFO]: Server running on port 3000
+2025-05-08 15:05:29 [INFO]: MongoDB connected successfully
+2025-05-08 15:05:31 [INFO]: Getting files info
+2025-05-08 15:05:33 [ERROR]: Error listing files
+2025-05-08 15:05:33 [ERROR]: Error in getCloudFiles| Data: {"request_options":{"protocol":"https:","slashes":true,"auth":"484822588963412:teb4pGz2Mqmk0-8lNgo29LfsMSI","host":"api.cloudinary.com","port":null,"hostname":"api.cloudinary.com","hash":null,"search":"?prefix=products%2F2025%2F05%2F08","query":"prefix=products%2F2025%2F05%2F08","pathname":"/v1_1/dyhju2mcs/resources/image/uploads","path":"/v1_1/dyhju2mcs/resources/image/uploads?prefix=products%2F2025%2F05%2F08","href":"https://api.cloudinary.com/v1_1/dyhju2mcs/resources/image/uploads?prefix=products%2F2025%2F05%2F08","method":"GET","headers":{"Content-Type":"application/x-www-form-urlencoded","User-Agent":"CloudinaryNodeJS/2.6.0 (Node 23.11.0)"}},"query_params":"prefix=products%2F2025%2F05%2F08","error":{"message":"Invalid value uploads for parameter type","http_code":400}}
+2025-05-08 15:05:33 [HTTP]: GET /api/admin/cloudFiles 500 90 - 2280.497 ms
+2025-05-08 15:07:44 [INFO]: MongoDB connection closed
+2025-05-08 15:07:47 [INFO]: Server running on port 3000
+2025-05-08 15:07:48 [INFO]: MongoDB connected successfully
+2025-05-08 15:07:50 [INFO]: Getting files info
+2025-05-08 15:07:52 [INFO]: Files info fetched successfully
+2025-05-08 15:07:52 [HTTP]: GET /api/admin/cloudFiles 200 3300 - 2216.325 ms
+2025-05-08 15:08:14 [INFO]: Getting files info
+2025-05-08 15:08:16 [INFO]: Files info fetched successfully
+2025-05-08 15:08:16 [HTTP]: GET /api/admin/cloudFiles 200 624 - 2233.196 ms
+2025-05-08 15:13:08 [INFO]: MongoDB connection closed
+2025-05-08 15:13:50 [INFO]: Server running on port 3000
+2025-05-08 15:13:51 [INFO]: MongoDB connected successfully
+2025-05-08 15:13:53 [INFO]: Creating a signed URL
+2025-05-08 15:13:53 [INFO]: URL generated successfully
+2025-05-08 15:13:53 [HTTP]: GET /api/admin/url 200 314 - 2.883 ms
+2025-05-08 15:17:47 [INFO]: Creating a signed URL
+2025-05-08 15:17:47 [INFO]: URL generated successfully
+2025-05-08 15:17:47 [HTTP]: GET /api/admin/url 200 314 - 1.600 ms
+2025-05-08 15:22:55 [INFO]: MongoDB connection closed
+2025-05-08 15:23:00 [INFO]: Server running on port 3000
+2025-05-08 15:23:02 [INFO]: MongoDB connected successfully
+2025-05-08 15:23:14 [INFO]: Attempting to create pdf
+2025-05-08 15:23:15 [INFO]: Generating pdf buffer
+2025-05-08 15:23:20 [INFO]: PDF uploaded successfully| Data: {"signedURL":"https://api.cloudinary.com/v1_1/dyhju2mcs/raw/download?timestamp=1746697100&public_id=orders%2F2025%2F05%2F08%2F6814671ea1815d08f1ecc20a.pdf&format=pdf&type=private&expires_at=1746697220&signature=c24591b1fac07657b9ed4bef96a3b6a8cec85530&api_key=484822588963412"}
+2025-05-08 15:23:20 [INFO]: PDF created successfully
+2025-05-08 15:23:20 [HTTP]: POST /api/mail 200 324 - 5871.677 ms
+2025-05-08 15:27:43 [INFO]: Attempting to upload images
+2025-05-08 15:27:46 [INFO]: Some or all images uploaded successfully.| Data: {"links":[{"image_1":"https://res.cloudinary.com/dyhju2mcs/image/upload/v1746697366/products/2025/05/08/6814671ea1815d08f1ecc20a_0_1746697363143.png"},{"image_2":"https://res.cloudinary.com/dyhju2mcs/image/upload/v1746697366/products/2025/05/08/6814671ea1815d08f1ecc20a_1_1746697363145.png"}],"failedUploads":[]}
+2025-05-08 15:27:46 [INFO]: Uploaded 2 image(s) successfully
+2025-05-08 15:27:46 [HTTP]: POST /api/mail/image 200 324 - 3459.489 ms
+2025-05-08 15:29:28 [INFO]: Attempting to create pdf
+2025-05-08 15:29:28 [INFO]: Generating pdf buffer
+2025-05-08 15:29:36 [INFO]: PDF uploaded successfully| Data: {"signedURL":"https://api.cloudinary.com/v1_1/dyhju2mcs/raw/download?timestamp=1746697476&public_id=orders%2F2025%2F05%2F08%2F6814671ea1815d08f1ecc20a.pdf&format=pdf&type=private&expires_at=1746697596&signature=d82fd53eb7f58bee790af6ae4690717807c346ae&api_key=484822588963412"}
+2025-05-08 15:29:36 [INFO]: PDF created successfully
+2025-05-08 15:29:36 [HTTP]: POST /api/mail 200 324 - 8131.495 ms
+2025-05-08 15:32:08 [INFO]: Deleting a file from cloud
+2025-05-08 15:32:10 [INFO]: file deleted successfully
+2025-05-08 15:32:10 [HTTP]: DELETE /api/admin/one 200 72 - 2626.824 ms
+2025-05-08 15:34:04 [INFO]: MongoDB connection closed
+2025-05-08 15:35:06 [INFO]: Server running on port 3000
+2025-05-08 15:35:07 [INFO]: MongoDB connected successfully
+2025-05-08 15:35:16 [INFO]: Deleting a file from cloud
+2025-05-08 15:35:18 [INFO]: file deleted successfully
+2025-05-08 15:35:18 [HTTP]: DELETE /api/admin/one 200 72 - 2230.315 ms
+2025-05-08 15:36:51 [INFO]: Deleting a file from cloud
+2025-05-08 15:36:53 [INFO]: file deleted successfully
+2025-05-08 15:36:53 [HTTP]: DELETE /api/admin/one 200 72 - 2230.048 ms
+2025-05-08 15:37:02 [INFO]: Deleting a file from cloud
+2025-05-08 15:37:05 [INFO]: file deleted successfully
+2025-05-08 15:37:05 [HTTP]: DELETE /api/admin/one 200 65 - 2418.116 ms
+2025-05-08 15:42:38 [INFO]: MongoDB connection closed
+2025-05-08 15:42:42 [INFO]: Server running on port 3000
+2025-05-08 15:42:43 [INFO]: MongoDB connected successfully
+2025-05-08 15:42:44 [INFO]: Deleting a file from cloud
+2025-05-08 15:42:46 [ERROR]: Failed to delete a file
+2025-05-08 15:42:46 [HTTP]: DELETE /api/admin/one 400 53 - 1927.605 ms
+2025-05-08 15:43:07 [INFO]: Attempting to create pdf
+2025-05-08 15:43:08 [INFO]: Generating pdf buffer
+2025-05-08 15:43:12 [INFO]: PDF uploaded successfully| Data: {"signedURL":"https://api.cloudinary.com/v1_1/dyhju2mcs/raw/download?timestamp=1746698292&public_id=orders%2F2025%2F05%2F08%2F6814671ea1815d08f1ecc20a.pdf&format=pdf&type=private&expires_at=1746698412&signature=888abcf671f59e89ab9491d1a15d8b5bcda0f6df&api_key=484822588963412"}
+2025-05-08 15:43:12 [INFO]: PDF created successfully
+2025-05-08 15:43:12 [HTTP]: POST /api/mail 200 324 - 4547.147 ms
+2025-05-08 15:50:25 [INFO]: MongoDB connection closed
+2025-05-08 15:50:34 [INFO]: Server running on port 3000
+2025-05-08 15:50:35 [INFO]: MongoDB connected successfully
+2025-05-08 15:50:39 [INFO]: Attempting to create pdf
+2025-05-08 15:50:40 [INFO]: Generating pdf buffer
+2025-05-08 15:50:44 [INFO]: PDF uploaded successfully| Data: {"signedURL":"https://api.cloudinary.com/v1_1/dyhju2mcs/raw/download?timestamp=1746698744&public_id=orders%2F2025%2F05%2F08%2F6814671ea1815d08f1ecc30a.pdf&format=pdf&type=private&expires_at=1746698864&signature=0e4e683b70aef00ae0a82900c7a284fe98140283&api_key=484822588963412"}
+2025-05-08 15:50:44 [INFO]: PDF created successfully
+2025-05-08 15:50:44 [HTTP]: POST /api/mail 200 324 - 4885.035 ms
+2025-05-08 15:51:15 [INFO]: Deleteing cloud fiels
+2025-05-08 15:51:17 [INFO]: Files deleted successfully
+2025-05-08 15:51:17 [HTTP]: DELETE /api/admin/all 200 84 - 2331.161 ms
+2025-05-08 15:51:38 [INFO]: Deleteing cloud fiels
+2025-05-08 15:51:40 [INFO]: Files deleted successfully
+2025-05-08 15:51:40 [HTTP]: DELETE /api/admin/all 200 98 - 2156.201 ms
+2025-05-08 15:51:44 [INFO]: Deleting a file from cloud
+2025-05-08 15:51:44 [ERROR]: Failed to delete a file
+2025-05-08 15:51:44 [HTTP]: DELETE /api/admin/one 400 53 - 430.208 ms
+2025-05-08 15:58:36 [INFO]: Deleteing cloud fiels
+2025-05-08 15:58:38 [INFO]: Files deleted successfully
+2025-05-08 15:58:38 [HTTP]: DELETE /api/admin/all 200 98 - 2286.590 ms
+2025-05-08 15:59:08 [INFO]: MongoDB connection closed
+2025-05-08 15:59:12 [INFO]: Server running on port 3000
+2025-05-08 15:59:13 [INFO]: MongoDB connected successfully
+2025-05-08 15:59:14 [INFO]: Deleteing cloud fiels
+2025-05-08 15:59:17 [WARN]: File not found while deleting: orders/2025/05/08/6814671ea1815d08f1ecc20a.pdf| Data: {"result":{"result":"not found"}}
+2025-05-08 15:59:17 [WARN]: File not found while deleting: orders/2025/05/08/6814671ea1815d08f1ecc30a.pdf| Data: {"result":{"result":"not found"}}
+2025-05-08 15:59:17 [INFO]: Files deleted successfully
+2025-05-08 15:59:17 [HTTP]: DELETE /api/admin/all 200 290 - 2247.334 ms
+2025-05-08 16:00:45 [INFO]: MongoDB connection closed
+2025-05-08 16:00:49 [INFO]: Server running on port 3000
+2025-05-08 16:00:50 [INFO]: Deleteing cloud fiels
+2025-05-08 16:00:50 [INFO]: MongoDB connected successfully
+2025-05-08 16:00:52 [WARN]: File not found while deleting: orders/2025/05/08/6814671ea1815d08f1ecc20a.pdf| Data: {"result":{"result":"not found"}}
+2025-05-08 16:00:52 [WARN]: File not found while deleting: orders/2025/05/08/6814671ea1815d08f1ecc30a.pdf| Data: {"result":{"result":"not found"}}
+2025-05-08 16:00:52 [INFO]: Files deleted successfully
+2025-05-08 16:00:52 [HTTP]: DELETE /api/admin/all 200 98 - 2035.679 ms
+2025-05-08 16:01:53 [INFO]: MongoDB connection closed
+2025-05-08 16:01:57 [INFO]: Server running on port 3000
+2025-05-08 16:01:58 [INFO]: MongoDB connected successfully
+2025-05-08 16:01:59 [INFO]: Deleteing cloud fiels
+2025-05-08 16:02:01 [WARN]: File not found while deleting: orders/2025/05/08/6814671ea1815d08f1ecc20a.pdf| Data: {"result":{"result":"not found"}}
+2025-05-08 16:02:01 [WARN]: File not found while deleting: orders/2025/05/08/6814671ea1815d08f1ecc30a.pdf| Data: {"result":{"result":"not found"}}
+2025-05-08 16:02:01 [INFO]: Files deleted successfully
+2025-05-08 16:02:01 [HTTP]: DELETE /api/admin/all 200 62 - 2195.595 ms
+2025-05-08 16:02:22 [INFO]: MongoDB connection closed
+2025-05-08 16:02:26 [INFO]: Server running on port 3000
+2025-05-08 16:02:27 [INFO]: MongoDB connected successfully
+2025-05-08 16:02:27 [INFO]: Deleteing cloud fiels
+2025-05-08 16:02:29 [WARN]: File not found while deleting: orders/2025/05/08/6814671ea1815d08f1ecc20a.pdf| Data: {"result":{"result":"not found"}}
+2025-05-08 16:02:29 [WARN]: File not found while deleting: orders/2025/05/08/6814671ea1815d08f1ecc30a.pdf| Data: {"result":{"result":"not found"}}
+2025-05-08 16:02:29 [INFO]: Files deleted successfully
+2025-05-08 16:02:29 [HTTP]: DELETE /api/admin/all 200 53 - 2120.452 ms
+2025-05-08 16:06:12 [INFO]: Attempting to create pdf
+2025-05-08 16:06:13 [INFO]: Generating pdf buffer
+2025-05-08 16:06:17 [INFO]: PDF uploaded successfully| Data: {"signedURL":"https://api.cloudinary.com/v1_1/dyhju2mcs/raw/download?timestamp=1746699677&public_id=orders%2F2025%2F05%2F08%2F6814671ea1815d08f1ecc30a.pdf&format=pdf&type=private&expires_at=1746699797&signature=5e2993a2980214d4e3e4e15d182c0ba0b631dcfe&api_key=484822588963412"}
+2025-05-08 16:06:17 [INFO]: PDF created successfully
+2025-05-08 16:06:17 [HTTP]: POST /api/mail 200 324 - 4670.383 ms
+2025-05-08 16:08:59 [INFO]: MongoDB connection closed
+2025-05-08 16:09:03 [INFO]: Server running on port 3000
+2025-05-08 16:09:04 [INFO]: MongoDB connected successfully
+2025-05-08 16:09:06 [INFO]: Renaming a file
+2025-05-08 16:09:09 [WARN]: Resource not found
+2025-05-08 16:09:09 [ERROR]: Error deleting file
+2025-05-08 16:09:09 [ERROR]: Error renaming a file in cloud
+2025-05-08 16:09:09 [ERROR]: Error in renameCloudFile Resource not found
+Error: Resource not found
+    at CloudService.deleteCloudFile (C:\Users\kosul\Desktop\Ecommerce\Backend\src\services\cloudService.ts:151:23)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async CloudService.renameCloudFile (C:\Users\kosul\Desktop\Ecommerce\Backend\src\services\cloudService.ts:207:7)
+    at async renameCloudFile (C:\Users\kosul\Desktop\Ecommerce\Backend\src\controllers\adminController.ts:145:20)| Data: {"statusCode":404}
+2025-05-08 16:09:09 [HTTP]: PUT /api/admin/ 404 48 - 3035.408 ms
+2025-05-08 16:10:02 [INFO]: Renaming a file
+2025-05-08 16:10:04 [ERROR]: Error renaming a file in cloud
+2025-05-08 16:10:04 [ERROR]: Error in renameCloudFile Resource not found - orders/2025/05/08/6814671ea1815d08f1ecc30a.pdf| Data: {"name":"Error","http_code":404}
+2025-05-08 16:10:04 [HTTP]: PUT /api/admin/ 500 129 - 2049.322 ms
+2025-05-08 16:10:23 [INFO]: Fetching file data from database
+2025-05-08 16:10:23 [INFO]: Data fetched successfully
+2025-05-08 16:10:23 [HTTP]: GET /api/admin/data 200 1949 - 71.826 ms
+2025-05-08 16:12:47 [INFO]: MongoDB connection closed
+2025-05-08 16:12:53 [INFO]: Server running on port 3000
+2025-05-08 16:12:54 [INFO]: MongoDB connected successfully
+2025-05-08 16:12:56 [INFO]: Renaming a file
+2025-05-08 16:12:58 [ERROR]: Error renaming a file in cloud
+2025-05-08 16:12:58 [ERROR]: Error in renameCloudFile Resource not found - orders/2025/05/08/6814671ea1815d08f1ecc30a.pdf| Data: {"name":"Error","http_code":404}
+2025-05-08 16:12:58 [HTTP]: PUT /api/admin/ 500 129 - 2213.512 ms
+2025-05-08 16:14:07 [INFO]: Renaming a file
+2025-05-08 16:14:09 [ERROR]: Error renaming a file in cloud
+2025-05-08 16:14:09 [ERROR]: Error in renameCloudFile Resource not found - 6814671ea1815d08f1ecc30a.pdf| Data: {"name":"Error","http_code":404}
+2025-05-08 16:14:09 [HTTP]: PUT /api/admin/ 500 111 - 2227.774 ms
+2025-05-08 16:14:15 [INFO]: Attempting to create pdf
+2025-05-08 16:14:16 [INFO]: Generating pdf buffer
+2025-05-08 16:14:20 [INFO]: PDF uploaded successfully| Data: {"signedURL":"https://api.cloudinary.com/v1_1/dyhju2mcs/raw/download?timestamp=1746700160&public_id=orders%2F2025%2F05%2F08%2F6814671ea1815d08f1ecc30a.pdf&format=pdf&type=private&expires_at=1746700280&signature=df1e0244c509321266080d7406c5bf79ba656e07&api_key=484822588963412"}
+2025-05-08 16:14:20 [INFO]: PDF created successfully
+2025-05-08 16:14:20 [HTTP]: POST /api/mail 200 324 - 4771.258 ms
+2025-05-08 16:14:55 [INFO]: Attempting to create pdf
+2025-05-08 16:14:55 [INFO]: Generating pdf buffer
+2025-05-08 16:14:59 [INFO]: PDF uploaded successfully| Data: {"signedURL":"https://api.cloudinary.com/v1_1/dyhju2mcs/raw/download?timestamp=1746700199&public_id=orders%2F2025%2F05%2F08%2F6814671ea1815d08f1ecc30a.pdf&format=pdf&type=private&expires_at=1746700319&signature=b1aac25c78d6a1718e1e1c35b6c9bea53d2d7c83&api_key=484822588963412"}
+2025-05-08 16:14:59 [INFO]: PDF created successfully
+2025-05-08 16:14:59 [HTTP]: POST /api/mail 200 324 - 4744.959 ms
+2025-05-08 16:15:36 [INFO]: Renaming a file
+2025-05-08 16:15:38 [ERROR]: Error renaming a file in cloud
+2025-05-08 16:15:38 [ERROR]: Error in renameCloudFile Resource not found - 6814671ea1815d08f1ecc30a.pdf| Data: {"name":"Error","http_code":404}
+2025-05-08 16:15:38 [HTTP]: PUT /api/admin/ 500 111 - 2320.564 ms
+2025-05-08 16:15:45 [INFO]: Renaming a file
+2025-05-08 16:15:48 [INFO]: File renamed successfully
+2025-05-08 16:15:48 [HTTP]: PUT /api/admin/ 200 749 - 2894.451 ms
+2025-05-08 16:16:15 [INFO]: Getting a file info
+2025-05-08 16:16:17 [INFO]: File info fetched successfully
+2025-05-08 16:16:17 [HTTP]: GET /api/admin/cloudFile 200 890 - 2311.765 ms
+2025-05-08 16:16:25 [INFO]: Getting files info
+2025-05-08 16:16:27 [INFO]: Files info fetched successfully
+2025-05-08 16:16:27 [HTTP]: GET /api/admin/cloudFiles 200 733 - 2279.386 ms
+2025-05-08 16:20:17 [INFO]: MongoDB connection closed
+2025-05-08 16:20:21 [INFO]: Server running on port 3000
+2025-05-08 16:20:22 [INFO]: MongoDB connected successfully
+2025-05-08 16:20:26 [INFO]: Attempting to create pdf
+2025-05-08 16:20:26 [INFO]: Generating pdf buffer
+2025-05-08 16:20:31 [INFO]: PDF uploaded successfully| Data: {"signedURL":"https://api.cloudinary.com/v1_1/dyhju2mcs/raw/download?timestamp=1746700531&public_id=orders%2F2025%2F05%2F08%2F6814671ea1815d08f1ecc30a_1746700527319&format=pdf&type=private&expires_at=1746700651&signature=03f8c17a6601c8a4213520551139f09544c19e2b&api_key=484822588963412"}
+2025-05-08 16:20:31 [INFO]: PDF created successfully
+2025-05-08 16:20:31 [HTTP]: POST /api/mail 200 334 - 4809.641 ms
+2025-05-08 16:21:58 [INFO]: MongoDB connection closed
+2025-05-08 16:22:02 [INFO]: Server running on port 3000
+2025-05-08 16:22:03 [INFO]: MongoDB connected successfully
+2025-05-08 16:22:07 [INFO]: Attempting to create pdf
+2025-05-08 16:22:08 [INFO]: Generating pdf buffer
+2025-05-08 16:22:12 [INFO]: PDF uploaded successfully| Data: {"signedURL":"https://api.cloudinary.com/v1_1/dyhju2mcs/raw/download?timestamp=1746700632&public_id=orders%2F2025%2F05%2F08%2F6814671ea1815d08f1ecc30a_1746700628902.pdf&format=pdf&type=private&expires_at=1746700752&signature=1e40f2eb9b3366c1e263c7f410d82409a3483e01&api_key=484822588963412"}
+2025-05-08 16:22:12 [INFO]: PDF created successfully
+2025-05-08 16:22:12 [HTTP]: POST /api/mail 200 338 - 4820.040 ms
+2025-05-08 16:23:05 [INFO]: Getting a file info
+2025-05-08 16:23:07 [INFO]: File info fetched successfully
+2025-05-08 16:23:07 [HTTP]: GET /api/admin/cloudFile 200 890 - 1843.073 ms
+2025-05-08 16:23:10 [INFO]: Getting files info
+2025-05-08 16:23:10 [INFO]: Files info fetched successfully
+2025-05-08 16:23:10 [HTTP]: GET /api/admin/cloudFiles 200 680 - 328.834 ms
+2025-05-08 16:24:39 [INFO]: MongoDB connection closed
+2025-05-08 16:24:43 [INFO]: Server running on port 3000
+2025-05-08 16:24:44 [INFO]: MongoDB connected successfully
+2025-05-08 16:24:46 [INFO]: Attempting to create pdf
+2025-05-08 16:24:46 [INFO]: Generating pdf buffer
+2025-05-08 16:24:49 [INFO]: PDF uploaded successfully| Data: {"signedURL":"https://api.cloudinary.com/v1_1/dyhju2mcs/raw/download?timestamp=1746700789&public_id=orders%2F2025%2F05%2F08%2F6814671ea1815d08f1ecc30a_1746700787157&format=pdf&type=private&expires_at=1746700909&signature=f71b9407e8304e60177be94b211f0278b954792c&api_key=484822588963412"}
+2025-05-08 16:24:49 [INFO]: PDF created successfully
+2025-05-08 16:24:49 [HTTP]: POST /api/mail 200 334 - 3641.270 ms
+2025-05-08 16:24:52 [INFO]: Getting files info
+2025-05-08 16:24:52 [INFO]: Files info fetched successfully
+2025-05-08 16:24:52 [HTTP]: GET /api/admin/cloudFiles 200 1287 - 285.417 ms
+2025-05-08 16:25:40 [INFO]: MongoDB connection closed
+2025-05-08 16:25:44 [INFO]: Server running on port 3000
+2025-05-08 16:25:45 [INFO]: MongoDB connected successfully
+2025-05-08 16:25:48 [INFO]: Attempting to create pdf
+2025-05-08 16:25:48 [INFO]: Generating pdf buffer
+2025-05-08 16:25:49 [ERROR]: Error uploading PDF| Data: {"error":{}}
+2025-05-08 16:25:49 [ERROR]: Failed to create pdf userid is not defined
+ReferenceError: userid is not defined
+    at UserServices.pdf (C:\Users\kosul\Desktop\Ecommerce\Backend\src\services\userServices.ts:281:15)
+    at async pdf (C:\Users\kosul\Desktop\Ecommerce\Backend\src\controllers\userController.ts:162:22)
+2025-05-08 16:25:49 [HTTP]: POST /api/mail 500 83 - 937.837 ms
+2025-05-08 16:26:19 [INFO]: MongoDB connection closed
+2025-05-08 16:26:23 [INFO]: Server running on port 3000
+2025-05-08 16:26:23 [INFO]: Attempting to create pdf
+2025-05-08 16:26:24 [INFO]: Generating pdf buffer
+2025-05-08 16:26:24 [INFO]: MongoDB connected successfully
+2025-05-08 16:26:28 [INFO]: PDF uploaded successfully| Data: {"signedURL":"https://api.cloudinary.com/v1_1/dyhju2mcs/raw/download?timestamp=1746700888&public_id=orders%2F2025%2F05%2F08%2F6814790a716d460249dc6fb1.pdf&format=pdf&type=private&expires_at=1746701008&signature=e11d5dd1045e3a3999f69132fb9b372436d5169a&api_key=484822588963412"}
+2025-05-08 16:26:28 [INFO]: PDF created successfully
+2025-05-08 16:26:28 [HTTP]: POST /api/mail 200 324 - 4835.794 ms
+2025-05-08 16:55:56 [INFO]: MongoDB connection closed
+2025-05-08 16:56:00 [INFO]: Server running on port 3000
+2025-05-08 16:56:01 [INFO]: MongoDB connected successfully
+2025-05-08 16:56:11 [INFO]: Validation passed for body in request: POST /api/user/signin/
+2025-05-08 16:56:11 [INFO]: User attempting to sign in: admin1
+2025-05-08 16:56:11 [INFO]: admin1 signed in successfully
+2025-05-08 16:56:11 [HTTP]: POST /api/user/signin/ 200 449 - 112.268 ms
+2025-05-08 16:57:05 [INFO]: Verifying token for user, Token: present
+2025-05-08 16:57:05 [ERROR]: Invalid token or verification failed jwt expired
+TokenExpiredError: jwt expired
+    at C:\Users\kosul\Desktop\Ecommerce\Backend\node_modules\jsonwebtoken\verify.js:190:21
+    at getSecret (C:\Users\kosul\Desktop\Ecommerce\Backend\node_modules\jsonwebtoken\verify.js:97:14)
+    at module.exports [as verify] (C:\Users\kosul\Desktop\Ecommerce\Backend\node_modules\jsonwebtoken\verify.js:101:10)
+    at verify (C:\Users\kosul\Desktop\Ecommerce\Backend\src\middlewares\verifyToken.ts:28:29)
+    at Layer.handleRequest (C:\Users\kosul\Desktop\Ecommerce\Backend\node_modules\router\lib\layer.js:152:17)
+    at next (C:\Users\kosul\Desktop\Ecommerce\Backend\node_modules\router\lib\route.js:157:13)
+    at Route.dispatch (C:\Users\kosul\Desktop\Ecommerce\Backend\node_modules\router\lib\route.js:117:3)
+    at handle (C:\Users\kosul\Desktop\Ecommerce\Backend\node_modules\router\index.js:435:11)
+    at Layer.handleRequest (C:\Users\kosul\Desktop\Ecommerce\Backend\node_modules\router\lib\layer.js:152:17)
+    at C:\Users\kosul\Desktop\Ecommerce\Backend\node_modules\router\index.js:295:15| Data: {"name":"TokenExpiredError","expiredAt":"2025-05-05T16:28:14.000Z"}
+2025-05-08 16:57:05 [HTTP]: GET /api/user/all 400 32 - 4.664 ms
+2025-05-08 16:57:11 [INFO]: Verifying token for user, Token: present
+2025-05-08 16:57:11 [ERROR]: Invalid token or verification failed jwt expired
+TokenExpiredError: jwt expired
+    at C:\Users\kosul\Desktop\Ecommerce\Backend\node_modules\jsonwebtoken\verify.js:190:21
+    at getSecret (C:\Users\kosul\Desktop\Ecommerce\Backend\node_modules\jsonwebtoken\verify.js:97:14)
+    at module.exports [as verify] (C:\Users\kosul\Desktop\Ecommerce\Backend\node_modules\jsonwebtoken\verify.js:101:10)
+    at verify (C:\Users\kosul\Desktop\Ecommerce\Backend\src\middlewares\verifyToken.ts:28:29)
+    at Layer.handleRequest (C:\Users\kosul\Desktop\Ecommerce\Backend\node_modules\router\lib\layer.js:152:17)
+    at next (C:\Users\kosul\Desktop\Ecommerce\Backend\node_modules\router\lib\route.js:157:13)
+    at Route.dispatch (C:\Users\kosul\Desktop\Ecommerce\Backend\node_modules\router\lib\route.js:117:3)
+    at handle (C:\Users\kosul\Desktop\Ecommerce\Backend\node_modules\router\index.js:435:11)
+    at Layer.handleRequest (C:\Users\kosul\Desktop\Ecommerce\Backend\node_modules\router\lib\layer.js:152:17)
+    at C:\Users\kosul\Desktop\Ecommerce\Backend\node_modules\router\index.js:295:15| Data: {"name":"TokenExpiredError","expiredAt":"2025-05-05T16:28:14.000Z"}
+2025-05-08 16:57:11 [HTTP]: GET /api/user/all 400 32 - 2.614 ms
+2025-05-08 16:57:15 [INFO]: Verifying token for user, Token: present
+2025-05-08 16:57:15 [ERROR]: Invalid token or verification failed jwt expired
+TokenExpiredError: jwt expired
+    at C:\Users\kosul\Desktop\Ecommerce\Backend\node_modules\jsonwebtoken\verify.js:190:21
+    at getSecret (C:\Users\kosul\Desktop\Ecommerce\Backend\node_modules\jsonwebtoken\verify.js:97:14)
+    at module.exports [as verify] (C:\Users\kosul\Desktop\Ecommerce\Backend\node_modules\jsonwebtoken\verify.js:101:10)
+    at verify (C:\Users\kosul\Desktop\Ecommerce\Backend\src\middlewares\verifyToken.ts:28:29)
+    at Layer.handleRequest (C:\Users\kosul\Desktop\Ecommerce\Backend\node_modules\router\lib\layer.js:152:17)
+    at next (C:\Users\kosul\Desktop\Ecommerce\Backend\node_modules\router\lib\route.js:157:13)
+    at Route.dispatch (C:\Users\kosul\Desktop\Ecommerce\Backend\node_modules\router\lib\route.js:117:3)
+    at handle (C:\Users\kosul\Desktop\Ecommerce\Backend\node_modules\router\index.js:435:11)
+    at Layer.handleRequest (C:\Users\kosul\Desktop\Ecommerce\Backend\node_modules\router\lib\layer.js:152:17)
+    at C:\Users\kosul\Desktop\Ecommerce\Backend\node_modules\router\index.js:295:15| Data: {"name":"TokenExpiredError","expiredAt":"2025-05-05T16:05:07.000Z"}
+2025-05-08 16:57:15 [HTTP]: GET /api/user/ 400 32 - 1.656 ms
+2025-05-08 16:57:23 [INFO]: Verifying token for user, Token: present
+2025-05-08 16:57:23 [ERROR]: Invalid token or verification failed jwt expired
+TokenExpiredError: jwt expired
+    at C:\Users\kosul\Desktop\Ecommerce\Backend\node_modules\jsonwebtoken\verify.js:190:21
+    at getSecret (C:\Users\kosul\Desktop\Ecommerce\Backend\node_modules\jsonwebtoken\verify.js:97:14)
+    at module.exports [as verify] (C:\Users\kosul\Desktop\Ecommerce\Backend\node_modules\jsonwebtoken\verify.js:101:10)
+    at verify (C:\Users\kosul\Desktop\Ecommerce\Backend\src\middlewares\verifyToken.ts:28:29)
+    at Layer.handleRequest (C:\Users\kosul\Desktop\Ecommerce\Backend\node_modules\router\lib\layer.js:152:17)
+    at next (C:\Users\kosul\Desktop\Ecommerce\Backend\node_modules\router\lib\route.js:157:13)
+    at Route.dispatch (C:\Users\kosul\Desktop\Ecommerce\Backend\node_modules\router\lib\route.js:117:3)
+    at handle (C:\Users\kosul\Desktop\Ecommerce\Backend\node_modules\router\index.js:435:11)
+    at Layer.handleRequest (C:\Users\kosul\Desktop\Ecommerce\Backend\node_modules\router\lib\layer.js:152:17)
+    at C:\Users\kosul\Desktop\Ecommerce\Backend\node_modules\router\index.js:295:15| Data: {"name":"TokenExpiredError","expiredAt":"2025-05-05T16:28:14.000Z"}
+2025-05-08 16:57:23 [HTTP]: GET /api/user/ 400 32 - 2.883 ms
+2025-05-08 16:57:27 [INFO]: Verifying token for user, Token: present
+2025-05-08 16:57:27 [ERROR]: Invalid token or verification failed jwt expired
+TokenExpiredError: jwt expired
+    at C:\Users\kosul\Desktop\Ecommerce\Backend\node_modules\jsonwebtoken\verify.js:190:21
+    at getSecret (C:\Users\kosul\Desktop\Ecommerce\Backend\node_modules\jsonwebtoken\verify.js:97:14)
+    at module.exports [as verify] (C:\Users\kosul\Desktop\Ecommerce\Backend\node_modules\jsonwebtoken\verify.js:101:10)
+    at verify (C:\Users\kosul\Desktop\Ecommerce\Backend\src\middlewares\verifyToken.ts:28:29)
+    at Layer.handleRequest (C:\Users\kosul\Desktop\Ecommerce\Backend\node_modules\router\lib\layer.js:152:17)
+    at next (C:\Users\kosul\Desktop\Ecommerce\Backend\node_modules\router\lib\route.js:157:13)
+    at Route.dispatch (C:\Users\kosul\Desktop\Ecommerce\Backend\node_modules\router\lib\route.js:117:3)
+    at handle (C:\Users\kosul\Desktop\Ecommerce\Backend\node_modules\router\index.js:435:11)
+    at Layer.handleRequest (C:\Users\kosul\Desktop\Ecommerce\Backend\node_modules\router\lib\layer.js:152:17)
+    at C:\Users\kosul\Desktop\Ecommerce\Backend\node_modules\router\index.js:295:15| Data: {"name":"TokenExpiredError","expiredAt":"2025-05-05T16:28:14.000Z"}
+2025-05-08 16:57:27 [HTTP]: GET /api/user/all 400 32 - 1.806 ms
+2025-05-08 16:57:37 [INFO]: Verifying token for user, Token: present
+2025-05-08 16:57:37 [ERROR]: Invalid token or verification failed jwt expired
+TokenExpiredError: jwt expired
+    at C:\Users\kosul\Desktop\Ecommerce\Backend\node_modules\jsonwebtoken\verify.js:190:21
+    at getSecret (C:\Users\kosul\Desktop\Ecommerce\Backend\node_modules\jsonwebtoken\verify.js:97:14)
+    at module.exports [as verify] (C:\Users\kosul\Desktop\Ecommerce\Backend\node_modules\jsonwebtoken\verify.js:101:10)
+    at verify (C:\Users\kosul\Desktop\Ecommerce\Backend\src\middlewares\verifyToken.ts:28:29)
+    at Layer.handleRequest (C:\Users\kosul\Desktop\Ecommerce\Backend\node_modules\router\lib\layer.js:152:17)
+    at next (C:\Users\kosul\Desktop\Ecommerce\Backend\node_modules\router\lib\route.js:157:13)
+    at Route.dispatch (C:\Users\kosul\Desktop\Ecommerce\Backend\node_modules\router\lib\route.js:117:3)
+    at handle (C:\Users\kosul\Desktop\Ecommerce\Backend\node_modules\router\index.js:435:11)
+    at Layer.handleRequest (C:\Users\kosul\Desktop\Ecommerce\Backend\node_modules\router\lib\layer.js:152:17)
+    at C:\Users\kosul\Desktop\Ecommerce\Backend\node_modules\router\index.js:295:15| Data: {"name":"TokenExpiredError","expiredAt":"2025-05-05T16:28:14.000Z"}
+2025-05-08 16:57:37 [HTTP]: GET /api/user/all 400 32 - 1.913 ms
+2025-05-08 16:57:46 [INFO]: Verifying token for user, Token: present
+2025-05-08 16:57:46 [ERROR]: Invalid token or verification failed jwt expired
+TokenExpiredError: jwt expired
+    at C:\Users\kosul\Desktop\Ecommerce\Backend\node_modules\jsonwebtoken\verify.js:190:21
+    at getSecret (C:\Users\kosul\Desktop\Ecommerce\Backend\node_modules\jsonwebtoken\verify.js:97:14)
+    at module.exports [as verify] (C:\Users\kosul\Desktop\Ecommerce\Backend\node_modules\jsonwebtoken\verify.js:101:10)
+    at verify (C:\Users\kosul\Desktop\Ecommerce\Backend\src\middlewares\verifyToken.ts:28:29)
+    at Layer.handleRequest (C:\Users\kosul\Desktop\Ecommerce\Backend\node_modules\router\lib\layer.js:152:17)
+    at next (C:\Users\kosul\Desktop\Ecommerce\Backend\node_modules\router\lib\route.js:157:13)
+    at Route.dispatch (C:\Users\kosul\Desktop\Ecommerce\Backend\node_modules\router\lib\route.js:117:3)
+    at handle (C:\Users\kosul\Desktop\Ecommerce\Backend\node_modules\router\index.js:435:11)
+    at Layer.handleRequest (C:\Users\kosul\Desktop\Ecommerce\Backend\node_modules\router\lib\layer.js:152:17)
+    at C:\Users\kosul\Desktop\Ecommerce\Backend\node_modules\router\index.js:295:15| Data: {"name":"TokenExpiredError","expiredAt":"2025-05-05T16:28:14.000Z"}
+2025-05-08 16:57:46 [HTTP]: GET /api/user/ 400 32 - 2.109 ms
+2025-05-08 16:58:02 [INFO]: MongoDB connection closed
+2025-05-08 16:58:07 [INFO]: Server running on port 3000
+2025-05-08 16:58:08 [INFO]: MongoDB connected successfully
+2025-05-08 16:59:30 [INFO]: Verifying token for user, Token: present
+2025-05-08 16:59:30 [INFO]: Token verified successfully for user: [object Object]
+2025-05-08 16:59:30 [INFO]: Checking role for user: 680b0d2b4f9904c610769730, Role: Admin
+2025-05-08 16:59:30 [INFO]: Access granted for user: 680b0d2b4f9904c610769730, Role: Admin
+2025-05-08 16:59:30 [INFO]: Validation passed for token data in request: GET /api/user/all
+2025-05-08 16:59:30 [INFO]: Fetching all users
+2025-05-08 16:59:30 [INFO]: Users fetched successfully
+2025-05-08 16:59:30 [HTTP]: GET /api/user/all 200 661 - 66.057 ms
+2025-05-08 16:59:57 [INFO]: Verifying token for user, Token: present
+2025-05-08 16:59:57 [INFO]: Token verified successfully for user: [object Object]
+2025-05-08 16:59:57 [INFO]: Checking role for user: 680b0d2b4f9904c610769730, Role: Admin
+2025-05-08 16:59:57 [INFO]: Access granted for user: 680b0d2b4f9904c610769730, Role: Admin
+2025-05-08 16:59:57 [INFO]: Validation passed for token data in request: GET /api/user/
+2025-05-08 16:59:57 [INFO]: Fetching user with id: 680b0d2b4f9904c610769730
+2025-05-08 16:59:57 [INFO]: User with id: 680b0d2b4f9904c610769730 found
+2025-05-08 16:59:57 [HTTP]: GET /api/user/ 200 179 - 89.984 ms
+2025-05-08 17:01:34 [INFO]: MongoDB connection closed
+2025-05-08 17:01:39 [INFO]: Server running on port 3000
+2025-05-08 17:01:40 [INFO]: MongoDB connected successfully
+2025-05-08 17:01:44 [INFO]: Verifying token for user, Token: present
+2025-05-08 17:01:44 [INFO]: Token verified successfully for user: [object Object]
+2025-05-08 17:01:44 [INFO]: Checking role for user: 680b0d2b4f9904c610769730, Role: Admin
+2025-05-08 17:01:44 [INFO]: Access granted for user: 680b0d2b4f9904c610769730, Role: Admin
+2025-05-08 17:01:44 [INFO]: Validation passed for token data in request: GET /api/user/
+2025-05-08 17:01:44 [INFO]: Fetching user with id: 680b0d2b4f9904c610769730
+2025-05-08 17:01:44 [INFO]: User with id: 680b0d2b4f9904c610769730 found
+2025-05-08 17:01:44 [HTTP]: GET /api/user/ 200 179 - 90.957 ms
+2025-05-08 17:03:48 [INFO]: MongoDB connection closed

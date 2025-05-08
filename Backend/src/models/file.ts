@@ -1,26 +1,25 @@
-import { string } from "joi";
+import { number, string } from "joi";
 import { Schema, model, Document } from "mongoose";
 
 interface File extends Document {
-  id: string;
+  publicid: string;
   original_name: string;
   type: string;
   size: number;
   blob_path: string;
-  extension: string;
-  mime_type: string;
+  mimetype: string;
   status: boolean;
   timestamp: Date;
 }
 
 const FileSchema = new Schema<File>({
-  id: { type: String, required: true },
-  original_name: { type: String, required: true },
+  publicid: { type: String, required: true },
+  original_name: { type: String, required: false },
   type: { type: String, required: true },
   blob_path: { type: String, required: true },
-  extension: { type: String, required: true },
-  mime_type: { type: String, required: true },
+  mimetype: { type: String, required: true },
   status: { type: Boolean, required: true },
+  size: { type: Number, required: false },
   timestamp: { type: Date, default: Date.now },
 });
 

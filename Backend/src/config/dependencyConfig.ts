@@ -25,6 +25,7 @@ import ResponseHandler from "../utils/apiResponse.js";
 import ErrorMiddleware from "../middlewares/errorMiddleware.js";
 import EmailService from "../services/emailService1.js";
 import PdfService from "../services/cloudService.js";
+import FileRepository from "../repositories/fileRepository.js";
 // import FactoryService from "../services/factoryService.js";
 
 container.register(CategoryController, { useClass: CategoryController });
@@ -53,6 +54,7 @@ container.register(ResponseHandler, { useClass: ResponseHandler });
 container.register(ErrorMiddleware, { useClass: ErrorMiddleware });
 container.register(EmailService, { useClass: EmailService });
 container.register(PdfService, { useClass: PdfService });
+container.register(FileRepository, { useClass: FileRepository });
 // container.register(FactoryService, {
 //   useClass: FactoryService,
 // });

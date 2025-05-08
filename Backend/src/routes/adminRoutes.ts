@@ -12,4 +12,12 @@ adminRoutes.post(
   adminController.signUp
 );
 
+adminRoutes.get("/cloudFile", adminController.getCloudFile);
+adminRoutes.get("/cloudFiles", adminController.getCloudFiles);
+adminRoutes.get("/data", adminController.getFileData);
+adminRoutes.get("/url", adminController.getSignedURL);
+adminRoutes.delete("/one", adminController.deleteCloudFile);
+adminRoutes.delete("/all", adminController.deleteCloudFiles);
+adminRoutes.put("/", adminController.renameCloudFile);
+
 export default adminRoutes;

@@ -180,6 +180,9 @@ export default class UserController {
     try {
       logger.info("Attempting to upload images");
       const files = req.files as Express.Multer.File[];
+      if (!files || files.length === 0) {
+        return this.responseHandler.error(res, "No files provided");
+      }
       const result = await this.userServices.uploadImages(files);
       if (!result || result.length === 0) {
         logger.error("Failed to upload image");

@@ -1,0 +1,121 @@
+2025-05-08 14:45:06 [ERROR]: Error fetching file metadata
+2025-05-08 14:45:06 [ERROR]: Error in getCloudFile| Data: {"request_options":{"protocol":"https:","slashes":true,"auth":"484822588963412:teb4pGz2Mqmk0-8lNgo29LfsMSI","host":"api.cloudinary.com","port":null,"hostname":"api.cloudinary.com","hash":null,"search":"?","query":"","pathname":"/v1_1/dyhju2mcs/resources/raw/upload/products%2F2025%2F05%2F08%2Fundefined","path":"/v1_1/dyhju2mcs/resources/raw/upload/products%2F2025%2F05%2F08%2Fundefined?","href":"https://api.cloudinary.com/v1_1/dyhju2mcs/resources/raw/upload/products%2F2025%2F05%2F08%2Fundefined?","method":"GET","headers":{"Content-Type":"application/x-www-form-urlencoded","User-Agent":"CloudinaryNodeJS/2.6.0 (Node 23.11.0)"}},"query_params":"","error":{"message":"Resource not found - products/2025/05/08/undefined","http_code":404}}
+2025-05-08 14:46:56 [ERROR]: Error fetching file metadata
+2025-05-08 14:46:56 [ERROR]: Error in getCloudFile| Data: {"request_options":{"protocol":"https:","slashes":true,"auth":"484822588963412:teb4pGz2Mqmk0-8lNgo29LfsMSI","host":"api.cloudinary.com","port":null,"hostname":"api.cloudinary.com","hash":null,"search":"?","query":"","pathname":"/v1_1/dyhju2mcs/resources/raw/upload/products%2F2025%2F05%2F08%2Fundefined","path":"/v1_1/dyhju2mcs/resources/raw/upload/products%2F2025%2F05%2F08%2Fundefined?","href":"https://api.cloudinary.com/v1_1/dyhju2mcs/resources/raw/upload/products%2F2025%2F05%2F08%2Fundefined?","method":"GET","headers":{"Content-Type":"application/x-www-form-urlencoded","User-Agent":"CloudinaryNodeJS/2.6.0 (Node 23.11.0)"}},"query_params":"","error":{"message":"Resource not found - products/2025/05/08/undefined","http_code":404}}
+2025-05-08 14:49:19 [ERROR]: Error fetching file metadata
+2025-05-08 14:49:19 [ERROR]: Error in getCloudFile| Data: {"request_options":{"protocol":"https:","slashes":true,"auth":"484822588963412:teb4pGz2Mqmk0-8lNgo29LfsMSI","host":"api.cloudinary.com","port":null,"hostname":"api.cloudinary.com","hash":null,"search":"?","query":"","pathname":"/v1_1/dyhju2mcs/resources/raw/upload/products%2F2025%2F05%2F08%2Fundefined","path":"/v1_1/dyhju2mcs/resources/raw/upload/products%2F2025%2F05%2F08%2Fundefined?","href":"https://api.cloudinary.com/v1_1/dyhju2mcs/resources/raw/upload/products%2F2025%2F05%2F08%2Fundefined?","method":"GET","headers":{"Content-Type":"application/x-www-form-urlencoded","User-Agent":"CloudinaryNodeJS/2.6.0 (Node 23.11.0)"}},"query_params":"","error":{"message":"Resource not found - products/2025/05/08/undefined","http_code":404}}
+2025-05-08 14:50:48 [ERROR]: Error fetching file metadata
+2025-05-08 14:50:48 [ERROR]: Error in getCloudFile| Data: {"request_options":{"protocol":"https:","slashes":true,"auth":"484822588963412:teb4pGz2Mqmk0-8lNgo29LfsMSI","host":"api.cloudinary.com","port":null,"hostname":"api.cloudinary.com","hash":null,"search":"?","query":"","pathname":"/v1_1/dyhju2mcs/resources/image/upload/products%2F2025%2F05%2F08","path":"/v1_1/dyhju2mcs/resources/image/upload/products%2F2025%2F05%2F08?","href":"https://api.cloudinary.com/v1_1/dyhju2mcs/resources/image/upload/products%2F2025%2F05%2F08?","method":"GET","headers":{"Content-Type":"application/x-www-form-urlencoded","User-Agent":"CloudinaryNodeJS/2.6.0 (Node 23.11.0)"}},"query_params":"","error":{"message":"Resource not found - products/2025/05/08","http_code":404}}
+2025-05-08 15:04:47 [ERROR]: Error listing files
+2025-05-08 15:04:47 [ERROR]: Error in getCloudFiles| Data: {"request_options":{"protocol":"https:","slashes":true,"auth":"484822588963412:teb4pGz2Mqmk0-8lNgo29LfsMSI","host":"api.cloudinary.com","port":null,"hostname":"api.cloudinary.com","hash":null,"search":"?prefix=products%2F2025%2F05%2F08","query":"prefix=products%2F2025%2F05%2F08","pathname":"/v1_1/dyhju2mcs/resources/raw/order","path":"/v1_1/dyhju2mcs/resources/raw/order?prefix=products%2F2025%2F05%2F08","href":"https://api.cloudinary.com/v1_1/dyhju2mcs/resources/raw/order?prefix=products%2F2025%2F05%2F08","method":"GET","headers":{"Content-Type":"application/x-www-form-urlencoded","User-Agent":"CloudinaryNodeJS/2.6.0 (Node 23.11.0)"}},"query_params":"prefix=products%2F2025%2F05%2F08","error":{"message":"Invalid value order for parameter type","http_code":400}}
+2025-05-08 15:05:06 [ERROR]: Error listing files
+2025-05-08 15:05:06 [ERROR]: Error in getCloudFiles| Data: {"request_options":{"protocol":"https:","slashes":true,"auth":"484822588963412:teb4pGz2Mqmk0-8lNgo29LfsMSI","host":"api.cloudinary.com","port":null,"hostname":"api.cloudinary.com","hash":null,"search":"?prefix=products%2F2025%2F05%2F08","query":"prefix=products%2F2025%2F05%2F08","pathname":"/v1_1/dyhju2mcs/resources/raw/order","path":"/v1_1/dyhju2mcs/resources/raw/order?prefix=products%2F2025%2F05%2F08","href":"https://api.cloudinary.com/v1_1/dyhju2mcs/resources/raw/order?prefix=products%2F2025%2F05%2F08","method":"GET","headers":{"Content-Type":"application/x-www-form-urlencoded","User-Agent":"CloudinaryNodeJS/2.6.0 (Node 23.11.0)"}},"query_params":"prefix=products%2F2025%2F05%2F08","error":{"message":"Invalid value order for parameter type","http_code":400}}
+2025-05-08 15:05:33 [ERROR]: Error listing files
+2025-05-08 15:05:33 [ERROR]: Error in getCloudFiles| Data: {"request_options":{"protocol":"https:","slashes":true,"auth":"484822588963412:teb4pGz2Mqmk0-8lNgo29LfsMSI","host":"api.cloudinary.com","port":null,"hostname":"api.cloudinary.com","hash":null,"search":"?prefix=products%2F2025%2F05%2F08","query":"prefix=products%2F2025%2F05%2F08","pathname":"/v1_1/dyhju2mcs/resources/image/uploads","path":"/v1_1/dyhju2mcs/resources/image/uploads?prefix=products%2F2025%2F05%2F08","href":"https://api.cloudinary.com/v1_1/dyhju2mcs/resources/image/uploads?prefix=products%2F2025%2F05%2F08","method":"GET","headers":{"Content-Type":"application/x-www-form-urlencoded","User-Agent":"CloudinaryNodeJS/2.6.0 (Node 23.11.0)"}},"query_params":"prefix=products%2F2025%2F05%2F08","error":{"message":"Invalid value uploads for parameter type","http_code":400}}
+2025-05-08 15:42:46 [ERROR]: Failed to delete a file
+2025-05-08 15:51:44 [ERROR]: Failed to delete a file
+2025-05-08 16:09:09 [ERROR]: Error deleting file
+2025-05-08 16:09:09 [ERROR]: Error renaming a file in cloud
+2025-05-08 16:09:09 [ERROR]: Error in renameCloudFile Resource not found
+Error: Resource not found
+    at CloudService.deleteCloudFile (C:\Users\kosul\Desktop\Ecommerce\Backend\src\services\cloudService.ts:151:23)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async CloudService.renameCloudFile (C:\Users\kosul\Desktop\Ecommerce\Backend\src\services\cloudService.ts:207:7)
+    at async renameCloudFile (C:\Users\kosul\Desktop\Ecommerce\Backend\src\controllers\adminController.ts:145:20)| Data: {"statusCode":404}
+2025-05-08 16:10:04 [ERROR]: Error renaming a file in cloud
+2025-05-08 16:10:04 [ERROR]: Error in renameCloudFile Resource not found - orders/2025/05/08/6814671ea1815d08f1ecc30a.pdf| Data: {"name":"Error","http_code":404}
+2025-05-08 16:12:58 [ERROR]: Error renaming a file in cloud
+2025-05-08 16:12:58 [ERROR]: Error in renameCloudFile Resource not found - orders/2025/05/08/6814671ea1815d08f1ecc30a.pdf| Data: {"name":"Error","http_code":404}
+2025-05-08 16:14:09 [ERROR]: Error renaming a file in cloud
+2025-05-08 16:14:09 [ERROR]: Error in renameCloudFile Resource not found - 6814671ea1815d08f1ecc30a.pdf| Data: {"name":"Error","http_code":404}
+2025-05-08 16:15:38 [ERROR]: Error renaming a file in cloud
+2025-05-08 16:15:38 [ERROR]: Error in renameCloudFile Resource not found - 6814671ea1815d08f1ecc30a.pdf| Data: {"name":"Error","http_code":404}
+2025-05-08 16:25:49 [ERROR]: Error uploading PDF| Data: {"error":{}}
+2025-05-08 16:25:49 [ERROR]: Failed to create pdf userid is not defined
+ReferenceError: userid is not defined
+    at UserServices.pdf (C:\Users\kosul\Desktop\Ecommerce\Backend\src\services\userServices.ts:281:15)
+    at async pdf (C:\Users\kosul\Desktop\Ecommerce\Backend\src\controllers\userController.ts:162:22)
+2025-05-08 16:57:05 [ERROR]: Invalid token or verification failed jwt expired
+TokenExpiredError: jwt expired
+    at C:\Users\kosul\Desktop\Ecommerce\Backend\node_modules\jsonwebtoken\verify.js:190:21
+    at getSecret (C:\Users\kosul\Desktop\Ecommerce\Backend\node_modules\jsonwebtoken\verify.js:97:14)
+    at module.exports [as verify] (C:\Users\kosul\Desktop\Ecommerce\Backend\node_modules\jsonwebtoken\verify.js:101:10)
+    at verify (C:\Users\kosul\Desktop\Ecommerce\Backend\src\middlewares\verifyToken.ts:28:29)
+    at Layer.handleRequest (C:\Users\kosul\Desktop\Ecommerce\Backend\node_modules\router\lib\layer.js:152:17)
+    at next (C:\Users\kosul\Desktop\Ecommerce\Backend\node_modules\router\lib\route.js:157:13)
+    at Route.dispatch (C:\Users\kosul\Desktop\Ecommerce\Backend\node_modules\router\lib\route.js:117:3)
+    at handle (C:\Users\kosul\Desktop\Ecommerce\Backend\node_modules\router\index.js:435:11)
+    at Layer.handleRequest (C:\Users\kosul\Desktop\Ecommerce\Backend\node_modules\router\lib\layer.js:152:17)
+    at C:\Users\kosul\Desktop\Ecommerce\Backend\node_modules\router\index.js:295:15| Data: {"name":"TokenExpiredError","expiredAt":"2025-05-05T16:28:14.000Z"}
+2025-05-08 16:57:11 [ERROR]: Invalid token or verification failed jwt expired
+TokenExpiredError: jwt expired
+    at C:\Users\kosul\Desktop\Ecommerce\Backend\node_modules\jsonwebtoken\verify.js:190:21
+    at getSecret (C:\Users\kosul\Desktop\Ecommerce\Backend\node_modules\jsonwebtoken\verify.js:97:14)
+    at module.exports [as verify] (C:\Users\kosul\Desktop\Ecommerce\Backend\node_modules\jsonwebtoken\verify.js:101:10)
+    at verify (C:\Users\kosul\Desktop\Ecommerce\Backend\src\middlewares\verifyToken.ts:28:29)
+    at Layer.handleRequest (C:\Users\kosul\Desktop\Ecommerce\Backend\node_modules\router\lib\layer.js:152:17)
+    at next (C:\Users\kosul\Desktop\Ecommerce\Backend\node_modules\router\lib\route.js:157:13)
+    at Route.dispatch (C:\Users\kosul\Desktop\Ecommerce\Backend\node_modules\router\lib\route.js:117:3)
+    at handle (C:\Users\kosul\Desktop\Ecommerce\Backend\node_modules\router\index.js:435:11)
+    at Layer.handleRequest (C:\Users\kosul\Desktop\Ecommerce\Backend\node_modules\router\lib\layer.js:152:17)
+    at C:\Users\kosul\Desktop\Ecommerce\Backend\node_modules\router\index.js:295:15| Data: {"name":"TokenExpiredError","expiredAt":"2025-05-05T16:28:14.000Z"}
+2025-05-08 16:57:15 [ERROR]: Invalid token or verification failed jwt expired
+TokenExpiredError: jwt expired
+    at C:\Users\kosul\Desktop\Ecommerce\Backend\node_modules\jsonwebtoken\verify.js:190:21
+    at getSecret (C:\Users\kosul\Desktop\Ecommerce\Backend\node_modules\jsonwebtoken\verify.js:97:14)
+    at module.exports [as verify] (C:\Users\kosul\Desktop\Ecommerce\Backend\node_modules\jsonwebtoken\verify.js:101:10)
+    at verify (C:\Users\kosul\Desktop\Ecommerce\Backend\src\middlewares\verifyToken.ts:28:29)
+    at Layer.handleRequest (C:\Users\kosul\Desktop\Ecommerce\Backend\node_modules\router\lib\layer.js:152:17)
+    at next (C:\Users\kosul\Desktop\Ecommerce\Backend\node_modules\router\lib\route.js:157:13)
+    at Route.dispatch (C:\Users\kosul\Desktop\Ecommerce\Backend\node_modules\router\lib\route.js:117:3)
+    at handle (C:\Users\kosul\Desktop\Ecommerce\Backend\node_modules\router\index.js:435:11)
+    at Layer.handleRequest (C:\Users\kosul\Desktop\Ecommerce\Backend\node_modules\router\lib\layer.js:152:17)
+    at C:\Users\kosul\Desktop\Ecommerce\Backend\node_modules\router\index.js:295:15| Data: {"name":"TokenExpiredError","expiredAt":"2025-05-05T16:05:07.000Z"}
+2025-05-08 16:57:23 [ERROR]: Invalid token or verification failed jwt expired
+TokenExpiredError: jwt expired
+    at C:\Users\kosul\Desktop\Ecommerce\Backend\node_modules\jsonwebtoken\verify.js:190:21
+    at getSecret (C:\Users\kosul\Desktop\Ecommerce\Backend\node_modules\jsonwebtoken\verify.js:97:14)
+    at module.exports [as verify] (C:\Users\kosul\Desktop\Ecommerce\Backend\node_modules\jsonwebtoken\verify.js:101:10)
+    at verify (C:\Users\kosul\Desktop\Ecommerce\Backend\src\middlewares\verifyToken.ts:28:29)
+    at Layer.handleRequest (C:\Users\kosul\Desktop\Ecommerce\Backend\node_modules\router\lib\layer.js:152:17)
+    at next (C:\Users\kosul\Desktop\Ecommerce\Backend\node_modules\router\lib\route.js:157:13)
+    at Route.dispatch (C:\Users\kosul\Desktop\Ecommerce\Backend\node_modules\router\lib\route.js:117:3)
+    at handle (C:\Users\kosul\Desktop\Ecommerce\Backend\node_modules\router\index.js:435:11)
+    at Layer.handleRequest (C:\Users\kosul\Desktop\Ecommerce\Backend\node_modules\router\lib\layer.js:152:17)
+    at C:\Users\kosul\Desktop\Ecommerce\Backend\node_modules\router\index.js:295:15| Data: {"name":"TokenExpiredError","expiredAt":"2025-05-05T16:28:14.000Z"}
+2025-05-08 16:57:27 [ERROR]: Invalid token or verification failed jwt expired
+TokenExpiredError: jwt expired
+    at C:\Users\kosul\Desktop\Ecommerce\Backend\node_modules\jsonwebtoken\verify.js:190:21
+    at getSecret (C:\Users\kosul\Desktop\Ecommerce\Backend\node_modules\jsonwebtoken\verify.js:97:14)
+    at module.exports [as verify] (C:\Users\kosul\Desktop\Ecommerce\Backend\node_modules\jsonwebtoken\verify.js:101:10)
+    at verify (C:\Users\kosul\Desktop\Ecommerce\Backend\src\middlewares\verifyToken.ts:28:29)
+    at Layer.handleRequest (C:\Users\kosul\Desktop\Ecommerce\Backend\node_modules\router\lib\layer.js:152:17)
+    at next (C:\Users\kosul\Desktop\Ecommerce\Backend\node_modules\router\lib\route.js:157:13)
+    at Route.dispatch (C:\Users\kosul\Desktop\Ecommerce\Backend\node_modules\router\lib\route.js:117:3)
+    at handle (C:\Users\kosul\Desktop\Ecommerce\Backend\node_modules\router\index.js:435:11)
+    at Layer.handleRequest (C:\Users\kosul\Desktop\Ecommerce\Backend\node_modules\router\lib\layer.js:152:17)
+    at C:\Users\kosul\Desktop\Ecommerce\Backend\node_modules\router\index.js:295:15| Data: {"name":"TokenExpiredError","expiredAt":"2025-05-05T16:28:14.000Z"}
+2025-05-08 16:57:37 [ERROR]: Invalid token or verification failed jwt expired
+TokenExpiredError: jwt expired
+    at C:\Users\kosul\Desktop\Ecommerce\Backend\node_modules\jsonwebtoken\verify.js:190:21
+    at getSecret (C:\Users\kosul\Desktop\Ecommerce\Backend\node_modules\jsonwebtoken\verify.js:97:14)
+    at module.exports [as verify] (C:\Users\kosul\Desktop\Ecommerce\Backend\node_modules\jsonwebtoken\verify.js:101:10)
+    at verify (C:\Users\kosul\Desktop\Ecommerce\Backend\src\middlewares\verifyToken.ts:28:29)
+    at Layer.handleRequest (C:\Users\kosul\Desktop\Ecommerce\Backend\node_modules\router\lib\layer.js:152:17)
+    at next (C:\Users\kosul\Desktop\Ecommerce\Backend\node_modules\router\lib\route.js:157:13)
+    at Route.dispatch (C:\Users\kosul\Desktop\Ecommerce\Backend\node_modules\router\lib\route.js:117:3)
+    at handle (C:\Users\kosul\Desktop\Ecommerce\Backend\node_modules\router\index.js:435:11)
+    at Layer.handleRequest (C:\Users\kosul\Desktop\Ecommerce\Backend\node_modules\router\lib\layer.js:152:17)
+    at C:\Users\kosul\Desktop\Ecommerce\Backend\node_modules\router\index.js:295:15| Data: {"name":"TokenExpiredError","expiredAt":"2025-05-05T16:28:14.000Z"}
+2025-05-08 16:57:46 [ERROR]: Invalid token or verification failed jwt expired
+TokenExpiredError: jwt expired
+    at C:\Users\kosul\Desktop\Ecommerce\Backend\node_modules\jsonwebtoken\verify.js:190:21
+    at getSecret (C:\Users\kosul\Desktop\Ecommerce\Backend\node_modules\jsonwebtoken\verify.js:97:14)
+    at module.exports [as verify] (C:\Users\kosul\Desktop\Ecommerce\Backend\node_modules\jsonwebtoken\verify.js:101:10)
+    at verify (C:\Users\kosul\Desktop\Ecommerce\Backend\src\middlewares\verifyToken.ts:28:29)
+    at Layer.handleRequest (C:\Users\kosul\Desktop\Ecommerce\Backend\node_modules\router\lib\layer.js:152:17)
+    at next (C:\Users\kosul\Desktop\Ecommerce\Backend\node_modules\router\lib\route.js:157:13)
+    at Route.dispatch (C:\Users\kosul\Desktop\Ecommerce\Backend\node_modules\router\lib\route.js:117:3)
+    at handle (C:\Users\kosul\Desktop\Ecommerce\Backend\node_modules\router\index.js:435:11)
+    at Layer.handleRequest (C:\Users\kosul\Desktop\Ecommerce\Backend\node_modules\router\lib\layer.js:152:17)
+    at C:\Users\kosul\Desktop\Ecommerce\Backend\node_modules\router\index.js:295:15| Data: {"name":"TokenExpiredError","expiredAt":"2025-05-05T16:28:14.000Z"}

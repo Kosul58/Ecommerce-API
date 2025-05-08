@@ -3,7 +3,6 @@ import { UpdateUser, User } from "../common/types/userType.js";
 import { UserRepositoryInterface } from "../common/types/classInterfaces.js";
 import UserSchema from "../models/user.js";
 import { BaseRepository } from "./baseRepository.js";
-import { Document } from "mongoose";
 
 @injectable()
 export default class UserRepository
