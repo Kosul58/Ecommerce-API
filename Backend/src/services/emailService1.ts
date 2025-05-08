@@ -3,8 +3,16 @@ import { injectable, inject } from "tsyringe";
 import Utills from "../utils/utils";
 import logger from "../utils/logger";
 
+interface EmailServiceInterface {
+  sendMail(
+    to: string,
+    subject: string,
+    type: string,
+    data: any
+  ): Promise<boolean>;
+}
 @injectable()
-export default class EmailService {
+export default class EmailService implements EmailServiceInterface {
   private transporter;
   constructor(@inject(Utills) private utils: Utills) {
     this.transporter = nodemailer.createTransport({

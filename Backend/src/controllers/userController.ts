@@ -185,7 +185,7 @@ export default class UserController {
         logger.error("Failed to upload image");
         return this.responseHandler.error(res, "Failed to upload image");
       }
-      logger.info("Images uploaded successfully");
+      logger.info(`Uploaded ${result.length} image(s) successfully`);
       return this.responseHandler.success(
         res,
         "Images uploaded successfully",

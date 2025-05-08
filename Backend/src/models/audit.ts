@@ -1,23 +1,20 @@
 import { Schema, model, Document } from "mongoose";
 
-interface AuditLog extends Document {
+interface Audit extends Document {
   action: string;
-  target: string;
   targetId: string;
   data: object;
-  user: string;
+  userId: string;
   timestamp: Date;
 }
 
-const auditLogSchema = new Schema<AuditLog>({
+const auditSchema = new Schema<Audit>({
   action: { type: String, required: true },
-  target: { type: String, required: true },
   targetId: { type: String, required: true },
   data: { type: Object, required: true },
-  user: { type: String, required: true },
+  userId: { type: String, required: true },
   timestamp: { type: Date, default: Date.now },
 });
 
-const AuditLogModel = model<AuditLog>("AuditLog", auditLogSchema);
-
-export default AuditLogModel;
+const Audit = model<Audit>("Audit", auditSchema);
+export default Audit;

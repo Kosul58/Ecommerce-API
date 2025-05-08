@@ -1,0 +1,133 @@
+2025-05-08 08:25:52 [INFO]: Server running on port 3000
+2025-05-08 08:34:25 [INFO]: Server and DB connection closed
+2025-05-08 08:49:07 [INFO]: Server running on port 3000
+2025-05-08 08:50:28 [INFO]: Server and DB connection closed
+2025-05-08 08:50:36 [INFO]: Server running on port 3000
+2025-05-08 08:50:37 [INFO]: MongoDB connected successfully
+2025-05-08 08:50:47 [INFO]: Attempting to send mail
+2025-05-08 08:50:50 [INFO]: Email sent successfully
+2025-05-08 08:50:50 [INFO]: Mail sent successfully
+2025-05-08 08:50:50 [HTTP]: PUT /api/mail 200 84 - 3235.336 ms
+2025-05-08 08:53:27 [INFO]: MongoDB connection closed
+2025-05-08 08:53:33 [INFO]: Server running on port 3000
+2025-05-08 08:53:34 [INFO]: MongoDB connected successfully
+2025-05-08 08:53:39 [INFO]: Attempting to send mail
+2025-05-08 08:53:42 [INFO]: Email sent successfully
+2025-05-08 08:53:42 [INFO]: Mail sent successfully
+2025-05-08 08:53:42 [HTTP]: PUT /api/mail 200 84 - 3147.946 ms
+2025-05-08 08:55:30 [INFO]: MongoDB connection closed
+2025-05-08 08:55:36 [INFO]: Server running on port 3000
+2025-05-08 08:55:38 [INFO]: MongoDB connected successfully
+2025-05-08 08:55:59 [INFO]: MongoDB connection closed
+2025-05-08 08:56:06 [INFO]: Server running on port 3000
+2025-05-08 08:56:07 [INFO]: MongoDB connected successfully
+2025-05-08 08:56:09 [INFO]: Attempting to send mail
+2025-05-08 08:56:13 [INFO]: Email sent successfully
+2025-05-08 08:56:13 [INFO]: Mail sent successfully
+2025-05-08 08:56:13 [HTTP]: PUT /api/mail 200 84 - 4121.041 ms
+2025-05-08 08:57:04 [INFO]: MongoDB connection closed
+2025-05-08 08:57:11 [INFO]: Server running on port 3000
+2025-05-08 08:57:12 [INFO]: MongoDB connected successfully
+2025-05-08 08:57:17 [INFO]: Attempting to send mail
+2025-05-08 08:57:20 [INFO]: Email sent successfully
+2025-05-08 08:57:20 [INFO]: Mail sent successfully
+2025-05-08 08:57:20 [HTTP]: PUT /api/mail 200 84 - 3032.654 ms
+2025-05-08 10:24:09 [INFO]: MongoDB connection closed
+2025-05-08 10:41:30 [INFO]: Server running on port 3000
+2025-05-08 10:41:30 [INFO]: MongoDB connected successfully
+2025-05-08 10:42:52 [INFO]: MongoDB connection closed
+2025-05-08 10:42:57 [INFO]: Server running on port 3000
+2025-05-08 10:42:58 [INFO]: MongoDB connected successfully
+2025-05-08 10:43:02 [INFO]: Attempting to create pdf
+2025-05-08 10:43:03 [INFO]: Generating pdf buffer
+2025-05-08 10:43:07 [INFO]: Uploaded pdf successfully
+2025-05-08 10:43:07 [INFO]: PDF created successfully
+2025-05-08 10:43:07 [HTTP]: POST /api/mail 200 165 - 5147.154 ms
+2025-05-08 10:44:52 [INFO]: MongoDB connection closed
+2025-05-08 10:45:00 [INFO]: Server running on port 3000
+2025-05-08 10:45:01 [INFO]: MongoDB connected successfully
+2025-05-08 10:45:02 [INFO]: Attempting to create pdf
+2025-05-08 10:45:03 [INFO]: Generating pdf buffer
+2025-05-08 10:45:07 [INFO]: Uploaded pdf successfully
+2025-05-08 10:45:07 [INFO]: PDF created successfully
+2025-05-08 10:45:07 [HTTP]: POST /api/mail 200 169 - 5077.130 ms
+2025-05-08 10:46:15 [INFO]: MongoDB connection closed
+2025-05-08 10:46:28 [INFO]: Server running on port 3000
+2025-05-08 10:46:29 [INFO]: MongoDB connected successfully
+2025-05-08 10:46:35 [INFO]: Attempting to create pdf
+2025-05-08 10:46:36 [INFO]: Generating pdf buffer
+2025-05-08 10:46:42 [INFO]: Uploaded pdf successfully
+2025-05-08 10:46:42 [INFO]: PDF created successfully
+2025-05-08 10:46:42 [HTTP]: POST /api/mail 200 169 - 6174.329 ms
+2025-05-08 10:53:49 [INFO]: MongoDB connection closed
+2025-05-08 10:53:54 [INFO]: Server running on port 3000
+2025-05-08 10:53:55 [INFO]: MongoDB connected successfully
+2025-05-08 10:54:36 [INFO]: Attempting to create pdf
+2025-05-08 10:54:36 [INFO]: Generating pdf buffer
+2025-05-08 10:54:40 [INFO]: Uploaded pdf successfully
+2025-05-08 10:54:40 [INFO]: PDF created successfully
+2025-05-08 10:54:40 [HTTP]: POST /api/mail 200 169 - 4549.185 ms
+2025-05-08 11:07:39 [INFO]: MongoDB connection closed
+2025-05-08 11:07:54 [INFO]: Server running on port 3000
+2025-05-08 11:07:55 [INFO]: MongoDB connected successfully
+2025-05-08 11:08:09 [INFO]: Attempting to upload images
+2025-05-08 11:08:12 [INFO]: Images uploaded successfully.| Data: {"links":[{"image_1":"https://res.cloudinary.com/dyhju2mcs/image/upload/v1746681792/products/2025/05/08/6814671ea1815d08f1ecc20a_0.jpg"},{"image_2":"https://res.cloudinary.com/dyhju2mcs/image/upload/v1746681791/products/2025/05/08/6814671ea1815d08f1ecc20a_1.jpg"}]}
+2025-05-08 11:08:12 [INFO]: Uploaded 2 image(s) successfully
+2025-05-08 11:08:12 [HTTP]: POST /api/mail/image 200 296 - 3443.507 ms
+2025-05-08 11:21:18 [INFO]: MongoDB connection closed
+2025-05-08 11:21:39 [INFO]: Server running on port 3000
+2025-05-08 11:21:39 [INFO]: MongoDB connected successfully
+2025-05-08 11:21:45 [INFO]: Attempting to create pdf
+2025-05-08 11:21:45 [INFO]: Generating pdf buffer
+2025-05-08 11:21:50 [INFO]: PDF uploaded successfully| Data: {"uploadedUrl":"https://res.cloudinary.com/dyhju2mcs/raw/authenticated/s--10pBeQ6f--/v1746682609/orders/2025/05/08/6814671ea1815d08f1ecc20a.pdf"}
+2025-05-08 11:21:50 [INFO]: PDF created successfully
+2025-05-08 11:21:50 [HTTP]: POST /api/mail 200 190 - 4876.626 ms
+2025-05-08 11:32:43 [INFO]: MongoDB connection closed
+2025-05-08 11:32:52 [INFO]: Server running on port 3000
+2025-05-08 11:32:53 [INFO]: MongoDB connected successfully
+2025-05-08 11:32:55 [INFO]: Attempting to create pdf
+2025-05-08 11:32:55 [INFO]: Generating pdf buffer
+2025-05-08 11:32:59 [INFO]: PDF uploaded successfully| Data: {"signedURL":"https://res.cloudinary.com/dyhju2mcs/raw/private/s--10pBeQ6f--/v1/orders/2025/05/08/6814671ea1815d08f1ecc20a.pdf?_a=BAMAJaRj0"}
+2025-05-08 11:32:59 [INFO]: PDF created successfully
+2025-05-08 11:32:59 [HTTP]: POST /api/mail 200 188 - 4510.245 ms
+2025-05-08 11:50:17 [INFO]: MongoDB connection closed
+2025-05-08 11:50:20 [INFO]: Server running on port 3000
+2025-05-08 11:50:21 [INFO]: MongoDB connected successfully
+2025-05-08 11:50:29 [INFO]: Attempting to create pdf
+2025-05-08 11:50:30 [INFO]: Generating pdf buffer
+2025-05-08 11:50:34 [INFO]: PDF uploaded successfully| Data: {"signedURL":"https://api.cloudinary.com/v1_1/dyhju2mcs/image/download?timestamp=1746684334&public_id=orders%2F2025%2F05%2F08%2F6814671ea1815d08f1ecc20a.pdf&format=raw&expires_at=1746684394&signature=79e9a552228b11c1f1f67cfe707b2c4fe21b8774&api_key=484822588963412"}
+2025-05-08 11:50:34 [INFO]: PDF created successfully
+2025-05-08 11:50:34 [HTTP]: POST /api/mail 200 313 - 4666.014 ms
+2025-05-08 11:52:04 [INFO]: MongoDB connection closed
+2025-05-08 11:52:09 [INFO]: Server running on port 3000
+2025-05-08 11:52:10 [INFO]: MongoDB connected successfully
+2025-05-08 11:52:13 [INFO]: Attempting to create pdf
+2025-05-08 11:52:13 [INFO]: Generating pdf buffer
+2025-05-08 11:52:17 [INFO]: PDF uploaded successfully| Data: {"signedURL":"https://api.cloudinary.com/v1_1/dyhju2mcs/image/download?timestamp=1746684437&public_id=orders%2F2025%2F05%2F08%2F6814671ea1815d08f1ecc20a.pdf.pdf&format=raw&expires_at=1746684497&signature=4f55a57b10d1f2ef6666bcdd8f569ff0f6e58834&api_key=484822588963412"}
+2025-05-08 11:52:17 [INFO]: PDF created successfully
+2025-05-08 11:52:17 [HTTP]: POST /api/mail 200 317 - 4750.565 ms
+2025-05-08 11:55:45 [INFO]: MongoDB connection closed
+2025-05-08 11:55:49 [INFO]: Server running on port 3000
+2025-05-08 11:55:50 [INFO]: MongoDB connected successfully
+2025-05-08 11:55:53 [INFO]: Attempting to create pdf
+2025-05-08 11:55:53 [INFO]: Generating pdf buffer
+2025-05-08 11:55:57 [INFO]: PDF uploaded successfully| Data: {"signedURL":"https://api.cloudinary.com/v1_1/dyhju2mcs/image/download?timestamp=1746684657&public_id=6814671ea1815d08f1ecc20a.pdf&format=pdf&expires_at=1746684717&signature=aa3a8d4696fbb8614ad9208fc95a5e363a354679&api_key=484822588963412"}
+2025-05-08 11:55:57 [INFO]: PDF created successfully
+2025-05-08 11:55:57 [HTTP]: POST /api/mail 200 287 - 4739.949 ms
+2025-05-08 11:56:36 [INFO]: MongoDB connection closed
+2025-05-08 11:56:40 [INFO]: Server running on port 3000
+2025-05-08 11:56:41 [INFO]: MongoDB connected successfully
+2025-05-08 11:56:46 [INFO]: Attempting to create pdf
+2025-05-08 11:56:46 [INFO]: Generating pdf buffer
+2025-05-08 11:56:51 [INFO]: PDF uploaded successfully| Data: {"signedURL":"https://api.cloudinary.com/v1_1/dyhju2mcs/image/download?timestamp=1746684711&public_id=orders%2F2025%2F05%2F08%2F6814671ea1815d08f1ecc20a.pdf&format=pdf&expires_at=1746684771&signature=5030eb0ab0b36fcacb7238ff79341e984e69891a&api_key=484822588963412"}
+2025-05-08 11:56:51 [INFO]: PDF created successfully
+2025-05-08 11:56:51 [HTTP]: POST /api/mail 200 313 - 4711.592 ms
+2025-05-08 11:58:47 [INFO]: MongoDB connection closed
+2025-05-08 11:59:22 [INFO]: Server running on port 3000
+2025-05-08 11:59:23 [INFO]: MongoDB connected successfully
+2025-05-08 11:59:40 [INFO]: Attempting to create pdf
+2025-05-08 11:59:41 [INFO]: Generating pdf buffer
+2025-05-08 11:59:45 [INFO]: PDF uploaded successfully| Data: {"signedURL":"https://api.cloudinary.com/v1_1/dyhju2mcs/raw/download?timestamp=1746684885&public_id=orders%2F2025%2F05%2F08%2F6814671ea1815d08f1ecc20a.pdf&format=pdf&type=private&attachment=true&expires_at=1746684945&signature=9c387eec43f145285bcf6e575562d26d32130f1f&api_key=484822588963412"}
+2025-05-08 11:59:45 [INFO]: PDF created successfully
+2025-05-08 11:59:45 [HTTP]: POST /api/mail 200 340 - 5051.411 ms
+2025-05-08 12:01:48 [INFO]: MongoDB connection closed

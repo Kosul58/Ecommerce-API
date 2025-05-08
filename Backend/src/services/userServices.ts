@@ -252,42 +252,102 @@ export default class UserServices {
     }
   }
 
-  public async pdf() {
+  public async pdf(): Promise<string> {
     try {
-      const data = await this.cloudService.uploadPDF({
+      const userInfo = {
         username: "Kosul",
         email: "kosulgrg@gmail.com",
-        orderid: "681478c9716d460249dc6fk6",
+        orderid: "6814790a716d460249dc6fb1",
+        userid: "6814671ea1815d08f1ecc20a",
         products: ["68145bfe8a486d9766ec9b88"],
         total: 7980,
         paymentType: "Cash on delivery",
         deliveryTime: Date.now(),
+      };
+
+      const buffer = await this.utils.generatePDFBuffer(userInfo);
+      const { userid } = userInfo;
+      const fileExtension = "pdf";
+      const fileName = `${userid}.${fileExtension}`;
+      const folderPath = `orders/${this.utils.generatePath()}`;
+
+      const uploadResult = await this.cloudService.uploadFile(buffer, {
+        folder: folderPath,
+        public_id: fileName,
+        resource_type: "raw",
+        use_filename: true,
+        unique_filename: false,
+        type: "private",
       });
-      if (!data || data.length === 0) {
+
+      if (!uploadResult) {
         const error = new Error("Failed to upload PDF");
         (error as any).statusCode = 500;
         throw error;
       }
-      logger.info("Uploaded pdf successfully");
-      return data;
+
+      const signedURL = await this.cloudService.signedURL(folderPath, fileName);
+      logger.info("PDF uploaded successfully", { signedURL });
+      return signedURL;
     } catch (err) {
-      logger.error("Error uploading PDF");
+      logger.error("Error uploading PDF", { error: err });
       throw err;
     }
   }
 
-  public async uploadImages(files: Express.Multer.File[]) {
+  public async uploadImages(files: Express.Multer.File[]): Promise<string[]> {
     try {
-      const data = await this.cloudService.uploadImages(files);
-      if (!data || data.length === 0) {
-        const error = new Error("Failed to upload images to the cloud");
+      if (!files || files.length === 0) {
+        const error = new Error("No files provided for upload");
+        (error as any).statusCode = 400;
+        throw error;
+      }
+      const sellerId = "6814671ea1815d08f1ecc20a";
+      const filePath = this.utils.generatePath();
+      const results = await Promise.allSettled(
+        files.map((file, index) =>
+          this.cloudService.uploadFile(file.buffer, {
+            resource_type: "image",
+            folder: `products/${filePath}`,
+            public_id: `${sellerId}_${index}`,
+            use_filename: true,
+            unique_filename: false,
+          })
+        )
+      );
+
+      const successfulUploads: string[] = [];
+      const failedUploads: { index: number; reason: any }[] = [];
+
+      results.forEach((result, index) => {
+        if (result.status === "fulfilled") {
+          successfulUploads.push(result.value);
+        } else {
+          failedUploads.push({ index, reason: result.reason });
+          logger.warn(`Upload failed for file ${index}`, {
+            reason: result.reason,
+          });
+        }
+      });
+
+      if (successfulUploads.length === 0) {
+        const error = new Error("All image uploads failed");
         (error as any).statusCode = 500;
         throw error;
       }
-      logger.info("Uploaded images successfully");
-      return data;
+
+      const links = successfulUploads.map((url, index) => ({
+        [`image_${index + 1}`]: url,
+      }));
+
+      logger.info("Some or all images uploaded successfully.", {
+        links,
+        failedUploads,
+      });
+
+      return successfulUploads;
     } catch (err) {
-      logger.error("Error uploading images");
+      logger.error("Error uploading images", { error: err });
       throw err;
     }
   }

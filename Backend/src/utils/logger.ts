@@ -7,14 +7,17 @@ const logDir = path.join(process.cwd(), "logs");
 if (!fs.existsSync(logDir)) {
   fs.mkdirSync(logDir, { recursive: true });
 }
-
 const logFormat = format.combine(
   format.timestamp({ format: "YYYY-MM-DD HH:mm:ss" }),
   format.errors({ stack: true }),
-  format.printf(({ timestamp, level, message, stack }) => {
+  format.printf(({ timestamp, level, message, stack, ...rest }) => {
+    let additionalData = "";
+    if (Object.keys(rest).length > 0) {
+      additionalData = `| Data: ${JSON.stringify(rest)}`;
+    }
     return stack
-      ? `${timestamp} [${level.toUpperCase()}]: ${message}\n${stack}`
-      : `${timestamp} [${level.toUpperCase()}]: ${message}`;
+      ? `${timestamp} [${level.toUpperCase()}]: ${message}\n${stack}${additionalData}`
+      : `${timestamp} [${level.toUpperCase()}]: ${message}${additionalData}`;
   })
 );
 
@@ -48,10 +51,14 @@ if (isDev) {
       format: format.combine(
         format.colorize(),
         format.errors({ stack: true }),
-        format.printf(({ timestamp, level, message, stack }) => {
+        format.printf(({ timestamp, level, message, stack, ...rest }) => {
+          let additionalData = "";
+          if (Object.keys(rest).length > 0) {
+            additionalData = `| Data: ${JSON.stringify(rest)}`;
+          }
           return stack
-            ? `${timestamp} [${level}]: ${message}\n${stack}`
-            : `${timestamp} [${level}]: ${message}`;
+            ? `${timestamp} [${level}]: ${message}\n${stack}${additionalData}`
+            : `${timestamp} [${level}]: ${message}${additionalData}`;
         })
       ),
     })
