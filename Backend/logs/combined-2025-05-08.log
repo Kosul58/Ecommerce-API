@@ -600,3 +600,13 @@ TokenExpiredError: jwt expired
 2025-05-08 17:01:44 [INFO]: User with id: 680b0d2b4f9904c610769730 found
 2025-05-08 17:01:44 [HTTP]: GET /api/user/ 200 179 - 90.957 ms
 2025-05-08 17:03:48 [INFO]: MongoDB connection closed
+2025-05-08 17:03:53 [INFO]: Server running on port 3000
+2025-05-08 17:03:54 [INFO]: MongoDB connected successfully
+2025-05-08 17:03:58 [INFO]: Verifying token for user, Token: present
+2025-05-08 17:03:58 [INFO]: Token verified successfully for user: [object Object]
+2025-05-08 17:03:58 [INFO]: Checking role for user: 680b0d2b4f9904c610769730, Role: Admin
+2025-05-08 17:03:58 [INFO]: Access granted for user: 680b0d2b4f9904c610769730, Role: Admin
+2025-05-08 17:03:58 [INFO]: Validation passed for token data in request: GET /api/user/
+2025-05-08 17:03:58 [INFO]: Fetching user with id: 680b0d2b4f9904c610769730
+2025-05-08 17:03:58 [INFO]: User with id: 680b0d2b4f9904c610769730 found
+2025-05-08 17:03:58 [HTTP]: GET /api/user/ 200 179 - 210.385 ms
