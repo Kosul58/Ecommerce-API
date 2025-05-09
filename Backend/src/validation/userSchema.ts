@@ -40,5 +40,5 @@ export const hideSchema = Joi.object({
     .items(Joi.string().length(24).hex().required())
     .min(1)
     .required(),
-  status: Joi.boolean().required,
+  status: Joi.boolean().required(),
 });

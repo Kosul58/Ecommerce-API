@@ -77,13 +77,13 @@ export default class CloudService implements CloudinaryService {
         size: additionalData.size,
         status: true,
         resourceType: UploadApiOptions.resource_type,
-        action: "create",
+        action: "upload file to cloud",
       });
     }
     return upload;
   }
 
-  public async signedURL(folderPath: string, fileName: string) {
+  public async presignedURL(folderPath: string, fileName: string) {
     const expiresAt = Math.floor(Date.now() / 1000) + 2 * 60;
     try {
       const signedUrl = cloudinary.utils.private_download_url(
@@ -100,16 +100,15 @@ export default class CloudService implements CloudinaryService {
         (error as any).statusCode = 500;
         throw error;
       }
-      // await this.fileRepository.create({
-      //   publicid: fileName,
-      //   type: "private",
-      //   blob_path: folderPath,
-      //   mimetype: "orders/pdf",
-      //   status: true,
-      //   resourceType: "raw",
-      //   action: "create",
-      // });
-
+      await this.fileRepository.create({
+        publicid: fileName,
+        type: "private",
+        blob_path: folderPath,
+        mimetype: "orders/pdf",
+        status: true,
+        resourceType: "raw",
+        action: "create presigned URL",
+      });
       return signedUrl;
     } catch (err) {
       logger.error("Error in signedURL");
@@ -117,19 +116,20 @@ export default class CloudService implements CloudinaryService {
     }
   }
 
-  public async getCloudFile(
-    folderPath: string,
-    filename: string
-    // resourceType: string
-  ) {
+  public async getCloudFile(folderPath: string, filename: string) {
     try {
       const filePath = `${folderPath}/${filename}`;
-      const result = await cloudinary.api.resource(
-        filePath
-        //    {
-        //   resource_type: resourceType,
-        // }
-      );
+      const result = await cloudinary.api.resource(filePath);
+      const mimeType = folderPath.split("/")[0] + "/" + result.resource_type;
+      await this.fileRepository.create({
+        publicid: result.public_id,
+        type: result.type,
+        blob_path: folderPath,
+        mimetype: mimeType,
+        status: true,
+        resourceType: result.resource_type,
+        action: "fetch file data from cloud",
+      });
       return result;
     } catch (err) {
       logger.error("Error fetching file metadata");
@@ -148,6 +148,16 @@ export default class CloudService implements CloudinaryService {
         prefix: folder,
         resource_type: resourceType,
       });
+      const mimeType = folder.split("/")[0] + "/" + resourceType;
+      await this.fileRepository.create({
+        publicid: folder,
+        type: type,
+        blob_path: folder,
+        mimetype: mimeType,
+        status: true,
+        resourceType: resourceType,
+        action: "fetched multiple file data from cloud",
+      });
       return result.resources;
     } catch (err) {
       logger.error("Error listing files");
@@ -155,11 +165,15 @@ export default class CloudService implements CloudinaryService {
     }
   }
 
-  public async deleteCloudFile(filePath: string, type: string) {
+  public async deleteCloudFile(
+    filePath: string,
+    type: string,
+    resourceType: string
+  ) {
     try {
       const data = await cloudinary.uploader.destroy(filePath, {
-        resource_type: "raw",
         type: type,
+        resource_type: resourceType,
       });
       if (data.result !== "ok") {
         logger.warn("Resource not found");
@@ -167,24 +181,37 @@ export default class CloudService implements CloudinaryService {
         (error as any).statusCode = 404;
         throw error;
       }
+      const mimeType = filePath.split("/")[0] + "/" + resourceType;
+      await this.fileRepository.create({
+        publicid: filePath,
+        type: type,
+        blob_path: filePath,
+        mimetype: mimeType,
+        status: true,
+        resourceType: resourceType,
+        action: "Deleted a file from cloud",
+      });
       return data;
     } catch (err) {
       logger.error("Error deleting file");
       throw err;
     }
   }
-  public async deleteCloudFiles(filePaths: string[], type: string) {
+  public async deleteCloudFiles(
+    filePaths: string[],
+    type: string,
+    resourceType: string
+  ) {
     try {
       const results = await Promise.allSettled(
         filePaths.map(async (id) => {
           const result = await cloudinary.uploader.destroy(id, {
-            resource_type: "raw",
+            resource_type: resourceType,
             type: type,
           });
           return { id, result };
         })
       );
-
       for (const res of results) {
         if (res.status === "fulfilled") {
           const { id, result } = res.value;
@@ -197,6 +224,21 @@ export default class CloudService implements CloudinaryService {
           logger.error(`Failed to delete file: ${res.reason}`);
         }
       }
+      const mimeType = filePaths[0].split("/")[0] + "/" + resourceType;
+      const data = [];
+      for (const filePath of filePaths) {
+        const saveData = {
+          publicid: filePath,
+          type: type,
+          blob_path: filePath,
+          mimetype: mimeType,
+          status: true,
+          resourceType: resourceType,
+          action: "Deleted a file from cloud",
+        };
+        data.push(saveData);
+      }
+      await this.fileRepository.insertMany(data);
       return results.filter((r) => {
         if (r.status === "fulfilled" && r.value.result.result === "ok") {
           return r.value.result;

@@ -72,7 +72,7 @@ orderRoutes.put(
 );
 
 orderRoutes.put(
-  "/orderproduct",
+  "/orderdata",
   verifyRole.verify("Seller"),
   dataValidation.validateTokenData(idSchema),
   dataValidation.validateBody(productStatusSchema),

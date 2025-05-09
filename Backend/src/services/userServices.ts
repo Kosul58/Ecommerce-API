@@ -290,8 +290,10 @@ export default class UserServices {
         (error as any).statusCode = 500;
         throw error;
       }
-
-      const signedURL = await this.cloudService.signedURL(folderPath, fileName);
+      const signedURL = await this.cloudService.presignedURL(
+        folderPath,
+        fileName
+      );
       logger.info("PDF uploaded successfully", { signedURL });
       return signedURL;
     } catch (err) {

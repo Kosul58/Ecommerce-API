@@ -33,7 +33,7 @@ userRoutes.get(
 );
 
 userRoutes.post(
-  "/signup/",
+  "/signup",
   dataValidation.validateBody(signUpSchema),
   createAudit({ action: "signup user" }),
   userController.signUp

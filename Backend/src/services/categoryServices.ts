@@ -162,7 +162,6 @@ export default class CategoryService {
         logger.warn(`Category with ID: ${categoryid} not found`);
         throw error;
       }
-
       const result = await this.categoryRepository.deleteOne(categoryid);
       if (!result) {
         const error = new Error("Failed to delete a category");
@@ -172,9 +171,11 @@ export default class CategoryService {
       }
 
       const categories = await this.findSub(categoryid);
-      const categoryList = categories?.map((p: any) => p.id);
-      if (categoryList)
-        await this.categoryRepository.updateManyParent(categoryList);
+      if (categories) {
+        const categoryList = categories.map((p: any) => p.id);
+        if (categoryList)
+          await this.categoryRepository.updateManyParent(categoryList);
+      }
 
       return "success";
     } catch (err) {
@@ -249,10 +250,11 @@ export default class CategoryService {
     try {
       const categories = await this.categoryRepository.findSubs(parentid);
       if (!categories || categories.length === 0) {
-        const error = new Error("No categories found");
-        (error as any).statusCode = 404;
+        // const error = new Error("No categories found");
+        // (error as any).statusCode = 404;
         logger.warn(`No subcategories found for parent ID: ${parentid}`);
-        throw error;
+        // throw error;
+        return;
       }
       return categories.map((c: any) => ({
         id: c._id.toString(),

@@ -34,12 +34,12 @@ export default class AdminController {
     }
   };
 
-  public getSignedURL: RequestHandler = async (req, res, next) => {
+  public getPresignedURL: RequestHandler = async (req, res, next) => {
     const folderPath = req.body.folderPath;
     const fileName = req.body.fileName;
     try {
       logger.info("Creating a signed URL");
-      const data = await this.cloudService.signedURL(folderPath, fileName);
+      const data = await this.cloudService.presignedURL(folderPath, fileName);
       if (!data || data.length === 0) {
         logger.error("Failed to generate URL");
         return this.responseHandler.error(res, "Failed to generate URL");
@@ -102,9 +102,14 @@ export default class AdminController {
   public deleteCloudFile: RequestHandler = async (req, res, next) => {
     const filePath = req.body.filePath;
     const type = req.body.type;
+    const resourceType = req.body.resourceType;
     try {
       logger.info("Deleting a file from cloud");
-      const data = await this.cloudService.deleteCloudFile(filePath, type);
+      const data = await this.cloudService.deleteCloudFile(
+        filePath,
+        type,
+        resourceType
+      );
       if (!data) {
         logger.error("Failed to delete a file");
         return this.responseHandler.error(res, "Failed to delete a file");
@@ -120,9 +125,14 @@ export default class AdminController {
   public deleteCloudFiles: RequestHandler = async (req, res, next) => {
     const filePaths = req.body.filePaths;
     const type = req.body.type;
+    const resourceType = req.body.resourceType;
     try {
       logger.info("Deleteing cloud fiels");
-      const data = await this.cloudService.deleteCloudFiles(filePaths, type);
+      const data = await this.cloudService.deleteCloudFiles(
+        filePaths,
+        type,
+        resourceType
+      );
       if (!data || data.length === 0) {
         logger.error("Failed to delete files");
         return this.responseHandler.error(res, "Failed to delete files");

@@ -22,7 +22,6 @@ export default class ProductServices {
   }
 
   private async checkCategory(name: string) {
-    logger.info(`Checking if category '${name}' exists`);
     return await this.categoryService.checkCategory(name);
   }
 
@@ -53,7 +52,6 @@ export default class ProductServices {
       inventory: number;
     }
   >(product: T): ProductReturn {
-    logger.debug(`Returning product data for: ${product.name}`);
     return {
       id: product._id.toString(),
       name: product.name,
@@ -239,7 +237,7 @@ export default class ProductServices {
 
       if (update.category) {
         const category = await this.checkCategory(update.category);
-        if (!category) {
+        if (category === "cat") {
           const error = new Error("No category found");
           (error as any).statusCode = 404;
           throw error;
@@ -318,7 +316,7 @@ export default class ProductServices {
         productids,
         status
       );
-      if (!result || result.modifiedCount === 0) {
+      if (!result) {
         const error = new Error("Product status update failed");
         (error as any).statusCode = 500;
         throw error;
@@ -337,11 +335,15 @@ export default class ProductServices {
   public async hideSellerProducts(sellerid: string) {
     try {
       logger.info(`Hiding products for seller: ${sellerid}`);
-      const products = await this.getSellerProducts(sellerid);
+      const products = await this.productRepository.getSellerProducts(sellerid);
       if (!products || products.length === 0) {
         return null;
       }
-
+      const visibleProducts = products.filter((p: any) => p.status === false);
+      if (visibleProducts.length === 0) {
+        logger.info("Products are already hidden");
+        return "success";
+      }
       const deleteIds = products.map((p: any) => p.id);
       const result = await this.productRepository.updateStatus(
         deleteIds,

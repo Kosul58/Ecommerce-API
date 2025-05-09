@@ -161,7 +161,7 @@ export default class CategoryController {
     try {
       logger.info("Fetching subcategories", { categoryid });
       const result = await this.categoryServices.findSub(categoryid);
-      if (!result) {
+      if (!result || result.length === 0) {
         logger.warn("No subcategories found", { categoryid });
         return this.responseHandler.notFound(res, "Category not found");
       }
