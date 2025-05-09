@@ -56,12 +56,13 @@ export default class AdminController {
     const folderPath = req.body.folderPath;
     const filename = req.body.fileName;
     const resourceType = req.body.resourceType;
+    const type = req.body.type;
     try {
       logger.info("Getting a file info");
       const data = await this.cloudService.getCloudFile(
         folderPath,
-        filename,
-        resourceType
+        filename
+        // resourceType
       );
       if (!data || data.length === 0) {
         logger.error("Failed to get a file info");

@@ -9,18 +9,21 @@ import {
   removeProductsSchema,
   updateSchema,
   viewCartParamsSchema,
-  viewUserCartParamsSchema,
 } from "../validation/cartSchema.js";
+import { createAudit } from "../middlewares/auditMiddleware.js";
+
 const cartRoutes = express.Router();
 
 const cartController = container.resolve(CartController);
 const dataValidation = container.resolve(DataValidation);
+
 // Create cart item
 cartRoutes.post(
   "/",
   verifyRole.verify("User"),
   dataValidation.validateTokenData(idSchema),
   dataValidation.validateBody(addCartSchema),
+  createAudit({ action: "add to cart" }),
   cartController.addProduct
 );
 
@@ -55,6 +58,7 @@ cartRoutes.put(
   "/",
   verifyRole.verify("User"),
   dataValidation.validateBody(updateSchema),
+  createAudit({ action: "update cart" }),
   cartController.updateProduct
 );
 
@@ -62,6 +66,7 @@ cartRoutes.put(
 cartRoutes.delete(
   "/:productid",
   verifyRole.verify("User"),
+  createAudit({ action: "remove from cart" }),
   cartController.removeProduct
 );
 
@@ -70,6 +75,7 @@ cartRoutes.delete(
   "/",
   verifyRole.verify("User"),
   dataValidation.validateBody(removeProductsSchema),
+  createAudit({ action: "remove multiple from cart" }),
   cartController.removeProducts
 );
 

@@ -119,3 +119,27 @@ TokenExpiredError: jwt expired
     at handle (C:\Users\kosul\Desktop\Ecommerce\Backend\node_modules\router\index.js:435:11)
     at Layer.handleRequest (C:\Users\kosul\Desktop\Ecommerce\Backend\node_modules\router\lib\layer.js:152:17)
     at C:\Users\kosul\Desktop\Ecommerce\Backend\node_modules\router\index.js:295:15| Data: {"name":"TokenExpiredError","expiredAt":"2025-05-05T16:28:14.000Z"}
+2025-05-08 17:26:42 [ERROR]: Error renaming a file in cloud
+2025-05-08 17:26:42 [ERROR]: Error in renameCloudFile Resource not found - orders/2025/05/08/6814671ea1815d08f1ecc30a.pdf| Data: {"name":"Error","http_code":404}
+2025-05-08 17:55:50 [ERROR]: Error listing files
+2025-05-08 17:55:50 [ERROR]: Error in getCloudFiles| Data: {"request_options":{"protocol":"https:","slashes":true,"auth":"484822588963412:teb4pGz2Mqmk0-8lNgo29LfsMSI","host":"api.cloudinary.com","port":null,"hostname":"api.cloudinary.com","hash":null,"search":"?prefix=orders%2F2025%2F05%2F08","query":"prefix=orders%2F2025%2F05%2F08","pathname":"/v1_1/dyhju2mcs/resources/image","path":"/v1_1/dyhju2mcs/resources/image?prefix=orders%2F2025%2F05%2F08","href":"https://api.cloudinary.com/v1_1/dyhju2mcs/resources/image?prefix=orders%2F2025%2F05%2F08","method":"GET","headers":{"Content-Type":"application/x-www-form-urlencoded","User-Agent":"CloudinaryNodeJS/2.6.0 (Node 23.11.0)"}},"query_params":"prefix=orders%2F2025%2F05%2F08","error":{"message":"Missing required parameter - type","http_code":400}}
+2025-05-08 17:59:10 [ERROR]: Error listing files
+2025-05-08 17:59:10 [ERROR]: Error in getCloudFiles| Data: {"request_options":{"protocol":"https:","slashes":true,"auth":"484822588963412:teb4pGz2Mqmk0-8lNgo29LfsMSI","host":"api.cloudinary.com","port":null,"hostname":"api.cloudinary.com","hash":null,"search":"?prefix=orders%2F2025%2F05%2F08","query":"prefix=orders%2F2025%2F05%2F08","pathname":"/v1_1/dyhju2mcs/resources/image","path":"/v1_1/dyhju2mcs/resources/image?prefix=orders%2F2025%2F05%2F08","href":"https://api.cloudinary.com/v1_1/dyhju2mcs/resources/image?prefix=orders%2F2025%2F05%2F08","method":"GET","headers":{"Content-Type":"application/x-www-form-urlencoded","User-Agent":"CloudinaryNodeJS/2.6.0 (Node 23.11.0)"}},"query_params":"prefix=orders%2F2025%2F05%2F08","error":{"message":"Missing required parameter - type","http_code":400}}
+2025-05-08 19:49:14 [ERROR]: Error deleting file
+2025-05-08 19:49:14 [ERROR]: Error in deleteCloudFile Resource not found
+Error: Resource not found
+    at CloudService.deleteCloudFile (C:\Users\kosul\Desktop\Ecommerce\Backend\src\services\cloudService.ts:169:23)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async deleteCloudFile (C:\Users\kosul\Desktop\Ecommerce\Backend\src\controllers\adminController.ts:107:20)| Data: {"statusCode":404}
+2025-05-08 19:49:41 [ERROR]: Error deleting file
+2025-05-08 19:49:41 [ERROR]: Error in deleteCloudFile Resource not found
+Error: Resource not found
+    at CloudService.deleteCloudFile (C:\Users\kosul\Desktop\Ecommerce\Backend\src\services\cloudService.ts:166:23)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async deleteCloudFile (C:\Users\kosul\Desktop\Ecommerce\Backend\src\controllers\adminController.ts:107:20)| Data: {"statusCode":404}
+2025-05-08 19:50:42 [ERROR]: Error deleting file
+2025-05-08 19:50:42 [ERROR]: Error in deleteCloudFile Resource not found
+Error: Resource not found
+    at CloudService.deleteCloudFile (C:\Users\kosul\Desktop\Ecommerce\Backend\src\services\cloudService.ts:169:23)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async deleteCloudFile (C:\Users\kosul\Desktop\Ecommerce\Backend\src\controllers\adminController.ts:107:20)| Data: {"statusCode":404}

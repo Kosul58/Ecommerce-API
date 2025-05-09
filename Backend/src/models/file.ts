@@ -9,6 +9,7 @@ interface File extends Document {
   blob_path: string;
   mimetype: string;
   status: boolean;
+  action: string;
   timestamp: Date;
 }
 
@@ -20,6 +21,7 @@ const FileSchema = new Schema<File>({
   mimetype: { type: String, required: true },
   status: { type: Boolean, required: true },
   size: { type: Number, required: false },
+  action: { type: String, required: true },
   timestamp: { type: Date, default: Date.now },
 });
 

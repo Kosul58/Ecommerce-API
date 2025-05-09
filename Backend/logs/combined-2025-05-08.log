@@ -610,3 +610,114 @@ TokenExpiredError: jwt expired
 2025-05-08 17:03:58 [INFO]: Fetching user with id: 680b0d2b4f9904c610769730
 2025-05-08 17:03:58 [INFO]: User with id: 680b0d2b4f9904c610769730 found
 2025-05-08 17:03:58 [HTTP]: GET /api/user/ 200 179 - 210.385 ms
+2025-05-08 17:25:45 [INFO]: Fetching file data from database
+2025-05-08 17:25:45 [INFO]: Data fetched successfully
+2025-05-08 17:25:45 [HTTP]: GET /api/admin/data 200 3591 - 85.828 ms
+2025-05-08 17:25:53 [INFO]: Getting a file info
+2025-05-08 17:25:55 [INFO]: File info fetched successfully
+2025-05-08 17:25:55 [HTTP]: GET /api/admin/cloudFile 200 890 - 2188.773 ms
+2025-05-08 17:26:02 [INFO]: Getting files info
+2025-05-08 17:26:04 [INFO]: Files info fetched successfully
+2025-05-08 17:26:04 [HTTP]: GET /api/admin/cloudFiles 200 1854 - 2164.031 ms
+2025-05-08 17:26:13 [INFO]: Getting files info
+2025-05-08 17:26:15 [INFO]: Files info fetched successfully
+2025-05-08 17:26:15 [HTTP]: GET /api/admin/cloudFiles 200 1854 - 2079.255 ms
+2025-05-08 17:26:24 [INFO]: Creating a signed URL
+2025-05-08 17:26:24 [INFO]: URL generated successfully
+2025-05-08 17:26:24 [HTTP]: GET /api/admin/url 200 314 - 1.310 ms
+2025-05-08 17:26:41 [INFO]: Renaming a file
+2025-05-08 17:26:42 [ERROR]: Error renaming a file in cloud
+2025-05-08 17:26:42 [ERROR]: Error in renameCloudFile Resource not found - orders/2025/05/08/6814671ea1815d08f1ecc30a.pdf| Data: {"name":"Error","http_code":404}
+2025-05-08 17:26:42 [HTTP]: PUT /api/admin/ 500 129 - 1050.790 ms
+2025-05-08 17:28:38 [INFO]: MongoDB connection closed
+2025-05-08 17:28:42 [INFO]: Server running on port 3000
+2025-05-08 17:28:43 [INFO]: MongoDB connected successfully
+2025-05-08 17:51:18 [INFO]: MongoDB connection closed
+2025-05-08 17:51:25 [INFO]: Server running on port 3000
+2025-05-08 17:51:27 [INFO]: MongoDB connected successfully
+2025-05-08 17:55:17 [INFO]: MongoDB connection closed
+2025-05-08 17:55:31 [INFO]: Server running on port 3000
+2025-05-08 17:55:32 [INFO]: MongoDB connected successfully
+2025-05-08 17:55:35 [INFO]: Fetching file data from database
+2025-05-08 17:55:35 [INFO]: Data fetched successfully
+2025-05-08 17:55:35 [HTTP]: GET /api/admin/data 200 3591 - 71.371 ms
+2025-05-08 17:55:38 [INFO]: Getting a file info
+2025-05-08 17:55:39 [INFO]: File info fetched successfully
+2025-05-08 17:55:39 [HTTP]: GET /api/admin/cloudFile 200 890 - 1171.922 ms
+2025-05-08 17:55:48 [INFO]: Getting files info
+2025-05-08 17:55:50 [ERROR]: Error listing files
+2025-05-08 17:55:50 [ERROR]: Error in getCloudFiles| Data: {"request_options":{"protocol":"https:","slashes":true,"auth":"484822588963412:teb4pGz2Mqmk0-8lNgo29LfsMSI","host":"api.cloudinary.com","port":null,"hostname":"api.cloudinary.com","hash":null,"search":"?prefix=orders%2F2025%2F05%2F08","query":"prefix=orders%2F2025%2F05%2F08","pathname":"/v1_1/dyhju2mcs/resources/image","path":"/v1_1/dyhju2mcs/resources/image?prefix=orders%2F2025%2F05%2F08","href":"https://api.cloudinary.com/v1_1/dyhju2mcs/resources/image?prefix=orders%2F2025%2F05%2F08","method":"GET","headers":{"Content-Type":"application/x-www-form-urlencoded","User-Agent":"CloudinaryNodeJS/2.6.0 (Node 23.11.0)"}},"query_params":"prefix=orders%2F2025%2F05%2F08","error":{"message":"Missing required parameter - type","http_code":400}}
+2025-05-08 17:55:50 [HTTP]: GET /api/admin/cloudFiles 500 90 - 2229.359 ms
+2025-05-08 17:59:08 [INFO]: Getting files info
+2025-05-08 17:59:10 [ERROR]: Error listing files
+2025-05-08 17:59:10 [ERROR]: Error in getCloudFiles| Data: {"request_options":{"protocol":"https:","slashes":true,"auth":"484822588963412:teb4pGz2Mqmk0-8lNgo29LfsMSI","host":"api.cloudinary.com","port":null,"hostname":"api.cloudinary.com","hash":null,"search":"?prefix=orders%2F2025%2F05%2F08","query":"prefix=orders%2F2025%2F05%2F08","pathname":"/v1_1/dyhju2mcs/resources/image","path":"/v1_1/dyhju2mcs/resources/image?prefix=orders%2F2025%2F05%2F08","href":"https://api.cloudinary.com/v1_1/dyhju2mcs/resources/image?prefix=orders%2F2025%2F05%2F08","method":"GET","headers":{"Content-Type":"application/x-www-form-urlencoded","User-Agent":"CloudinaryNodeJS/2.6.0 (Node 23.11.0)"}},"query_params":"prefix=orders%2F2025%2F05%2F08","error":{"message":"Missing required parameter - type","http_code":400}}
+2025-05-08 17:59:10 [HTTP]: GET /api/admin/cloudFiles 500 90 - 2103.133 ms
+2025-05-08 17:59:43 [INFO]: MongoDB connection closed
+2025-05-08 19:44:33 [INFO]: Server running on port 3000
+2025-05-08 19:44:34 [INFO]: MongoDB connected successfully
+2025-05-08 19:44:48 [INFO]: Getting a file info
+2025-05-08 19:44:50 [INFO]: File info fetched successfully
+2025-05-08 19:44:50 [HTTP]: GET /api/admin/cloudFile 200 890 - 1907.628 ms
+2025-05-08 19:46:07 [INFO]: MongoDB connection closed
+2025-05-08 19:46:10 [INFO]: Server running on port 3000
+2025-05-08 19:46:11 [INFO]: MongoDB connected successfully
+2025-05-08 19:46:14 [INFO]: Getting a file info
+2025-05-08 19:46:16 [INFO]: File info fetched successfully
+2025-05-08 19:46:16 [HTTP]: GET /api/admin/cloudFile 200 890 - 1900.420 ms
+2025-05-08 19:47:02 [INFO]: MongoDB connection closed
+2025-05-08 19:47:06 [INFO]: Server running on port 3000
+2025-05-08 19:47:07 [INFO]: MongoDB connected successfully
+2025-05-08 19:47:14 [INFO]: MongoDB connection closed
+2025-05-08 19:47:18 [INFO]: Server running on port 3000
+2025-05-08 19:47:19 [INFO]: MongoDB connected successfully
+2025-05-08 19:48:09 [INFO]: Creating a signed URL
+2025-05-08 19:48:09 [INFO]: URL generated successfully
+2025-05-08 19:48:09 [HTTP]: GET /api/admin/url 200 314 - 7.102 ms
+2025-05-08 19:49:05 [INFO]: MongoDB connection closed
+2025-05-08 19:49:09 [INFO]: Server running on port 3000
+2025-05-08 19:49:09 [INFO]: MongoDB connected successfully
+2025-05-08 19:49:12 [INFO]: Deleting a file from cloud
+2025-05-08 19:49:14 [WARN]: Resource not found
+2025-05-08 19:49:14 [ERROR]: Error deleting file
+2025-05-08 19:49:14 [ERROR]: Error in deleteCloudFile Resource not found
+Error: Resource not found
+    at CloudService.deleteCloudFile (C:\Users\kosul\Desktop\Ecommerce\Backend\src\services\cloudService.ts:169:23)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async deleteCloudFile (C:\Users\kosul\Desktop\Ecommerce\Backend\src\controllers\adminController.ts:107:20)| Data: {"statusCode":404}
+2025-05-08 19:49:14 [HTTP]: DELETE /api/admin/one 404 48 - 2038.300 ms
+2025-05-08 19:49:31 [INFO]: MongoDB connection closed
+2025-05-08 19:49:35 [INFO]: Server running on port 3000
+2025-05-08 19:49:36 [INFO]: MongoDB connected successfully
+2025-05-08 19:49:39 [INFO]: Deleting a file from cloud
+2025-05-08 19:49:41 [WARN]: Resource not found
+2025-05-08 19:49:41 [ERROR]: Error deleting file
+2025-05-08 19:49:41 [ERROR]: Error in deleteCloudFile Resource not found
+Error: Resource not found
+    at CloudService.deleteCloudFile (C:\Users\kosul\Desktop\Ecommerce\Backend\src\services\cloudService.ts:166:23)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async deleteCloudFile (C:\Users\kosul\Desktop\Ecommerce\Backend\src\controllers\adminController.ts:107:20)| Data: {"statusCode":404}
+2025-05-08 19:49:41 [HTTP]: DELETE /api/admin/one 404 48 - 1802.462 ms
+2025-05-08 19:49:52 [INFO]: Getting files info
+2025-05-08 19:49:54 [INFO]: Files info fetched successfully
+2025-05-08 19:49:54 [HTTP]: GET /api/admin/cloudFiles 200 1854 - 1904.995 ms
+2025-05-08 19:50:24 [INFO]: MongoDB connection closed
+2025-05-08 19:50:28 [INFO]: Server running on port 3000
+2025-05-08 19:50:29 [INFO]: MongoDB connected successfully
+2025-05-08 19:50:34 [INFO]: MongoDB connection closed
+2025-05-08 19:50:37 [INFO]: Server running on port 3000
+2025-05-08 19:50:38 [INFO]: MongoDB connected successfully
+2025-05-08 19:50:40 [INFO]: Deleting a file from cloud
+2025-05-08 19:50:42 [WARN]: Resource not found
+2025-05-08 19:50:42 [ERROR]: Error deleting file
+2025-05-08 19:50:42 [ERROR]: Error in deleteCloudFile Resource not found
+Error: Resource not found
+    at CloudService.deleteCloudFile (C:\Users\kosul\Desktop\Ecommerce\Backend\src\services\cloudService.ts:169:23)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async deleteCloudFile (C:\Users\kosul\Desktop\Ecommerce\Backend\src\controllers\adminController.ts:107:20)| Data: {"statusCode":404}
+2025-05-08 19:50:42 [HTTP]: DELETE /api/admin/one 404 48 - 1613.655 ms
+2025-05-08 19:50:49 [INFO]: MongoDB connection closed
+2025-05-08 19:50:56 [INFO]: Server running on port 3000
+2025-05-08 19:50:57 [INFO]: MongoDB connected successfully
+2025-05-08 19:51:00 [INFO]: Deleting a file from cloud
+2025-05-08 19:51:02 [INFO]: file deleted successfully
+2025-05-08 19:51:02 [HTTP]: DELETE /api/admin/one 200 65 - 2184.150 ms

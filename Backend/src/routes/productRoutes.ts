@@ -9,28 +9,35 @@ import {
   modifySchema,
   productParamsSchema,
 } from "../validation/productSchema.js";
+import { createAudit } from "../middlewares/auditMiddleware.js";
+
 const productRoutes = express.Router();
 
 const productController = container.resolve(ProductController);
 const dataValidation = container.resolve(DataValidation);
-// Create product
+
+// CREATE
 productRoutes.post(
   "/",
   verifyToken.verify,
   verifyRole.verify("Seller"),
   dataValidation.validateTokenData(idSchema),
+  createAudit({ action: "add product" }),
   productController.addProduct
 );
+
 productRoutes.post(
   "/addbatch",
   verifyToken.verify,
   verifyRole.verify("Seller"),
   dataValidation.validateTokenData(idSchema),
+  createAudit({ action: "add batch products" }),
   productController.addProducts
 );
 
-// Read product(s)
+// READ
 productRoutes.get("/", productController.getProducts);
+
 productRoutes.get(
   "/myproduct",
   verifyToken.verify,
@@ -38,6 +45,7 @@ productRoutes.get(
   dataValidation.validateTokenData(idSchema),
   productController.getSellerProducts
 );
+
 productRoutes.get(
   "/hiddenproduct",
   verifyToken.verify,
@@ -45,15 +53,17 @@ productRoutes.get(
   dataValidation.validateTokenData(idSchema),
   productController.getHiddenProducts
 );
+
 productRoutes.get("/:productid", productController.getProductById);
 
-// Update product
+// UPDATE
 productRoutes.put(
   "/status",
   verifyToken.verify,
   verifyRole.verify("Seller"),
   dataValidation.validateTokenData(idSchema),
   dataValidation.validateBody(hideSchema),
+  createAudit({ action: "update product status" }),
   productController.updateStatus
 );
 
@@ -63,15 +73,28 @@ productRoutes.put(
   verifyRole.verify("Seller"),
   dataValidation.validateTokenData(idSchema),
   dataValidation.validateParams(productParamsSchema),
+  createAudit({ action: "update product" }),
   productController.updateProduct
 );
 
-// Delete product
+productRoutes.put(
+  "/modify/:productid",
+  verifyToken.verify,
+  verifyRole.verify("Seller"),
+  dataValidation.validateTokenData(idSchema),
+  dataValidation.validateParams(productParamsSchema),
+  dataValidation.validateBody(modifySchema),
+  createAudit({ action: "modify product inventory" }),
+  productController.modifyInventory
+);
+
+// DELETE
 productRoutes.delete(
   "/all",
   verifyToken.verify,
   verifyRole.verify("Admin", "Seller"),
   dataValidation.validateTokenData(idSchema),
+  createAudit({ action: "delete all products" }),
   productController.deleteProducts
 );
 
@@ -81,18 +104,8 @@ productRoutes.delete(
   verifyRole.verify("Admin", "Seller"),
   dataValidation.validateTokenData(idSchema),
   dataValidation.validateParams(productParamsSchema),
+  createAudit({ action: "delete a product" }),
   productController.deleteProduct
-);
-
-// Modify inventory
-productRoutes.put(
-  "/modify/:productid",
-  verifyToken.verify,
-  verifyRole.verify("Seller"),
-  dataValidation.validateTokenData(idSchema),
-  dataValidation.validateParams(productParamsSchema),
-  dataValidation.validateBody(modifySchema),
-  productController.modifyInventory
 );
 
 export default productRoutes;

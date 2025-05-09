@@ -12,7 +12,7 @@ cloudinary.config({
 import { UploadApiOptions } from "cloudinary";
 import FileRepository from "../repositories/fileRepository";
 import { RequestHandler } from "express";
-interface CloudServiceInterface {
+interface CloudinaryService {
   uploadFile(
     input: Buffer | string,
     options: UploadApiOptions,
@@ -26,7 +26,7 @@ interface CloudServiceInterface {
 }
 
 @injectable()
-export default class CloudService implements CloudServiceInterface {
+export default class CloudService implements CloudinaryService {
   private readonly imageSizeLimit: number = parseInt(
     process.env.IMAGE_SIZE_LIMIT || `${8 * 1024 * 1024}`,
     10
@@ -35,6 +35,7 @@ export default class CloudService implements CloudServiceInterface {
     @inject(Utills) private utils: Utills,
     @inject(FileRepository) private fileRepository: FileRepository
   ) {}
+
   public async uploadFile(
     input: Buffer,
     UploadApiOptions: UploadApiOptions,
@@ -76,6 +77,7 @@ export default class CloudService implements CloudServiceInterface {
         size: additionalData.size,
         status: true,
         resourceType: UploadApiOptions.resource_type,
+        action: "create",
       });
     }
     return upload;
@@ -98,6 +100,16 @@ export default class CloudService implements CloudServiceInterface {
         (error as any).statusCode = 500;
         throw error;
       }
+      // await this.fileRepository.create({
+      //   publicid: fileName,
+      //   type: "private",
+      //   blob_path: folderPath,
+      //   mimetype: "orders/pdf",
+      //   status: true,
+      //   resourceType: "raw",
+      //   action: "create",
+      // });
+
       return signedUrl;
     } catch (err) {
       logger.error("Error in signedURL");
@@ -107,14 +119,17 @@ export default class CloudService implements CloudServiceInterface {
 
   public async getCloudFile(
     folderPath: string,
-    filename: string,
-    resourceType: string
+    filename: string
+    // resourceType: string
   ) {
     try {
       const filePath = `${folderPath}/${filename}`;
-      const result = await cloudinary.api.resource(filePath, {
-        resource_type: resourceType,
-      });
+      const result = await cloudinary.api.resource(
+        filePath
+        //    {
+        //   resource_type: resourceType,
+        // }
+      );
       return result;
     } catch (err) {
       logger.error("Error fetching file metadata");

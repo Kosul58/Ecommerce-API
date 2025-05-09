@@ -28,7 +28,7 @@
 -> worked on templates
 -> read some cloudinary documentation.
 -> added more cloud services (signedURL , read , rename , delete)
--> save cloud operations in database
+-> save uploadfile info data in database
 -> presigned and signed url
 -> file paths
 -> file repository
