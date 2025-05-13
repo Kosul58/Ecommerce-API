@@ -13,14 +13,14 @@ export const createAudit = ({ action }: AuditOptions) => {
     res.on("finish", async () => {
       try {
         let targetId = "unknown";
-        const userId: string = req.user?.id || "unknown";
+        const sourceId: string = req.user?.id || "unknown";
         const method = req.method;
         const status = res.statusCode >= 400 ? "failure" : "success";
         const url = req.originalUrl;
 
         if (url.includes("user") || url.includes("seller")) {
           if (action.includes("user") || action.includes("seller")) {
-            targetId = userId;
+            targetId = sourceId;
           }
         }
 
@@ -64,7 +64,7 @@ export const createAudit = ({ action }: AuditOptions) => {
           } else if (action === "remove multiple from cart") {
             targetId = body.products;
           } else if (action === "add to cart") {
-            targetId = userId;
+            targetId = sourceId;
           }
         }
         const audit = new AuditSchema({
@@ -72,8 +72,8 @@ export const createAudit = ({ action }: AuditOptions) => {
           action,
           targetId: targetId || "unknown",
           data: body || "unknown",
-          userId,
-          userType: req.user?.role || "unknown",
+          sourceId,
+          sourceType: req.user?.role || "unknown",
           method,
           status,
           timestamp: new Date(),

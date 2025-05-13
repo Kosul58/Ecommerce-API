@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <style>
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background-color: #f4f4f4;
+        color: #333;
+        padding: 20px;
+      }
+      .container {
+        background-color: #ffffff;
+        border-radius: 10px;
+        max-width: 600px;
+        margin: 0 auto;
+        padding: 35px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+      }
+      h2 {
+        color: #d62828;
+        margin-bottom: 20px;
+      }
+      p {
+        font-size: 16px;
+        line-height: 1.6;
+      }
+      .footer {
+        margin-top: 35px;
+        font-size: 14px;
+        color: #777;
+        text-align: center;
+      }
+      .highlight {
+        font-weight: 600;
+        color: #000;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h2>Seller Account Removed</h2>
+      <p>Dear <span class="highlight">{{username}}</span>,</p>
+      <p>
+        This email is to confirm that your seller account linked with
+        <span class="highlight">{{email}}</span> has been successfully deleted
+        from our system.
+      </p>
+      <p>
+        We appreciate your contributions to our marketplace. If this action was
+        unintentional or you need further assistance, our support team is always
+        here to help.
+      </p>
+      <p>
+        Thank you for being a part of our seller community. Wishing you the best
+        in your future endeavors!
+      </p>
+
+      <div class="footer">&mdash; The Ecommerce Team</div>
+    </div>
+  </body>
+</html>

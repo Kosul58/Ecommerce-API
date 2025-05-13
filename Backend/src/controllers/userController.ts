@@ -14,10 +14,15 @@ export default class UserController {
 
   public signUp: RequestHandler = async (req, res, next) => {
     const user: AddUser = req.body;
+    const file = req.file as Express.Multer.File;
     try {
       logger.info(`Attempting to register user: ${user.username}`);
-      const data = await this.userServices.signUp(user, "User");
+      const data = await this.userServices.signUp(user, file);
       const { result, token } = data;
+      if (!result) {
+        logger.error("Failed to sign up User", { user });
+        return this.responseHandler.error(res, "Failed to sign up User");
+      }
       logger.info(`${user.username} signed up successfully`);
       return this.responseHandler.created(res, "User registered successfully", {
         result,
@@ -139,12 +144,11 @@ export default class UserController {
   public sendMail: RequestHandler = async (req, res, next) => {
     try {
       logger.info("Attempting to send mail");
-      const result = await this.userServices.sendMail();
+      const result = await this.userServices.SignUpMail();
       if (!result) {
         logger.error("Failed to send mail");
         return this.responseHandler.error(res, "Failed to send mail");
       }
-      logger.info("Mail sent successfully");
       return this.responseHandler.success(
         res,
         "Mail sent successfully",

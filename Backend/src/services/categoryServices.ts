@@ -5,7 +5,6 @@ import {
 } from "../common/types/categoryType.js";
 import { CategoryRepositoryInterface } from "../common/types/classInterfaces.js";
 import CategoryFactory from "../factories/categoryRepositoryFactory.js";
-import CategoryRepository from "../repositories/categoryRepository.js";
 import { inject, injectable, container } from "tsyringe";
 import logger from "../utils/logger.js";
 
@@ -35,7 +34,7 @@ export default class CategoryService {
       logger.info(`Checking if category with name ${name} exists`);
       const category = await this.categoryRepository.checkCategory(name);
       if (category) {
-        logger.info(`Category with name ${name} already exists`);
+        logger.info(`Category with name ${name} exists`);
         return null;
       }
       return "cat";

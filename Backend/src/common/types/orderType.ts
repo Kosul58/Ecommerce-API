@@ -12,6 +12,13 @@ export interface Order {
   total: number;
 }
 
+export enum PaymentMethod {
+  CASH = "Cash On Delivery",
+  ESEWA = "Esewa",
+  REPLACE = "Replace",
+  REFUND = "Refund",
+}
+
 export enum OrderType {
   DELIVERY = "Delivery",
   REFUND = "Refund",
@@ -26,7 +33,7 @@ export enum OrderProductStatus {
 }
 
 export enum DeliveryStatus {
-  PENDING = "Pending",
+  PLACED = "Placed",
   CONFIRMED = "Confirmed",
   PROCESSING = "Processing",
   SHIPPED = "Shipped",
@@ -60,6 +67,7 @@ export interface BaseOrder {
   items: OrderProduct[];
   total: number;
   timestamp?: Date;
+  paymentMethod: PaymentMethod;
 }
 
 export interface DeliveryOrder extends BaseOrder {

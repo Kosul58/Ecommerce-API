@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 import { UserRole } from "../common/types/userType";
+import { required } from "joi";
 
 const userSchema = new mongoose.Schema({
   firstname: {
@@ -36,6 +37,9 @@ const userSchema = new mongoose.Schema({
     type: Date,
     required: true,
     default: Date.now,
+  },
+  image: {
+    type: String,
   },
   role: {
     type: String,

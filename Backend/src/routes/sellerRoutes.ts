@@ -11,6 +11,7 @@ import {
   updateSchema,
 } from "../validation/sellerSchema.js";
 import { createAudit } from "../middlewares/auditMiddleware.js";
+import { upload } from "../middlewares/imageMiddleware.js";
 
 const sellerController = container.resolve(SellerController);
 const dataValidation = container.resolve(DataValidation);
@@ -35,6 +36,7 @@ sellerRoutes.post(
   "/signup",
   dataValidation.validateBody(signUpSchema),
   createAudit({ action: "signup seller" }),
+  upload.single("image"),
   sellerController.signUp
 );
 

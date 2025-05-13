@@ -9,6 +9,7 @@ import {
   DeliveryOrder,
   ReturnOrder,
   OrderProductStatus,
+  PaymentMethod,
 } from "../common/types/orderType";
 
 interface OrderDocument extends Document {
@@ -18,6 +19,7 @@ interface OrderDocument extends Document {
   timestamp?: Date;
   type: OrderType;
   status: DeliveryStatus | ReturnStatus;
+  paymentMethod: PaymentMethod;
   deliveryTime?: string;
   returnTime?: string;
 }
@@ -61,6 +63,11 @@ const OrderSchema = new Schema<OrderDocument>({
   status: {
     type: String,
     enum: [...Object.values(DeliveryStatus), ...Object.values(ReturnStatus)],
+    required: true,
+  },
+  paymentMethod: {
+    type: String,
+    enum: Object.values(PaymentMethod),
     required: true,
   },
   deliveryTime: { type: String },

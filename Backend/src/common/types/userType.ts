@@ -25,6 +25,7 @@ export interface UserReturn {
   email: string;
   phone: number;
   address: string;
+  image: string;
 }
 
 export interface AddUser {
@@ -43,4 +44,5 @@ export interface UpdateUser {
   username?: string;
   phone?: number;
   address?: string;
+  image?: string;
 }

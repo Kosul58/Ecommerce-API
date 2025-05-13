@@ -5,8 +5,9 @@ export const addSchema = Joi.object({
   price: Joi.number().positive().required(),
   inventory: Joi.number().positive().required(),
   sellerid: Joi.string().min(15).required(),
-  description: Joi.string().max(500).optional(),
-  category: Joi.string().optional(),
+  description: Joi.string().max(500).required(),
+  category: Joi.string().required(),
+  image: Joi.string().optional(),
 });
 
 export const updateSchema = Joi.object({

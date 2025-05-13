@@ -47,17 +47,14 @@ export default class SellerController {
 
   public signUp: RequestHandler = async (req, res, next) => {
     const seller: AddSeller = req.body;
+    const file = req.file as Express.Multer.File;
     try {
       logger.info(`Attempting to sign up seller: ${seller.username}`);
-      const { result, token } = await this.sellerServices.signUp(
-        seller,
-        "Seller"
-      );
+      const { result, token } = await this.sellerServices.signUp(seller, file);
       if (!result) {
         logger.error("Failed to sign up seller", { seller });
         return this.responseHandler.error(res, "Failed to sign up seller");
       }
-
       logger.info(`Seller created successfully: ${seller.username}`);
       return this.responseHandler.created(res, "Seller created successfully", {
         result,

@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <style>
+      body {
+        font-family: "Segoe UI", sans-serif;
+        background-color: #f4f4f4;
+        padding: 20px;
+        color: #333;
+      }
+      .container {
+        background-color: #ffffff;
+        border-radius: 8px;
+        padding: 30px;
+        max-width: 600px;
+        margin: auto;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+      }
+      h2 {
+        color: #2f855a;
+      }
+      .summary {
+        margin-top: 20px;
+        border-top: 1px solid #e2e8f0;
+        padding-top: 20px;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 10px;
+      }
+      th,
+      td {
+        padding: 10px;
+        border-bottom: 1px solid #edf2f7;
+        text-align: left;
+      }
+      .total {
+        font-weight: bold;
+        color: #2b6cb0;
+      }
+      .footer {
+        margin-top: 30px;
+        font-size: 14px;
+        color: #999;
+        text-align: center;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h2>Thank You for Your Order, {{username}}!</h2>
+      <p>
+        We've received your order and are waiting for it to be confirmed. You'll
+        receive another email when your order is confirmed.
+      </p>
+
+      <div class="summary">
+        <h3>Order Summary</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>Product</th>
+              <th>Price</th>
+              <th>Qty</th>
+            </tr>
+          </thead>
+          <tbody>
+            {{#each products}}
+            <tr>
+              <td>{{name}}</td>
+              <td>{{price}}</td>
+              <td>{{quantity}}</td>
+            </tr>
+            {{/each}}
+            <tr>
+              <td colspan="2" class="total">Total</td>
+              <td class="total">{{cost}}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="footer">— The Ecommerce Team</div>
+    </div>
+  </body>
+</html>

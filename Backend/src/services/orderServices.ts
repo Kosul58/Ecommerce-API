@@ -7,6 +7,8 @@ import {
   OrderType,
   ReturnStatus,
   OrderDocumnet,
+  PaymentMethod,
+  Order,
 } from "../common/types/orderType.js";
 import CartService from "./cartServices.js";
 import ProductServices from "./productServices.js";
@@ -15,6 +17,10 @@ import { inject, injectable, container } from "tsyringe";
 import OrderFactory from "../factories/orderRepositoryFactory.js";
 import { OrderRepositoryInterface } from "../common/types/classInterfaces.js";
 import logger from "../utils/logger.js";
+import SellerServices from "./sellerServices.js";
+import EmailService from "./emailService.js";
+import UserServices from "./userServices.js";
+import { OrderMailData } from "../common/types/mailType.js";
 
 @injectable()
 export default class OrderService {
@@ -22,23 +28,28 @@ export default class OrderService {
   constructor(
     @inject(OrderFactory) private orderFactory: OrderFactory,
     @inject(ProductServices) private productService: ProductServices,
-    @inject(CartService) private cartService: CartService
+    @inject(CartService) private cartService: CartService,
+    @inject(SellerServices) private sellerService: SellerServices,
+    @inject(EmailService) private emailService: EmailService,
+    @inject(UserServices) private userService: UserServices
   ) {
     this.orderRepository =
       this.orderFactory.getRepository() as OrderRepositoryInterface;
   }
   private generateOrder(
     userid: string,
-    type: OrderType
+    type: OrderType,
+    paymentMethod: PaymentMethod
   ): DeliveryOrder | ReturnOrder {
     logger.info(`Generating order for ${userid}`);
     if (type === OrderType.DELIVERY) {
       return {
         userid,
-        status: DeliveryStatus.PENDING,
+        status: DeliveryStatus.PLACED,
         items: [],
         total: 0,
         type: OrderType.DELIVERY,
+        paymentMethod,
         deliveryTime: "",
       };
     } else if (type === OrderType.REFUND) {
@@ -48,6 +59,7 @@ export default class OrderService {
         items: [],
         total: 0,
         type: OrderType.REFUND,
+        paymentMethod,
         returnTime: "",
       };
     } else if (type === OrderType.REPLACE) {
@@ -57,6 +69,7 @@ export default class OrderService {
         items: [],
         total: 0,
         type: OrderType.REPLACE,
+        paymentMethod,
         returnTime: "",
       };
     }
@@ -89,7 +102,8 @@ export default class OrderService {
   }
 
   private calcTotal(items: OrderProduct[]): number {
-    return items.reduce((a, p) => a + p.price * p.quantity, 0);
+    const vat: number = 1.13;
+    return items.reduce((a, p) => a + p.price * p.quantity, 0) * vat;
   }
 
   private async returnData(data: any) {
@@ -160,7 +174,11 @@ export default class OrderService {
     }
   }
 
-  public async addOrder(userid: string, productid: string) {
+  public async addOrder(
+    userid: string,
+    productid: string,
+    paymentMethod: PaymentMethod
+  ) {
     try {
       const cart = await this.cartService.getCart(userid);
       if (!cart) {
@@ -176,7 +194,11 @@ export default class OrderService {
         (error as any).statusCode = 404;
         throw error;
       }
-      const order = this.generateOrder(userid, OrderType.DELIVERY);
+      const order = this.generateOrder(
+        userid,
+        OrderType.DELIVERY,
+        paymentMethod
+      );
       const productItem = await this.generateOrderProduct(
         product as CartProduct
       );
@@ -187,7 +209,7 @@ export default class OrderService {
         throw error;
       }
       order.items.push(productItem);
-      order.total = this.calcTotal(order.items);
+      order.total = parseFloat(this.calcTotal(order.items).toFixed(2));
       const data = await this.orderRepository.create(order);
       if (!data || Object.keys(data).length === 0) {
         const error = new Error("Failed to create order");
@@ -196,13 +218,17 @@ export default class OrderService {
       }
       await this.manageCart(data.items, userid);
       await this.manageInventory([product] as CartProduct[], "decrease");
+      await this.statusMail(userid, order);
       return "success";
     } catch (err) {
       throw err;
     }
   }
-
-  public async addOrders(userid: string, products: string[]) {
+  public async addOrders(
+    userid: string,
+    products: string[],
+    paymentMethod: PaymentMethod
+  ) {
     try {
       const searchProducts = await this.cartService.getCart(userid);
       if (
@@ -223,7 +249,11 @@ export default class OrderService {
         (error as any).statusCode = 404;
         throw error;
       }
-      const order = this.generateOrder(userid, OrderType.DELIVERY);
+      const order = this.generateOrder(
+        userid,
+        OrderType.DELIVERY,
+        paymentMethod
+      );
       for (let product of filteredProducts) {
         const productItem = await this.generateOrderProduct(
           product as CartProduct
@@ -231,7 +261,7 @@ export default class OrderService {
         if (productItem) order.items.push(productItem);
       }
 
-      order.total = this.calcTotal(order.items);
+      order.total = parseFloat(this.calcTotal(order.items).toFixed(2));
       const data = await this.orderRepository.create(order);
       if (!data || Object.keys(data).length === 0) {
         const error = new Error("Failed to create a order");
@@ -240,6 +270,7 @@ export default class OrderService {
       }
       await this.manageCart(filteredProducts as CartProduct[], userid);
       await this.manageInventory(filteredProducts as CartProduct[], "decrease");
+      await this.statusMail(userid, order);
       return "success";
     } catch (err) {
       throw err;
@@ -315,11 +346,42 @@ export default class OrderService {
         (error as any).statusCode = 400;
         throw error;
       }
+      const userid = order.userid;
+      if (
+        order.status === DeliveryStatus.CONFIRMED ||
+        order.status === DeliveryStatus.CANCELED ||
+        order.status === DeliveryStatus.DELIVERED
+      ) {
+        await this.statusMail(userid, order);
+      }
       return "success";
     } catch (err) {
       throw err;
     }
   }
+
+  private async statusMail(userid: string, order: any) {
+    const user = await this.userService.getUser(userid);
+    const data: OrderMailData = {
+      username: user.username,
+      email: user.email,
+      cost: order.total,
+      paymentMethod: order.paymentMethod,
+      products: order.items.map((p: any) => ({
+        name: p.name,
+        price: p.price,
+        quantity: p.quantity,
+      })),
+    };
+    const emailSent = await this.emailService.orderStatusMail(
+      data,
+      order.status
+    );
+    if (!emailSent) {
+      logger.warn(`Order placed but email failed to send to ${user.email}`);
+    }
+  }
+
   public async updateProductStatus(
     orderid: string,
     sellerid: string,
@@ -334,6 +396,12 @@ export default class OrderService {
       ) {
         const error = new Error("Invalid product status");
         (error as any).statusCode = 400;
+        throw error;
+      }
+      if (status === "Requested") {
+        logger.warn("Cannot change staus now");
+        const error = new Error("Cannot change status now");
+        (error as any).statusCode = 403;
         throw error;
       }
       const newStatus = status as OrderProductStatus;
@@ -351,7 +419,18 @@ export default class OrderService {
         (error as any).statusCode = 404;
         throw error;
       }
-      product.status = newStatus;
+      // if (status === product.status) return "success";
+      if (
+        (product.status === "Rejected" && status === "Accepted") ||
+        (product.status === "Accepted" && status === "Rejected")
+      ) {
+        logger.warn("Cannot change staus now");
+        const error = new Error("Cannot change status now");
+        (error as any).statusCode = 403;
+        throw error;
+      }
+
+      if (product) product.status = newStatus;
       const updatedOrder = await this.orderRepository.orderSave(order);
       if (!updatedOrder || Object.keys(updatedOrder).length === 0) {
         const error = new Error("Failed to update status of a product");
@@ -363,17 +442,22 @@ export default class OrderService {
         accepted: 0,
         ready: 0,
         active: 0,
+        rejected: 0,
       };
       for (const item of order.items) {
         if (item.status === "Accepted") countByStatus.accepted++;
         if (item.status === "Ready") countByStatus.ready++;
         if (item.active === false) countByStatus.active++;
+        if (item.status === "Rejected") countByStatus.rejected++;
       }
       if (countByStatus.accepted === totalItems) {
         await this.updateOrderStatus(orderid, DeliveryStatus.CONFIRMED);
       } else if (countByStatus.ready === totalItems) {
         await this.updateOrderStatus(orderid, DeliveryStatus.PROCESSING);
-      } else if (countByStatus.active === totalItems) {
+      } else if (
+        countByStatus.active === totalItems ||
+        countByStatus.rejected === totalItems
+      ) {
         await this.updateOrderStatus(orderid, DeliveryStatus.CANCELED);
       }
       return "success";

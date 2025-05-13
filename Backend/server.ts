@@ -7,7 +7,10 @@ import "./src/config/dependencyConfig.js";
 import ErrorMiddleware from "./src/middlewares/errorMiddleware.js";
 import { container } from "tsyringe";
 import dotenv from "dotenv";
-import morganMiddleware from "./src/middlewares/morganMiddleware.js";
+import {
+  requestLogger,
+  responseLogger,
+} from "./src/middlewares/morganMiddleware.js";
 import logger from "./src/utils/logger.js";
 
 dotenv.config();
@@ -17,7 +20,8 @@ const PORT = process.env.PORT || 3000;
 
 app.use(cors());
 app.use(express.json());
-app.use(morganMiddleware);
+app.use(requestLogger);
+app.use(responseLogger);
 app.use("/api", routes);
 
 const errorMiddleware = container.resolve(ErrorMiddleware);

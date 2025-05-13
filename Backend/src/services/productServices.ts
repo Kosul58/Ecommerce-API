@@ -9,13 +9,18 @@ import CategoryService from "./categoryServices.js";
 import ProductFactory from "../factories/productRepositoryFactory.js";
 import { ProductRepositoryInteface } from "../common/types/classInterfaces.js";
 import logger from "../utils/logger.js";
+import CloudService from "./cloudService.js";
+import Utils from "../utils/utils.js";
+import EmailService from "./emailService.js";
 
 @injectable()
 export default class ProductServices {
   private productRepository: ProductRepositoryInteface;
   constructor(
     @inject(ProductFactory) private productFacotry: ProductFactory,
-    @inject(CategoryService) private categoryService: CategoryService
+    @inject(CategoryService) private categoryService: CategoryService,
+    @inject(CloudService) private cloudService: CloudService,
+    @inject(EmailService) private emailService: EmailService
   ) {
     this.productRepository =
       this.productFacotry.getRepository() as ProductRepositoryInteface;
@@ -38,6 +43,7 @@ export default class ProductServices {
       inventory: Number(inventory),
       description,
       category,
+      images: [],
     };
   }
 
@@ -50,6 +56,7 @@ export default class ProductServices {
       description: string;
       category: string;
       inventory: number;
+      images: string[];
     }
   >(product: T): ProductReturn {
     return {
@@ -60,6 +67,7 @@ export default class ProductServices {
       description: product.description,
       category: product.category,
       inventory: product.inventory,
+      images: product.images,
     };
   }
 
@@ -126,32 +134,93 @@ export default class ProductServices {
     }
   }
 
-  public async addProduct(product: AddProduct, sellerid: string) {
+  private async uploadImages(
+    files: Express.Multer.File[],
+    productid: string
+  ): Promise<string[]> {
+    try {
+      const filePath = Utils.generatePath();
+      const results = await Promise.allSettled(
+        files.map((file, index) =>
+          this.cloudService.uploadFile(
+            file.buffer,
+            {
+              resource_type: "image",
+              folder: `products/${filePath}`,
+              public_id: `${productid}_${index}`,
+              use_filename: true,
+              unique_filename: false,
+            },
+            {
+              id: file.originalname,
+              type: "upload",
+              mimetype: file.mimetype,
+              size: file.size,
+            }
+          )
+        )
+      );
+      const successfulUploads: string[] = [];
+      const failedUploads: { index: number; reason: any }[] = [];
+      results.forEach((result, index) => {
+        if (result.status === "fulfilled") {
+          if (result.value) successfulUploads.push(result.value);
+        } else {
+          failedUploads.push({ index, reason: result.reason });
+          logger.warn(`Upload failed for file ${index}`, {
+            reason: result.reason,
+          });
+        }
+      });
+      return successfulUploads;
+    } catch (err) {
+      logger.error("Error uploading images", { error: err });
+      throw err;
+    }
+  }
+
+  public async addProduct(
+    product: AddProduct,
+    sellerid: string,
+    files: Express.Multer.File[]
+  ) {
     try {
       logger.info(`Adding product for seller: ${sellerid}`);
-      const check = await this.productRepository.checkProduct({
-        ...product,
-        sellerid,
-      });
-
-      if (check && Object.keys(check).length > 0) {
-        const error = new Error("Product already exists");
-        (error as any).statusCode = 409;
-        throw error;
-      }
-
       const categoryCheck = await this.checkCategory(product.category);
       if (categoryCheck === "cat") {
         logger.warn(`Category ${product.category} not found`);
         return null;
       }
-
+      const check = await this.productRepository.checkProduct({
+        ...product,
+        sellerid,
+      });
+      if (check && Object.keys(check).length > 0) {
+        const error = new Error("Product already exists");
+        (error as any).statusCode = 409;
+        throw error;
+      }
       const newProduct: Product = await this.createProduct(product, sellerid);
       const result = await this.productRepository.create(newProduct);
       if (!result) {
         const error = new Error("Product addition failed");
         (error as any).statusCode = 500;
         throw error;
+      }
+      const productId = result._id.toString();
+      const uploadResult = await this.uploadImages(files, productId);
+      if (!uploadResult || uploadResult.length === 0) {
+        logger.warn("Failed to upload images to the cloud");
+        await this.deleteProduct(productId, sellerid);
+      }
+      result.images = uploadResult;
+      const savedProduct = await this.productRepository.save(result);
+      // const savedProduct = await this.productRepository.updateOne(productId, {
+      //   images: uploadResult,
+      // });
+      if (!savedProduct) {
+        logger.warn("Failed to add image info to the product");
+        await this.deleteProduct(productId, sellerid);
       }
       logger.info(`Product added successfully for seller: ${sellerid}`);
       return "success";
@@ -168,7 +237,6 @@ export default class ProductServices {
         ...p,
         sellerid,
       }));
-
       const existingProducts = await this.productRepository.checkProducts(
         productInputs
       );
@@ -179,34 +247,29 @@ export default class ProductServices {
       const filteredProducts = productInputs.filter(
         (p) => !existingSet.has(`${p.name}-${p.price}-${p.sellerid}`)
       );
-
       let productList: Product[] = [];
       if (filteredProducts.length === 0) {
         const error = new Error("Products already exist");
         (error as any).statusCode = 409;
         throw error;
       }
-
       for (const product of filteredProducts) {
         const categoryCheck = await this.checkCategory(product.category);
         if (!categoryCheck) {
           productList.push(await this.createProduct(product, sellerid));
         }
       }
-
       if (productList.length === 0) {
         const error = new Error("No matching category found for any product");
         (error as any).statusCode = 404;
         throw error;
       }
-
       const result = await this.productRepository.addProducts(productList);
       if (!result || result.length === 0) {
         const error = new Error("Product addition failed");
         (error as any).statusCode = 500;
         throw error;
       }
-
       logger.info(
         `Multiple products added successfully for seller: ${sellerid}`
       );
@@ -227,14 +290,12 @@ export default class ProductServices {
       const updateFields = Object.fromEntries(
         Object.entries(update).filter(([_, value]) => value !== undefined)
       ) as Partial<UpdateProdcut>;
-
       const product = await this.getProductById(productid);
       if (!product || product.sellerid !== sellerid) {
         const error = new Error("No product found");
         (error as any).statusCode = 404;
         throw error;
       }
-
       if (update.category) {
         const category = await this.checkCategory(update.category);
         if (category === "cat") {
@@ -243,7 +304,6 @@ export default class ProductServices {
           throw error;
         }
       }
-
       const result = await this.productRepository.updateOne(
         productid,
         updateFields
@@ -253,7 +313,6 @@ export default class ProductServices {
         (error as any).statusCode = 500;
         throw error;
       }
-
       logger.info(`Product updated successfully with ID: ${productid}`);
       return "success";
     } catch (err) {
@@ -269,7 +328,6 @@ export default class ProductServices {
       if (!product || product.sellerid !== sellerid) {
         return null;
       }
-
       const result = await this.productRepository.deleteOne(productid);
       if (!result || Object.keys(result).length === 0) {
         const error = new Error("Product delete failed");
@@ -321,7 +379,6 @@ export default class ProductServices {
         (error as any).statusCode = 500;
         throw error;
       }
-
       logger.info(
         `Status updated successfully for products: ${productids.join(", ")}`
       );
@@ -354,7 +411,6 @@ export default class ProductServices {
         (error as any).statusCode = 500;
         throw error;
       }
-
       logger.info(`Products hidden successfully for seller: ${sellerid}`);
       return "success";
     } catch (err) {
@@ -381,14 +437,12 @@ export default class ProductServices {
         (error as any).statusCode = 404;
         throw error;
       }
-
       let newInventory = product.inventory ?? 0;
       if (modification === "increase") {
         newInventory += quantity;
       } else {
         newInventory -= quantity;
       }
-
       const result = await this.productRepository.manageInventory(
         id,
         newInventory
@@ -398,7 +452,6 @@ export default class ProductServices {
         (error as any).statusCode = 500;
         throw error;
       }
-
       logger.info(`Inventory modified successfully for product ID: ${id}`);
       return "success";
     } catch (err) {

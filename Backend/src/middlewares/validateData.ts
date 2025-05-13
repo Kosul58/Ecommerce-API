@@ -23,7 +23,6 @@ export default class DataValidation {
     }
     return null;
   }
-
   public validateBody(schema: Joi.ObjectSchema) {
     return (req: Request, res: Response, next: NextFunction) => {
       const err = this.validate(schema, req.body);
@@ -43,7 +42,6 @@ export default class DataValidation {
       next();
     };
   }
-
   public validateTokenData(schema: Joi.ObjectSchema) {
     return (req: Request, res: Response, next: NextFunction) => {
       const err = this.validate(schema, req.user);
@@ -63,7 +61,6 @@ export default class DataValidation {
       next();
     };
   }
-
   public validateParams(schema: Joi.ObjectSchema) {
     return (req: Request, res: Response, next: NextFunction) => {
       const err = this.validate(schema, req.params);
@@ -79,6 +76,24 @@ export default class DataValidation {
 
       logger.info(
         `Validation passed for params in request: ${req.method} ${req.originalUrl}`
+      );
+      next();
+    };
+  }
+  public validateUser(schema: Joi.ObjectSchema) {
+    return (req: Request, res: Response, next: NextFunction) => {
+      const err = this.validate(schema, JSON.parse(req.body.user));
+      if (err) {
+        logger.warn(
+          `Validation error in validateUser for request: ${req.method} ${req.originalUrl}`,
+          {
+            errorDetails: (err as any).details,
+          }
+        );
+        return next(err);
+      }
+      logger.info(
+        `Validation passed for User in request: ${req.method} ${req.originalUrl}`
       );
       next();
     };

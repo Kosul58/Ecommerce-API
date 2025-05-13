@@ -1,5 +1,4 @@
 import { injectable, container } from "tsyringe";
-import UserRepository from "../repositories/userRepository";
 import CartRepository from "../repositories/cartRepository";
 @injectable()
 export default class CartFactory {

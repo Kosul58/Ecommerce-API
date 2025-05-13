@@ -4,6 +4,7 @@ import DataValidation from "../middlewares/validateData.js";
 import { signUpSchema } from "../validation/userSchema.js";
 import AdminController from "../controllers/adminController.js";
 import { createAudit } from "../middlewares/auditMiddleware.js";
+import { upload } from "../middlewares/imageMiddleware.js";
 
 const adminController = container.resolve(AdminController);
 const dataValidation = container.resolve(DataValidation);
@@ -14,7 +15,16 @@ adminRoutes.post(
   "/signup",
   dataValidation.validateBody(signUpSchema),
   createAudit({ action: "admin signup" }),
+  upload.single("image"),
   adminController.signUp
+);
+
+// Admin signup
+adminRoutes.post(
+  "/signin",
+  dataValidation.validateBody(signUpSchema),
+  createAudit({ action: "admin signin" }),
+  adminController.signIn
 );
 
 // Get one cloud file

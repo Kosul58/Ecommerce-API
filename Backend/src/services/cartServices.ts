@@ -1,5 +1,5 @@
 import { CartProduct } from "../common/types/cartType.js";
-import { inject, injectable, container } from "tsyringe";
+import { inject, injectable } from "tsyringe";
 import ProductServices from "./productServices.js";
 import CartFactory from "../factories/cartRepositoryFactory.js";
 import { CartRepositoryInterface } from "../common/types/classInterfaces.js";

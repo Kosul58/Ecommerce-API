@@ -3,6 +3,7 @@ import { inject, injectable } from "tsyringe";
 import OrderService from "../services/orderServices.js";
 import ResponseHandler from "../utils/apiResponse.js";
 import logger from "../utils/logger.js";
+import { PaymentMethod } from "../common/types/orderType.js";
 
 @injectable()
 export default class OrderController {
@@ -56,13 +57,18 @@ export default class OrderController {
 
   // Create a single order
   public createOrder: RequestHandler = async (req, res, next) => {
-    const { productid } = req.body;
+    const productid: string = req.body.productid;
+    const paymentMethod: PaymentMethod = req.body.paymentMethod;
     const userid = req.user.id;
     logger.info(
       `Creating order for user ${userid} with product id: ${productid}`
     );
     try {
-      const result = await this.orderService.addOrder(userid, productid);
+      const result = await this.orderService.addOrder(
+        userid,
+        productid,
+        paymentMethod
+      );
       if (!result || Object.keys(result).length === 0) {
         logger.warn(
           `Order creation failed for user ${userid} with product id: ${productid}`
@@ -88,7 +94,8 @@ export default class OrderController {
 
   // Create order of multiple products
   public createOrders: RequestHandler = async (req, res, next) => {
-    const { products } = req.body;
+    const products: string[] = req.body.Products;
+    const paymentMethod: PaymentMethod = req.body.paymentMethod;
     const userid = req.user.id;
     logger.info(
       `Creating order of multiple products for user ${userid} with products: ${JSON.stringify(
@@ -96,7 +103,11 @@ export default class OrderController {
       )}`
     );
     try {
-      const result = await this.orderService.addOrders(userid, products);
+      const result = await this.orderService.addOrders(
+        userid,
+        products,
+        paymentMethod
+      );
       if (!result || Object.keys(result).length === 0) {
         logger.warn(
           `Multiple product order creation failed for user ${userid}`

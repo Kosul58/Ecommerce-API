@@ -9,6 +9,7 @@ export interface Product {
   createdAt?: string;
   updatedAt?: string;
   timestamp?: Date;
+  images?: string[];
 }
 
 export interface AddProduct {
@@ -26,6 +27,7 @@ export interface UpdateProdcut {
   invetory?: number;
   description?: string;
   category?: string;
+  images?: string[];
 }
 
 export interface ProductReturn {
@@ -36,4 +38,5 @@ export interface ProductReturn {
   description: string;
   category: string;
   inventory: number;
+  images?: string[];
 }

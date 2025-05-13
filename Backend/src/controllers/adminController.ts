@@ -5,20 +5,22 @@ import UserServices from "../services/userServices.js";
 import ResponseHandler from "../utils/apiResponse.js";
 import logger from "../utils/logger.js";
 import CloudService from "../services/cloudService.js";
+import AdminServices from "../services/adminServices.js";
 @injectable()
 export default class AdminController {
   constructor(
-    @inject(UserServices) private userServices: UserServices,
+    @inject(AdminServices) private adminServices: AdminServices,
     @inject(ResponseHandler) private responseHandler: ResponseHandler,
     @inject(CloudService) private cloudService: CloudService
   ) {}
 
   public signUp: RequestHandler = async (req, res, next) => {
     const user: AddUser = req.body;
+    const file = req.file as Express.Multer.File;
     try {
-      logger.info("Registering user.");
-      const data = await this.userServices.signUp(user, "Admin");
-      logger.info("User registered successfully");
+      logger.info("Registering Admin.");
+      const data = await this.adminServices.signUp(user, file);
+      logger.info("Admin registered successfully");
       const { result, token } = data;
       return this.responseHandler.created(
         res,
@@ -29,7 +31,27 @@ export default class AdminController {
         }
       );
     } catch (err) {
-      logger.error("Failed to register user", err);
+      logger.error("Failed to register admin", err);
+      return next(err);
+    }
+  };
+
+  public signIn: RequestHandler = async (req, res, next) => {
+    const { username, email, password } = req.body;
+    try {
+      logger.info(`Admin attempting to sign in: ${username || email}`);
+      const { result, token } = await this.adminServices.signIn(
+        username,
+        email,
+        password
+      );
+      logger.info(`Admin ${username} signed in successfully`);
+      return this.responseHandler.success(res, "Signin successful", {
+        result,
+        token,
+      });
+    } catch (err) {
+      logger.error("Signin failed", err);
       return next(err);
     }
   };
@@ -53,17 +75,11 @@ export default class AdminController {
   };
 
   public getCloudFile: RequestHandler = async (req, res, next) => {
-    const folderPath = req.body.folderPath;
-    const filename = req.body.fileName;
-    const resourceType = req.body.resourceType;
-    const type = req.body.type;
+    const publicId = req.body.publicId;
+
     try {
       logger.info("Getting a file info");
-      const data = await this.cloudService.getCloudFile(
-        folderPath,
-        filename
-        // resourceType
-      );
+      const data = await this.cloudService.getCloudFile(publicId);
       if (!data || data.length === 0) {
         logger.error("Failed to get a file info");
         return this.responseHandler.error(res, "Failed to get a file info");
@@ -153,7 +169,7 @@ export default class AdminController {
 
     try {
       logger.info("Renaming a file");
-      const data = await this.cloudService.renameCloudFile(
+      const data = await this.cloudService.renameFile(
         oldId,
         newId,
         type,

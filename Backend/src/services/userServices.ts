@@ -9,32 +9,29 @@ import {
 import AuthServices from "./authServices.js";
 import CartService from "./cartServices.js";
 import { UserRepositoryInterface } from "../common/types/classInterfaces.js";
-import Utills from "../utils/utils.js";
-import EmailService from "./emailService1.js";
+import Utils from "../utils/utils.js";
+import EmailService from "./emailService.js";
 import CloudService from "./cloudService.js";
 import UserFactory from "../factories/userRepositoryFactory.js";
 import logger from "../utils/logger.js";
+import { DeliveryStatus } from "../common/types/orderType.js";
 
 @injectable()
 export default class UserServices {
   private userRepository: UserRepositoryInterface;
-
   constructor(
     @inject(UserFactory) private userFactory: UserFactory,
     @inject(EmailService) private emailService: EmailService,
     @inject(CloudService) private cloudService: CloudService,
     @inject(CartService) private cartService: CartService,
-    @inject(AuthServices) private authService: AuthServices,
-    @inject(Utills) private utils: Utills
+    @inject(AuthServices) private authService: AuthServices
   ) {
     this.userRepository =
       this.userFactory.getRepository() as UserRepositoryInterface;
   }
-
-  private async generateUser(user: AddUser, role: string): Promise<User> {
+  private async generateUser(user: AddUser, role?: string): Promise<User> {
     try {
-      const encryptedPassword = await this.utils.encryptPassword(user.password);
-      const userRole = role === "User" ? UserRole.USER : UserRole.ADMIN;
+      const encryptedPassword = await Utils.encryptPassword(user.password);
       return {
         firstname: user.firstname,
         lastname: user.lastname,
@@ -43,7 +40,7 @@ export default class UserServices {
         password: encryptedPassword,
         phone: user.phone,
         address: user.address,
-        role: userRole,
+        role: role === "Admin" ? UserRole.ADMIN : UserRole.USER,
       };
     } catch (err) {
       logger.error(
@@ -56,8 +53,29 @@ export default class UserServices {
     }
   }
 
-  public async signUp(user: AddUser, role: string) {
+  private async uploadImage(file: Express.Multer.File, userId: string) {
+    const filePath = Utils.generatePath();
+    const uploadResult = await this.cloudService.uploadFile(
+      file.buffer,
+      {
+        resource_type: "image",
+        folder: `users/${filePath}`,
+        public_id: userId,
+        use_filename: false,
+        unique_filename: false,
+      },
+      {
+        id: file.originalname,
+        type: "upload",
+        mimetype: file.mimetype,
+        size: file.size,
+      }
+    );
+    return uploadResult;
+  }
+  public async signUp(user: AddUser, file: Express.Multer.File, role?: string) {
     try {
+      logger.info("Checking input fields");
       const [usernameTaken, emailTaken, phoneTaken] = await Promise.all([
         this.userRepository.findUserName(user.username),
         this.userRepository.findEmail(user.email),
@@ -74,22 +92,46 @@ export default class UserServices {
         logger.error("User creation failed due to duplicate data");
         throw error;
       }
-
       const newUser = await this.generateUser(user, role);
       const result = await this.userRepository.signUp(newUser);
-
       if (!result || Object.keys(result).length === 0) {
         const error = new Error("User creation failed");
         (error as any).statusCode = 500;
         throw error;
       }
+      const userid = result._id.toString();
 
-      if (result.role === "User") {
-        await this.cartService.createCart(result._id.toString());
+      const uploadResult = await this.uploadImage(file, userid);
+      if (!uploadResult) {
+        await this.userRepository.deleteOne(userid);
+        const error = new Error("Image upload failed");
+        (error as any).statusCode = 500;
+        throw error;
       }
-
+      const savedUser = await this.userRepository.updateOne(userid, {
+        image: uploadResult,
+      });
+      if (!savedUser) {
+        await this.deleteUser(userid, userid, "User");
+        const error = new Error("Failed to save user after image upload");
+        (error as any).statusCode = 500;
+        throw error;
+      }
+      if (!role) await this.cartService.createCart(userid);
+      const emailSent = await this.emailService.signUpMail(
+        {
+          email: savedUser.email,
+          username: savedUser.username,
+        },
+        role?.toLowerCase() === "admin" ? UserRole.ADMIN : UserRole.USER
+      );
+      if (!emailSent) {
+        logger.warn(
+          `Sign-up succeeded but email failed to send to ${savedUser.email}`
+        );
+      }
       return {
-        result: this.returnData(result),
+        result: this.returnData(savedUser),
         token: this.authService.generateToken(
           result._id.toString(),
           user.username,
@@ -112,13 +154,12 @@ export default class UserServices {
         throw error;
       }
 
-      const check = await this.utils.comparePassword(password, result.password);
+      const check = await Utils.comparePassword(password, result.password);
       if (!check) {
         const error = new Error("Signin failed. Incorrect password");
         (error as any).statusCode = 401;
         throw error;
       }
-
       return {
         result: this.returnData(result),
         token: this.authService.generateToken(
@@ -193,7 +234,6 @@ export default class UserServices {
       const updateFields = Object.fromEntries(
         Object.entries(update).filter(([_, value]) => value !== undefined)
       ) as Partial<UpdateUser>;
-
       if (updateFields.username) {
         const usernameTaken = await this.userRepository.findUserName(
           updateFields.username,
@@ -205,7 +245,6 @@ export default class UserServices {
           throw error;
         }
       }
-
       if (updateFields.phone) {
         const phoneTaken = await this.userRepository.findPhoneNumber(
           updateFields.phone,
@@ -217,27 +256,31 @@ export default class UserServices {
           throw error;
         }
       }
-
       const result = await this.userRepository.updateOne(userid, updateFields);
       if (!result) {
         logger.error("Failed to update user data for userId:", userid);
         return;
       }
-      logger.info(`User ${result.username} updated successfully`);
-      return "success";
+      // logger.info(`User ${result.username} updated successfully`);
+      return this.returnData(result);
     } catch (err) {
       logger.error("Error updating user info for userId:");
       throw err;
     }
   }
 
-  public async sendMail() {
+  public async SignUpMail() {
     try {
-      const data = await this.emailService.sendMail(
-        "gurungkosul@gmail.com",
-        "Signup complete",
-        "Thank you for creating an account. Hope you enjoy your shopping.",
-        { username: "Kosul", email: "kosulgrg@gmail.com" }
+      const mailData = {
+        username: "userx3",
+        email: "gurungkosul@gmail.com",
+        cost: 1353.7399999999998,
+        paymentMethod: "Cash On Delivery",
+        products: [{ name: "product501", price: 599, quantity: 2 }],
+      };
+      const data = await this.emailService.orderStatusMail(
+        mailData,
+        DeliveryStatus.DELIVERED
       );
       if (!data) {
         const error = new Error("Failed to send email");
@@ -247,7 +290,7 @@ export default class UserServices {
       logger.info("Email sent successfully");
       return "Email sent successfully";
     } catch (err) {
-      logger.error("Error sending email");
+      logger.error("Error sending email", err);
       throw err;
     }
   }
@@ -264,9 +307,9 @@ export default class UserServices {
         paymentType: "Cash on delivery",
         deliveryTime: Date.now(),
       };
-      const buffer = await this.utils.generatePDFBuffer(userInfo);
+      const buffer = await Utils.generatePDFBuffer(userInfo);
       const fileName = `${userInfo.orderid}.pdf`;
-      const folderPath = `orders/${this.utils.generatePath()}`;
+      const folderPath = `orders/${Utils.generatePath()}`;
       const uploadResult = await this.cloudService.uploadFile(
         buffer,
         {
@@ -284,7 +327,6 @@ export default class UserServices {
           mimetype: "orders/pdf",
         }
       );
-
       if (!uploadResult) {
         const error = new Error("Failed to upload PDF");
         (error as any).statusCode = 500;
@@ -305,7 +347,7 @@ export default class UserServices {
   public async uploadImages(files: Express.Multer.File[]): Promise<string[]> {
     try {
       const sellerId = "6814671ea1815d08f1ecc20a";
-      const filePath = this.utils.generatePath();
+      const filePath = Utils.generatePath();
       const results = await Promise.allSettled(
         files.map((file, index) =>
           this.cloudService.uploadFile(
@@ -330,7 +372,7 @@ export default class UserServices {
       const failedUploads: { index: number; reason: any }[] = [];
       results.forEach((result, index) => {
         if (result.status === "fulfilled") {
-          successfulUploads.push(result.value);
+          if (result.value) successfulUploads.push(result.value);
         } else {
           failedUploads.push({ index, reason: result.reason });
           logger.warn(`Upload failed for file ${index}`, {
@@ -366,6 +408,7 @@ export default class UserServices {
       email: string;
       phone: number;
       address: string;
+      image: string;
     }
   >(data: T): UserReturn {
     return {
@@ -374,6 +417,7 @@ export default class UserServices {
       email: data.email,
       phone: data.phone,
       address: data.address,
+      image: data.image,
     };
   }
 }

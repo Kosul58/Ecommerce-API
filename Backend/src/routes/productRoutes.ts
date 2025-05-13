@@ -6,10 +6,12 @@ import { container } from "tsyringe";
 import DataValidation from "../middlewares/validateData.js";
 import { hideSchema, idSchema } from "../validation/userSchema.js";
 import {
+  addSchema,
   modifySchema,
   productParamsSchema,
 } from "../validation/productSchema.js";
 import { createAudit } from "../middlewares/auditMiddleware.js";
+import { upload } from "../middlewares/imageMiddleware.js";
 
 const productRoutes = express.Router();
 
@@ -22,7 +24,9 @@ productRoutes.post(
   verifyToken.verify,
   verifyRole.verify("Seller"),
   dataValidation.validateTokenData(idSchema),
+  dataValidation.validateBody(addSchema),
   createAudit({ action: "add product" }),
+  upload.array("images", 10),
   productController.addProduct
 );
 

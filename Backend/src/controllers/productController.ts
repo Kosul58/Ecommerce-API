@@ -87,6 +87,7 @@ export default class ProductController {
 
   public addProduct: RequestHandler = async (req, res, next) => {
     const productData: AddProduct = req.body;
+    const files = req.files as Express.Multer.File[];
     const sellerid: string = req.user.id;
     try {
       logger.info(
@@ -94,7 +95,8 @@ export default class ProductController {
       );
       const result = await this.productService.addProduct(
         productData,
-        sellerid
+        sellerid,
+        files
       );
       if (!result) {
         logger.error(
@@ -110,8 +112,8 @@ export default class ProductController {
       );
       return this.responseHandler.created(
         res,
-        `Product ${productData.name} added successfully`,
-        result
+        `Product ${productData.name} added successfully`
+        // result
       );
     } catch (err) {
       logger.error(
