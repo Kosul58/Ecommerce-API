@@ -1,4 +1,28 @@
-# 📘 Project Features Documentation
+# 📘 Project Documentation
+
+## Key Features:
+
+- Token-based authentication with JWT for secure access (Role Based access control).
+
+- Tsyringe for effective dependency injection, promoting modularity and testability.
+
+- Centralized error handling for consistent and informative feedback.
+
+- A unified response handler for both success and error scenarios.
+
+- Joi for rigorous input validation, ensuring data integrity.
+
+- A Factory pattern for repository management, allowing for future database flexibility.
+
+- Winston for comprehensive data logging and monitoring.
+
+- An Audit mechanism to track API requests and responses.
+
+- Cloudinary integration for efficient cloud-based file storage.
+
+- A dedicated File Repository for managing cloud file metadata.
+
+- Nodemailer integration to send email notifications.
 
 ## Functional Features
 
@@ -42,9 +66,13 @@
 
 - Repository to store the meta data related to the cloud files.
 
+### 11. **Email Service**
+
+- Email service using **Nodemailer** to send email notifications.
+
 ---
 
-### 11. **Core Operations**
+### 12. **Core Operations**
 
 #### a. **Product Operations**
 
@@ -108,7 +136,7 @@
 
 ---
 
-### 12. **Platform-Specific Features**
+### 13. **Platform-Specific Features**
 
 #### a. **User Features**
 
@@ -116,7 +144,7 @@
 - On login: JWT is returned
 - Update user info (username, phone, etc.) with uniqueness check
 - Delete account (deletes associated cart as well)
-- Browse all products or search by ID
+- View products
 - Add/remove/update product in cart
 - View all cart items
 - Create an order (single or multiple products)
@@ -128,14 +156,18 @@
 - On signup/login: JWT is returned
 - Update seller profile (shop name, phone, etc.)
 - Delete account (deletes all seller's products)
-- Add one or multiple products
+- Add product
+- Change product visibility (hide/show).
+- Remove product
 - Update product info (name, price, inventory, etc.)
-- View all products added by seller
+- View all products added by seller.
+- View all hidden products
 - View all products that have been ordered
 - Update status of ordered products (Requested, Rejected, Accepted, Ready)
 
 #### c. **Admin Features**
 
+- Sign Up (JWT issued)
 - Sign in (JWT issued)
 - View all sellers, users, carts, and orders
 - Delete sellers, and user.
