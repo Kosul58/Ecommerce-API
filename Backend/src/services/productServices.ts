@@ -74,12 +74,13 @@ export default class ProductServices {
   public async getProducts() {
     try {
       logger.info("Fetching all products");
-      const products = await this.productRepository.findAll();
+      let products = await this.productRepository.findAll();
       if (!products || products.length === 0) {
         const error = new Error("No Products found");
         (error as any).statusCode = 404;
         throw error;
       }
+      products = products.filter((p: any) => p.active === true);
       return products.map((p: any) => this.returnProductData(p));
     } catch (err) {
       logger.error("Error fetching products");

@@ -1,11 +1,10 @@
 import Joi from "joi";
 export const addSchema = Joi.object({
-  name: Joi.string().min(1).max(100).required(),
-  price: Joi.number().positive().required(),
-  inventory: Joi.number().positive().required(),
-  sellerid: Joi.string().min(15).required(),
-  description: Joi.string().max(500).required(),
-  category: Joi.string().required(),
+  name: Joi.string().min(1).max(100).required().invalid(""),
+  price: Joi.number().positive().required().invalid(""),
+  inventory: Joi.number().positive().required().invalid(""),
+  description: Joi.string().max(500).required().invalid(""),
+  category: Joi.string().required().invalid(""),
   image: Joi.string().optional(),
 });
 export const updateSchema = Joi.object({

@@ -51,6 +51,15 @@ export default class CategoryService {
         logger.warn(`Category with name ${category.name} already exists`);
         return null;
       }
+      if (category.parentId) {
+        const parent = await this.categoryRepository.findOne(category.parentId);
+        if (!parent) {
+          logger.warn("No parent found for the provided parentId");
+          const errror = new Error("No parent found");
+          (errror as any).statusCode = 404;
+          throw errror;
+        }
+      }
       const newCategory = this.generateCategory(category);
       const result = await this.categoryRepository.create(newCategory);
       if (!result || Object.keys(result).length === 0) {
@@ -75,6 +84,7 @@ export default class CategoryService {
         throw error;
       }
       return categories.map((c: any) => ({
+        id: c._id.toString(),
         name: c.name,
         description: c.description,
         parentId: c.parentId,
@@ -89,12 +99,11 @@ export default class CategoryService {
     try {
       const category = await this.categoryRepository.findOne(categoryid);
       if (!category) {
-        const error = new Error("Failed to find category");
-        (error as any).statusCode = 500;
         logger.warn(`Category with ID: ${categoryid} not found`);
-        throw error;
+        return null;
       }
       return {
+        id: category._id.toString(),
         name: category.name,
         description: category.description,
         parentId: category.parentId,
@@ -174,6 +183,7 @@ export default class CategoryService {
         const categoryList = categories.map((p: any) => p.id);
         if (categoryList)
           await this.categoryRepository.updateManyParent(categoryList);
+        await this.categoryRepository.updateManyStatus(categoryList, false);
       }
 
       return "success";
@@ -192,7 +202,15 @@ export default class CategoryService {
         logger.warn(`Category with ID: ${categoryid} not found`);
         throw error;
       }
-
+      if (category.parentId) {
+        const parent = await this.categoryRepository.findOne(category.parentId);
+        if (parent.isActive === false && status === true) {
+          logger.warn(`Parent of ID: ${categoryid} is not active`);
+          const error = new Error("Parent is not active");
+          (error as any).statusCode = 403;
+          throw error;
+        }
+      }
       const update = { isActive: status };
       const result = await this.categoryRepository.updateOne(
         categoryid,

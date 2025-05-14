@@ -5,8 +5,16 @@ import { UserRole } from "../common/types/userType.js";
 export const signUpSchema = Joi.object({
   firstname: Joi.string().min(2).required(),
   lastname: Joi.string().min(2).required(),
-  username: Joi.string().alphanum().min(3).max(30).required(),
-  email: Joi.string().email().required(),
+  username: Joi.string().alphanum().min(3).max(30).required().invalid(""),
+  email: Joi.string()
+    .email({ tlds: { allow: false } })
+    .required()
+    .invalid("")
+    .messages({
+      "string.email": "Email must be a valid email address",
+      "any.required": "Email is required",
+      "any.invalid": "Email cannot be empty",
+    }),
   password: Joi.string().min(2).required(),
   phone: Joi.number().min(1000000000).max(9999999999).required(),
   address: Joi.string().min(5).required(),

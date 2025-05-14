@@ -85,7 +85,7 @@ export default class CartController {
         );
       }
       logger.info("Product added to cart", { result });
-      return this.responseHandler.created(res, "Product added to cart", result);
+      return this.responseHandler.success(res, "Product added to cart", result);
     } catch (err) {
       logger.error("Error adding product to cart", err);
       return next(err);

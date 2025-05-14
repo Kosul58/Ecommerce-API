@@ -37,6 +37,7 @@ export enum DeliveryStatus {
   CONFIRMED = "Confirmed",
   PROCESSING = "Processing",
   SHIPPED = "Shipped",
+  DELIVERYREADY = "Ready for delivery",
   OUTFORDELIVERY = "Out for Delivery",
   DELIVERED = "Delivered",
   CANCELED = "Canceled",

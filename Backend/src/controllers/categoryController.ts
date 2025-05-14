@@ -85,7 +85,7 @@ export default class CategoryController {
     const { categoryid } = req.params;
     const update: UpdateCategory = req.body;
     try {
-      logger.info("Attempting to update category", { categoryid, update });
+      logger.info("Attempting to update category ", { categoryid });
       const result = await this.categoryServices.updateCategory(
         categoryid,
         update

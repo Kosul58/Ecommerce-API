@@ -22,9 +22,29 @@
 
 - Input validation using **Joi** to ensure correctness and integrity of user-provided data.
 
+### 6. **Factory patter**
+
+- Facotry for repostitories to handle different types of database in the future.
+
+### 7. **Logger**
+
+- Data log using **Winston** to log all usefull data.
+
+### 8. **Audit**
+
+- Audit to store data about the API requests and the responses to the given requests.
+
+### 9. **Cloud services**
+
+- Cloud services using **Cloudinary** to store file data in the cloud.
+
+### 10. **File Repository**
+
+- Repository to store the meta data related to the cloud files.
+
 ---
 
-### 6. **Core Operations**
+### 11. **Core Operations**
 
 #### a. **Product Operations**
 
@@ -88,7 +108,7 @@
 
 ---
 
-### 7. **Platform-Specific Features**
+### 12. **Platform-Specific Features**
 
 #### a. **User Features**
 
@@ -189,8 +209,6 @@
 ### Route: POST /api/product
 
 ### Input: JSON with name, price, inventory , description and category
-
-.
 
 <!-- verifytoken
 authorize role

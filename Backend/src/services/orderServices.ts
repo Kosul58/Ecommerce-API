@@ -330,6 +330,7 @@ export default class OrderService {
           (order.status === "Delivered" ||
             order.status === "Canceled" ||
             order.status === "Shipped" ||
+            order.status === "Ready for delivery" ||
             order.status === "Out for Delivery") &&
           status === "Canceled"
         ) {

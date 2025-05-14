@@ -149,7 +149,7 @@ export default class ProductController {
       logger.info(
         `New Images added successfully to product: ${productid} for seller with id: ${sellerid}`
       );
-      return this.responseHandler.created(
+      return this.responseHandler.success(
         res,
         `New Product image added successfully`
         // result

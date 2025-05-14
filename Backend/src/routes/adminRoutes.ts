@@ -1,7 +1,7 @@
 import express from "express";
 import { container } from "tsyringe";
 import DataValidation from "../middlewares/validateData.js";
-import { signUpSchema } from "../validation/userSchema.js";
+import { signInSchema, signUpSchema } from "../validation/userSchema.js";
 import AdminController from "../controllers/adminController.js";
 import { createAudit } from "../middlewares/auditMiddleware.js";
 import { upload } from "../middlewares/imageMiddleware.js";
@@ -13,16 +13,16 @@ const adminRoutes = express.Router();
 // Admin signup
 adminRoutes.post(
   "/signup",
+  upload.single("image"),
   dataValidation.validateBody(signUpSchema),
   createAudit({ action: "admin signup" }),
-  upload.single("image"),
   adminController.signUp
 );
 
 // Admin signup
 adminRoutes.post(
   "/signin",
-  dataValidation.validateBody(signUpSchema),
+  dataValidation.validateBody(signInSchema),
   createAudit({ action: "admin signin" }),
   adminController.signIn
 );

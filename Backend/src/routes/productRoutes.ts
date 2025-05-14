@@ -24,10 +24,10 @@ productRoutes.post(
   "/",
   verifyToken.verify,
   verifyRole.verify("Seller"),
+  upload.array("images", 10),
   dataValidation.validateTokenData(idSchema),
   dataValidation.validateBody(addSchema),
   createAudit({ action: "add product" }),
-  upload.array("images", 10),
   productController.addProduct
 );
 
@@ -44,10 +44,10 @@ productRoutes.post(
   "/image/:productid",
   verifyToken.verify,
   verifyRole.verify("Seller"),
+  upload.single("image"),
   dataValidation.validateTokenData(idSchema),
   dataValidation.validateParams(productParamsSchema),
   createAudit({ action: "add product image" }),
-  upload.single("image"),
   productController.addImage
 );
 
