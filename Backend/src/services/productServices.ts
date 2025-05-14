@@ -147,7 +147,7 @@ export default class ProductServices {
             {
               resource_type: "image",
               folder: `products/${filePath}`,
-              public_id: `${productid}_${index}`,
+              public_id: `${productid}_${new Date().toISOString()}`,
               use_filename: true,
               unique_filename: false,
             },
@@ -279,7 +279,78 @@ export default class ProductServices {
       throw err;
     }
   }
+  public async addImage(
+    productid: string,
+    sellerid: string,
+    file: Express.Multer.File
+  ) {
+    try {
+      const product = await this.productRepository.findOne(productid);
+      if (!product || product.sellerid !== sellerid) {
+        logger.warn("No product found");
+        const error = new Error("No product found");
+        (error as any).statusCode = 404;
+        throw error;
+      }
+      const uploadResult = await this.uploadImages([file], productid);
+      if (!uploadResult || uploadResult.length === 0) {
+        logger.warn("Failed to upload image to cloud");
+        return;
+      }
+      product.images.push(...uploadResult);
+      const saveResult = await this.productRepository.save(product);
+      if (!saveResult)
+        logger.warn(
+          "Image uploaded to cloud but not saved in product imgaes array"
+        );
+      return "success";
+    } catch (err) {
+      throw err;
+    }
+  }
 
+  public async removeImage(
+    imageurl: string,
+    productid: string,
+    sellerid: string
+  ) {
+    try {
+      const product = await this.productRepository.findOne(productid);
+      if (!product || product.sellerid !== sellerid) {
+        const error = new Error("Failed to find product");
+        (error as any).statusCode = 404;
+        throw error;
+      }
+      const public_id = await this.cloudService.filterData(imageurl);
+      if (!public_id) {
+        const error = new Error("Failed to find image data");
+        (error as any).statusCode = 404;
+        throw error;
+      }
+      product.images = product.images.filter((url: string) => url !== imageurl);
+      const saveResult = await this.productRepository.save(product);
+      if (!saveResult) {
+        logger.warn("Failed to remove image url from the database");
+        const error = new Error("Failed to remove image url from the database");
+        (error as any).statusCode = 500;
+        throw error;
+      }
+      const deleteResult = await this.cloudService.deleteCloudFile(
+        public_id,
+        "upload",
+        "image"
+      );
+      if (!deleteResult) {
+        logger.warn("Failed to delete image from the cloud");
+        const error = new Error("Failed to delete image from the cloud");
+        (error as any).statusCode = 500;
+        throw error;
+      }
+      return "success";
+    } catch (err) {
+      throw err;
+    }
+  }
   public async updateProduct(
     productid: string,
     sellerid: string,
@@ -320,7 +391,6 @@ export default class ProductServices {
       throw err;
     }
   }
-
   public async deleteProduct(productid: string, sellerid: string) {
     try {
       logger.info(`Deleting product with ID: ${productid}`);
@@ -334,7 +404,6 @@ export default class ProductServices {
         (error as any).statusCode = 500;
         throw error;
       }
-
       logger.info(`Product with ID: ${productid} deleted successfully`);
       return "success";
     } catch (err) {
@@ -342,7 +411,6 @@ export default class ProductServices {
       throw err;
     }
   }
-
   public async deleteProducts(id: string) {
     try {
       logger.info(`Deleting products for seller: ${id}`);
@@ -358,7 +426,6 @@ export default class ProductServices {
         (error as any).statusCode = 500;
         throw error;
       }
-
       logger.info(`Products deleted successfully for seller: ${id}`);
       return "success";
     } catch (err) {
@@ -366,7 +433,6 @@ export default class ProductServices {
       throw err;
     }
   }
-
   public async updateStatus(productids: string[], status: boolean) {
     try {
       logger.info(`Updating status for products: ${productids.join(", ")}`);
@@ -388,7 +454,6 @@ export default class ProductServices {
       throw err;
     }
   }
-
   public async hideSellerProducts(sellerid: string) {
     try {
       logger.info(`Hiding products for seller: ${sellerid}`);

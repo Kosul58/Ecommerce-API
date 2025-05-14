@@ -1,4 +1,4 @@
-import { number, string } from "joi";
+import { number, required, string } from "joi";
 import { Schema, model, Document } from "mongoose";
 
 interface File extends Document {
@@ -9,6 +9,7 @@ interface File extends Document {
   blob_path: string;
   mimetype: string;
   status: boolean;
+  secureUrl: string;
   action: string;
   timestamp: Date;
 }
@@ -21,6 +22,7 @@ const FileSchema = new Schema<File>({
   mimetype: { type: String, required: true },
   status: { type: Boolean, required: true },
   size: { type: Number, required: false },
+  secureUrl: { type: String },
   action: { type: String, required: true },
   timestamp: { type: Date, default: Date.now },
 });

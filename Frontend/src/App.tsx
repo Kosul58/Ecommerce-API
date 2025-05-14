@@ -1,8 +1,15 @@
-import SignUp from "./components/UserSignIn";
+import AdminSignUp from "./components/AdminSignUp";
+import SellerSignUp from "./components/SellerSignUp";
+import UserSignUp from "./components/UserSignUp";
+
 function App() {
   return (
     <>
-      <SignUp />
+      <section className="w-full h-screen bg-black flex justify-evenly items-center">
+        <UserSignUp />
+        <SellerSignUp />
+        <AdminSignUp />
+      </section>
     </>
   );
 }

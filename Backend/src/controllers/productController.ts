@@ -124,6 +124,72 @@ export default class ProductController {
     }
   };
 
+  public addImage: RequestHandler = async (req, res, next) => {
+    const { productid } = req.params;
+    const sellerid: string = req.user.id;
+    const file = req.file as Express.Multer.File;
+    try {
+      logger.info(
+        `Attempting to add a new image to a product for seller with id: ${sellerid}`
+      );
+      const result = await this.productService.addImage(
+        productid,
+        sellerid,
+        file
+      );
+      if (!result) {
+        logger.error(
+          `Failed to add a new image for a product of a seller with id: ${sellerid}`
+        );
+        return this.responseHandler.error(
+          res,
+          "Failed to add image. No category found"
+        );
+      }
+      logger.info(
+        `New Images added successfully to product: ${productid} for seller with id: ${sellerid}`
+      );
+      return this.responseHandler.created(
+        res,
+        `New Product image added successfully`
+        // result
+      );
+    } catch (err) {
+      logger.error(`Error adding new product image`, err);
+      return next(err);
+    }
+  };
+
+  public removeImage: RequestHandler = async (req, res, next) => {
+    const { productid, imageUrl } = req.body;
+    const sellerid: string = req.user.id;
+    try {
+      logger.info(
+        `Attempting to remove a  image url for product with id: ${productid} from database`
+      );
+      const result = await this.productService.removeImage(
+        imageUrl,
+        productid,
+        sellerid
+      );
+      if (!result) {
+        logger.error(
+          `Failed to remove a image url for a product with id: ${productid}`
+        );
+        return this.responseHandler.error(res, "Failed to remove imgae url");
+      }
+      logger.info(`Removed image URL from the database`);
+      return this.responseHandler.success(
+        res,
+        `Product image url removed successfully`
+        // result
+      );
+    } catch (err) {
+      logger.error(`Error adding new product image`, err);
+      return next(err);
+    }
+  };
+
   public addProducts: RequestHandler = async (req, res, next) => {
     const products: AddProduct[] = req.body;
     const sellerid: string = req.user.id;

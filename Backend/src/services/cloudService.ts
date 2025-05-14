@@ -53,11 +53,6 @@ export interface CloudinaryService {
     resourceType: string
   ): Promise<any>;
 
-  replaceFile(
-    publicId: string,
-    newFile: Express.Multer.File
-  ): Promise<string | null>;
-
   getFileData(): Promise<any[]>;
 }
 
@@ -68,6 +63,7 @@ export default class CloudService implements CloudinaryService {
     10
   );
   constructor(@inject(FileRepository) private fileRepository: FileRepository) {}
+
   public async uploadFile(
     input: Buffer,
     UploadApiOptions: UploadApiOptions,
@@ -111,6 +107,7 @@ export default class CloudService implements CloudinaryService {
           blob_path: UploadApiOptions.folder,
           mimetype: additionalData.mimetype,
           size: additionalData.size,
+          secureUrl: upload,
           status: true,
           resourceType: UploadApiOptions.resource_type,
           action: "upload file to cloud",
@@ -308,59 +305,72 @@ export default class CloudService implements CloudinaryService {
     }
   }
 
-  public async replaceFile(publicId: string, newFile: Express.Multer.File) {
+  // public async replaceFile(publicId: string, newFile: Express.Multer.File) {
+  //   try {
+  //     const oldFile = await this.getCloudFile(publicId);
+  //     const folder = oldFile.asset_folder;
+  //     const newPublicId = publicId.split("/").pop();
+
+  //     const deleteResult = await this.deleteCloudFile(
+  //       publicId,
+  //       oldFile.type,
+  //       oldFile.resource_type
+  //     );
+
+  //     if (!deleteResult || deleteResult.result !== "ok") {
+  //       const error = new Error("Failed to delete old file");
+  //       (error as any).statusCode = 500;
+  //       throw error;
+  //     }
+
+  //     const replaceResult = await this.uploadFile(
+  //       newFile.buffer,
+  //       {
+  //         folder,
+  //         public_id: newPublicId,
+  //         resource_type: oldFile.resource_type,
+  //         use_filename: true,
+  //         unique_filename: false,
+  //         type: oldFile.type,
+  //         overwrite: true,
+  //       },
+  //       {
+  //         id: newPublicId || "",
+  //         type: oldFile.resource_type,
+  //         size: newFile.size,
+  //         mimetype: newFile.mimetype,
+  //       }
+  //     );
+
+  //     await this.fileRepository.create({
+  //       publicid: newPublicId,
+  //       type: oldFile.type,
+  //       blob_path: folder,
+  //       mimetype: newFile.mimetype,
+  //       status: true,
+  //       resourceType: oldFile.resource_type,
+  //       action: "Replaced a file in cloud",
+  //     });
+  //     return replaceResult;
+  //   } catch (err) {
+  //     logger.error("Error replacing a file in cloud", { error: err });
+  //     throw err;
+  //   }
+  // }
+
+  public async filterData(imageUrl: string) {
     try {
-      const oldFile = await this.getCloudFile(publicId);
-      const folder = oldFile.asset_folder;
-      const newPublicId = publicId.split("/").pop();
-
-      const deleteResult = await this.deleteCloudFile(
-        publicId,
-        oldFile.type,
-        oldFile.resource_type
-      );
-
-      if (!deleteResult || deleteResult.result !== "ok") {
-        const error = new Error("Failed to delete old file");
-        (error as any).statusCode = 500;
-        throw error;
+      const data = await this.fileRepository.filterFile(imageUrl);
+      if (!data) {
+        logger.warn("No data found for the given url");
+        return null;
       }
-
-      const replaceResult = await this.uploadFile(
-        newFile.buffer,
-        {
-          folder,
-          public_id: newPublicId,
-          resource_type: oldFile.resource_type,
-          use_filename: true,
-          unique_filename: false,
-          type: oldFile.type,
-          overwrite: true,
-        },
-        {
-          id: newPublicId || "",
-          type: oldFile.resource_type,
-          size: newFile.size,
-          mimetype: newFile.mimetype,
-        }
-      );
-
-      await this.fileRepository.create({
-        publicid: newPublicId,
-        type: oldFile.type,
-        blob_path: folder,
-        mimetype: newFile.mimetype,
-        status: true,
-        resourceType: oldFile.resource_type,
-        action: "Replaced a file in cloud",
-      });
-      return replaceResult;
+      const public_id = `${data.blob_path}/${data.publicid}`;
+      return public_id;
     } catch (err) {
-      logger.error("Error replacing a file in cloud", { error: err });
       throw err;
     }
   }
-
   public async getFileData() {
     try {
       return await this.fileRepository.findAll();

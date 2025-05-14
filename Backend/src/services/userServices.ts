@@ -53,13 +53,22 @@ export default class UserServices {
     }
   }
 
-  private async uploadImage(file: Express.Multer.File, userId: string) {
+  private async uploadImage(
+    file: Express.Multer.File,
+    userId: string,
+    role?: string
+  ) {
     const filePath = Utils.generatePath();
+    const folder =
+      role?.toLowerCase() === "admin"
+        ? `admins/${filePath}`
+        : `users/${filePath}`;
+
     const uploadResult = await this.cloudService.uploadFile(
       file.buffer,
       {
         resource_type: "image",
-        folder: `users/${filePath}`,
+        folder,
         public_id: userId,
         use_filename: false,
         unique_filename: false,
@@ -71,8 +80,10 @@ export default class UserServices {
         size: file.size,
       }
     );
+
     return uploadResult;
   }
+
   public async signUp(user: AddUser, file: Express.Multer.File, role?: string) {
     try {
       logger.info("Checking input fields");
@@ -101,7 +112,7 @@ export default class UserServices {
       }
       const userid = result._id.toString();
 
-      const uploadResult = await this.uploadImage(file, userid);
+      const uploadResult = await this.uploadImage(file, userid, role);
       if (!uploadResult) {
         await this.userRepository.deleteOne(userid);
         const error = new Error("Image upload failed");

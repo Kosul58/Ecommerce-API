@@ -24,6 +24,7 @@ import ErrorMiddleware from "../middlewares/errorMiddleware.js";
 import EmailService from "../services/emailService.js";
 import PdfService from "../services/cloudService.js";
 import FileRepository from "../repositories/fileRepository.js";
+import AuditService from "../services/auditService.js";
 // import FactoryService from "../services/factoryService.js";
 
 container.register(CategoryController, { useClass: CategoryController });
@@ -51,6 +52,7 @@ container.register(ErrorMiddleware, { useClass: ErrorMiddleware });
 container.register(EmailService, { useClass: EmailService });
 container.register(PdfService, { useClass: PdfService });
 container.register(FileRepository, { useClass: FileRepository });
+container.register(AuditService, { useClass: AuditService });
 // container.register(FactoryService, {
 //   useClass: FactoryService,
 // });

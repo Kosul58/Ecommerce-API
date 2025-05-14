@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-const SignUp = () => {
+const AdminSignUp = () => {
   const [formData, setFormData] = useState<{
     firstname: string;
     lastname: string;
@@ -60,7 +60,7 @@ const SignUp = () => {
       form.append("image", formData.image);
     }
     try {
-      const res = await fetch("http://localhost:3000/api/user/signup", {
+      const res = await fetch("http://localhost:3000/api/admin/signup", {
         method: "POST",
         body: form,
       });
@@ -83,50 +83,48 @@ const SignUp = () => {
   ];
 
   return (
-    <section className="w-full h-screen bg-black flex justify-center items-center">
-      <form
-        onSubmit={handleSubmit}
-        className="w-[600px] h-[750px] bg-indigo-100 rounded-2xl flex justify-center items-center flex-col gap-4 p-6 overflow-y-auto"
+    <form
+      onSubmit={handleSubmit}
+      className="w-[400px] h-[700px] bg-indigo-100 rounded-2xl flex justify-center items-center flex-col gap-4 p-6 overflow-y-auto"
+    >
+      {fields.map((field) => (
+        <div key={field.name} className="flex flex-col w-[300px]">
+          <label
+            htmlFor={field.name}
+            className="text-sm font-semibold text-gray-700 ml-1 mb-[-2px] z-10"
+          >
+            {field.label}
+          </label>
+          {field.type === "file" ? (
+            <input
+              id={field.name}
+              type="file"
+              name={field.name}
+              accept=".jpg,.jpeg,.png"
+              onChange={handleChange}
+              className="h-[40px] bg-amber-50  shadow-xl rounded-lg cursor-pointer text-lg p-2"
+            />
+          ) : (
+            <input
+              id={field.name}
+              type={field.type}
+              name={field.name}
+              placeholder={field.label}
+              value={formData[field.name as keyof typeof formData] as string}
+              onChange={handleChange}
+              className="h-[40px] bg-amber-50 p-2 shadow-xl rounded-lg"
+            />
+          )}
+        </div>
+      ))}
+      <button
+        type="submit"
+        className="mt-4 px-6 py-2 bg-indigo-500 text-white rounded-lg shadow-lg cursor-pointer hover:scale-110"
       >
-        {fields.map((field) => (
-          <div key={field.name} className="flex flex-col w-[400px]">
-            <label
-              htmlFor={field.name}
-              className="text-sm font-semibold text-gray-700 mb-1"
-            >
-              {field.label}
-            </label>
-            {field.type === "file" ? (
-              <input
-                id={field.name}
-                type="file"
-                name={field.name}
-                accept=".jpg,.jpeg,.png"
-                onChange={handleChange}
-                className="h-[40px] bg-amber-50 p-2 shadow-xl rounded-lg"
-              />
-            ) : (
-              <input
-                id={field.name}
-                type={field.type}
-                name={field.name}
-                placeholder={field.label}
-                value={formData[field.name as keyof typeof formData] as string}
-                onChange={handleChange}
-                className="h-[40px] bg-amber-50 p-2 shadow-xl rounded-lg"
-              />
-            )}
-          </div>
-        ))}
-        <button
-          type="submit"
-          className="mt-4 px-6 py-2 bg-indigo-500 text-white rounded-lg shadow-lg cursor-pointer hover:scale-110"
-        >
-          Sign Up
-        </button>
-      </form>
-    </section>
+        Sign Up
+      </button>
+    </form>
   );
 };
 
-export default SignUp;
+export default AdminSignUp;

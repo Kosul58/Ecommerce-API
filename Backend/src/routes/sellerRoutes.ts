@@ -34,9 +34,9 @@ sellerRoutes.get(
 
 sellerRoutes.post(
   "/signup",
+  upload.single("image"),
   dataValidation.validateBody(signUpSchema),
   createAudit({ action: "signup seller" }),
-  upload.single("image"),
   sellerController.signUp
 );
 

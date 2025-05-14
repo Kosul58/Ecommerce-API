@@ -9,6 +9,7 @@ import {
   addSchema,
   modifySchema,
   productParamsSchema,
+  removeImageSchema,
 } from "../validation/productSchema.js";
 import { createAudit } from "../middlewares/auditMiddleware.js";
 import { upload } from "../middlewares/imageMiddleware.js";
@@ -37,6 +38,17 @@ productRoutes.post(
   dataValidation.validateTokenData(idSchema),
   createAudit({ action: "add batch products" }),
   productController.addProducts
+);
+
+productRoutes.post(
+  "/image/:productid",
+  verifyToken.verify,
+  verifyRole.verify("Seller"),
+  dataValidation.validateTokenData(idSchema),
+  dataValidation.validateParams(productParamsSchema),
+  createAudit({ action: "add product image" }),
+  upload.single("image"),
+  productController.addImage
 );
 
 // READ
@@ -101,7 +113,15 @@ productRoutes.delete(
   createAudit({ action: "delete all products" }),
   productController.deleteProducts
 );
-
+productRoutes.delete(
+  "/image",
+  verifyToken.verify,
+  verifyRole.verify("Seller"),
+  dataValidation.validateTokenData(idSchema),
+  dataValidation.validateBody(removeImageSchema),
+  createAudit({ action: "delete a product image" }),
+  productController.removeImage
+);
 productRoutes.delete(
   "/:productid",
   verifyToken.verify,
