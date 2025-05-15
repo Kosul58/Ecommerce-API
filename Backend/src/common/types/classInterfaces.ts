@@ -40,6 +40,7 @@ export interface OrderRepositoryInterface extends Repository {
     productid: string,
     type: OrderType.REFUND | OrderType.REPLACE
   ): Promise<any>;
+  insertMany(orders: any): Promise<any>;
 }
 export interface SellerRepositoryInterface extends Repository {
   findUserName(username: string, excludeId?: string): Promise<boolean | null>;

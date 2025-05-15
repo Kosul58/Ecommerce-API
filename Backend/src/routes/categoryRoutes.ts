@@ -27,6 +27,11 @@ categoryRoutes.post(
 
 // Read category
 categoryRoutes.get(
+  "/list",
+  verifyRole.verify("Admin", "Seller"),
+  categoryController.categoryList
+);
+categoryRoutes.get(
   "/sub/:categoryid",
   verifyRole.verify("Admin"),
   categoryController.findSub
@@ -36,6 +41,7 @@ categoryRoutes.get(
   verifyRole.verify("Admin"),
   categoryController.readCategories
 );
+
 categoryRoutes.get(
   "/:categoryid",
   verifyRole.verify("Admin"),

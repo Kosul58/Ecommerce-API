@@ -53,6 +53,14 @@ export default class OrderRepository
     }
   }
 
+  public async insertMany(orders: any) {
+    try {
+      return await this.model.insertMany(orders);
+    } catch (err) {
+      throw err;
+    }
+  }
+
   // public async cancelDeliveryOrders(order: OrderDocumnet) {
   //   try {
   //     order.markModified("items");

@@ -224,6 +224,7 @@ export default class OrderService {
       throw err;
     }
   }
+
   public async addOrders(
     userid: string,
     products: string[],
@@ -240,6 +241,7 @@ export default class OrderService {
         (error as any).statusCode = 404;
         throw error;
       }
+
       const filteredProducts = searchProducts.products.filter((p: any) =>
         products.includes(p.productid)
       );
@@ -249,28 +251,44 @@ export default class OrderService {
         (error as any).statusCode = 404;
         throw error;
       }
-      const order = this.generateOrder(
-        userid,
-        OrderType.DELIVERY,
-        paymentMethod
-      );
-      for (let product of filteredProducts) {
-        const productItem = await this.generateOrderProduct(
-          product as CartProduct
-        );
-        if (productItem) order.items.push(productItem);
+      const sellerGroups: { [sellerid: string]: CartProduct[] } = {};
+      for (const product of filteredProducts) {
+        const sellerid = product.sellerid;
+        if (!sellerGroups[sellerid]) {
+          sellerGroups[sellerid] = [];
+        }
+        sellerGroups[sellerid].push(product);
       }
+      const allProcessedProducts: CartProduct[] = [];
+      const allOrders: Order[] = [];
 
-      order.total = parseFloat(this.calcTotal(order.items).toFixed(2));
-      const data = await this.orderRepository.create(order);
+      for (const sellerid in sellerGroups) {
+        const sellerProducts = sellerGroups[sellerid];
+        const order = this.generateOrder(
+          userid,
+          OrderType.DELIVERY,
+          paymentMethod
+        );
+
+        for (const product of sellerProducts) {
+          const productItem = await this.generateOrderProduct(product);
+          if (productItem) order.items.push(productItem);
+        }
+        order.total = parseFloat(this.calcTotal(order.items).toFixed(2));
+        allProcessedProducts.push(...sellerProducts);
+        allOrders.push(order);
+      }
+      const data = await this.orderRepository.insertMany(allOrders);
       if (!data || Object.keys(data).length === 0) {
-        const error = new Error("Failed to create a order");
+        const error = new Error("Failed to create an order");
         (error as any).statusCode = 500;
         throw error;
       }
-      await this.manageCart(filteredProducts as CartProduct[], userid);
-      await this.manageInventory(filteredProducts as CartProduct[], "decrease");
-      await this.statusMail(userid, order);
+      await this.manageCart(allProcessedProducts, userid);
+      await this.manageInventory(allProcessedProducts, "decrease");
+      for (const order of allOrders) {
+        await this.statusMail(userid, order);
+      }
       return "success";
     } catch (err) {
       throw err;

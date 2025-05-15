@@ -7,7 +7,9 @@ import { CategoryRepositoryInterface } from "../common/types/classInterfaces.js"
 import CategoryFactory from "../factories/categoryRepositoryFactory.js";
 import { inject, injectable, container } from "tsyringe";
 import logger from "../utils/logger.js";
-
+type CategoryTree = {
+  [key: string]: string | CategoryTree;
+};
 @injectable()
 export default class CategoryService {
   private categoryRepository: CategoryRepositoryInterface;
@@ -76,11 +78,11 @@ export default class CategoryService {
 
   public async readCategories() {
     try {
-      const categories = await this.categoryRepository.findActive();
+      const categories = await this.categoryRepository.findAll();
       if (!categories || categories.length === 0) {
         const error = new Error("No categories found");
         (error as any).statusCode = 404;
-        logger.warn("No active categories found");
+        logger.warn("No categories found");
         throw error;
       }
       return categories.map((c: any) => ({
@@ -197,9 +199,9 @@ export default class CategoryService {
     try {
       const category = await this.categoryRepository.findOne(categoryid);
       if (!category) {
+        logger.warn(`Category with ID: ${categoryid} not found`);
         const error = new Error("No category found");
         (error as any).statusCode = 500;
-        logger.warn(`Category with ID: ${categoryid} not found`);
         throw error;
       }
       if (category.parentId) {
@@ -281,6 +283,69 @@ export default class CategoryService {
       }));
     } catch (err) {
       logger.error(`Error fetching subcategories for parent ID: ${parentid}`);
+      throw err;
+    }
+  }
+  public async categorylist(): Promise<CategoryTree> {
+    try {
+      const categories = await this.categoryRepository.findActive();
+      if (!categories || categories.length === 0) {
+        logger.warn(`No active categories found`);
+        return {};
+      }
+
+      // Step 1: Initialize nodes with empty children
+      const idMap: Record<string, any> = {};
+      categories.forEach((cat: any) => {
+        idMap[cat._id.toString()] = {
+          name: cat.name,
+          parentId: cat.parentId?.toString() || null,
+          children: {},
+        };
+      });
+
+      // Step 2: Populate children references
+      categories.forEach((cat: any) => {
+        const id = cat._id.toString();
+        const node = idMap[id];
+        const parentId = node.parentId;
+
+        if (parentId && idMap[parentId]) {
+          idMap[parentId].children[node.name] = node;
+        }
+      });
+
+      // Step 3: Build the tree from root nodes (no parentId)
+      const tree: any = {};
+      for (const id in idMap) {
+        const node = idMap[id];
+        if (!node.parentId) {
+          tree[node.name] = node;
+        }
+      }
+
+      // Step 4: Convert leaf children to strings recursively
+      function simplifyNode(node: any): any {
+        const keys = Object.keys(node.children);
+        if (keys.length === 0) {
+          // Leaf node: replace with name string
+          return node.name;
+        }
+        const simplifiedChildren: any = {};
+        for (const key of keys) {
+          simplifiedChildren[key] = simplifyNode(node.children[key]);
+        }
+        return simplifiedChildren;
+      }
+
+      const simplifiedTree: any = {};
+      for (const rootName in tree) {
+        simplifiedTree[rootName] = simplifyNode(tree[rootName]);
+      }
+
+      return simplifiedTree;
+    } catch (err) {
+      logger.error(`Error generating categoryList`, err);
       throw err;
     }
   }

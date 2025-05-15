@@ -3,8 +3,7 @@ import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import { IoIosCloseCircleOutline } from "react-icons/io";
 const validationSchema = Yup.object({
-  firstname: Yup.string().min(2).required("First name is required"),
-  lastname: Yup.string().required("Last name is required"),
+  shopname: Yup.string().min(2).required("Shop name is required"),
   username: Yup.string().required("Username is required"),
   email: Yup.string().email("Invalid email").required("Email is required"),
   password: Yup.string().min(6).required("Password is required"),
@@ -28,8 +27,7 @@ const validationSchema = Yup.object({
 });
 
 const initialValues = {
-  firstname: "",
-  lastname: "",
+  shopname: "",
   username: "",
   email: "",
   password: "",
@@ -39,7 +37,7 @@ const initialValues = {
   image: null as File | null,
 };
 
-const UserSignUp = () => {
+const SellerSignUp = () => {
   const [formState, setFormState] = useState(false);
   const handleSubmit = async (
     values: typeof initialValues,
@@ -81,7 +79,7 @@ const UserSignUp = () => {
         className="bg-white px-6 py-2 rounded-md text-xl cursor-pointer hover:scale-105 "
         onClick={() => setFormState(true)}
       >
-        User Sign Up
+        Seller Sign Up
       </button>
 
       {formState && (
@@ -97,21 +95,20 @@ const UserSignUp = () => {
                 onClick={() => setFormState(false)}
               />
               <div className="w-full flex justify-center items-center mb-8">
-                <p>User Sign Up</p>
+                <p>Seller Sign Up</p>
               </div>
               <div className="flex flex-wrap gap-4 justify-center">
                 {[
-                  { label: "Firstname:", name: "firstname", type: "text" },
-                  { label: "Lastname:", name: "lastname", type: "text" },
+                  { label: "Shopname:", name: "firstname", type: "text" },
                   { label: "Username:", name: "username", type: "text" },
                   { label: "Email:", name: "email", type: "email" },
+                  { label: "Phone:", name: "phone", type: "tel" },
                   { label: "Password:", name: "password", type: "password" },
                   {
                     label: "Confirm Password:",
                     name: "confirmpassword",
                     type: "password",
                   },
-                  { label: "Phone:", name: "phone", type: "tel" },
                   { label: "Address:", name: "address", type: "text" },
                 ].map((field) => (
                   <div
@@ -129,7 +126,9 @@ const UserSignUp = () => {
                       name={field.name}
                       type={field.type}
                       placeholder={field.label}
-                      className="h-[40px] bg-amber-50 p-2 shadow-xl rounded-lg"
+                      className={`h-[40px] bg-amber-50 p-2 shadow-xl rounded-lg ${
+                        field.name === "address" ? "w-[400px]" : ""
+                      }`}
                     />
                     <ErrorMessage
                       name={field.name}
@@ -139,7 +138,7 @@ const UserSignUp = () => {
                   </div>
                 ))}
 
-                <div className="flex flex-col w-[400px] max-md:w-[300px]">
+                <div className="flex flex-col ml-8 w-[400px] max-md:w-[300px]">
                   <label
                     htmlFor="image"
                     className="text-[14px] font-semibold text-gray-700 ml-1 mb-[-2px] z-10"
@@ -180,4 +179,4 @@ const UserSignUp = () => {
   );
 };
 
-export default UserSignUp;
+export default SellerSignUp;

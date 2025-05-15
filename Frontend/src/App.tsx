@@ -1,17 +1,37 @@
-import AdminSignUp from "./components/AdminSignUp";
-import SellerSignUp from "./components/SellerSignUp";
-import UserSignUp from "./components/UserSignUp";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import NavBar from "./components/Navbar";
+import SellerDashboard from "./components/seller/SellerDashboard";
+import ProtectedRoute from "./components/ProtectedRoute";
+import { useState } from "react";
 
-function App() {
+const App = () => {
+  const [sellerSigned, setSellerSigned] = useState(false);
   return (
     <>
-      <section className="w-full h-screen bg-black flex justify-evenly items-center">
-        <UserSignUp />
-        <SellerSignUp />
-        <AdminSignUp />
-      </section>
+      <Router>
+        <Routes>
+          <Route
+            path="/"
+            element={
+              <>
+                <main className="w-full h-screen flex flex-col min-h-fit bg-black gap-4 justify-center items-center">
+                  <NavBar setSellerSigned={setSellerSigned} />
+                </main>
+              </>
+            }
+          ></Route>
+          <Route
+            path="/sellerdashboard"
+            element={
+              <ProtectedRoute isAuthenticated={sellerSigned}>
+                <SellerDashboard />
+              </ProtectedRoute>
+            }
+          ></Route>
+        </Routes>
+      </Router>
     </>
   );
-}
+};
 
 export default App;

@@ -172,4 +172,20 @@ export default class CategoryController {
       return next(err);
     }
   };
+
+  public categoryList: RequestHandler = async (req, res, next) => {
+    try {
+      logger.info("Fetching categorylist");
+      const result = await this.categoryServices.categorylist();
+      if (!result || Object.keys(result).length === 0) {
+        logger.warn("No actuve categories found");
+        return this.responseHandler.notFound(res, "Category not found");
+      }
+      logger.info("Subcategories found", { result });
+      return this.responseHandler.success(res, "Sub Categories found", result);
+    } catch (err) {
+      logger.error("Error finding subcategories", err);
+      return next(err);
+    }
+  };
 }

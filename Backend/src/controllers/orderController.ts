@@ -94,7 +94,7 @@ export default class OrderController {
 
   // Create order of multiple products
   public createOrders: RequestHandler = async (req, res, next) => {
-    const products: string[] = req.body.Products;
+    const products: string[] = req.body.products;
     const paymentMethod: PaymentMethod = req.body.paymentMethod;
     const userid = req.user.id;
     logger.info(

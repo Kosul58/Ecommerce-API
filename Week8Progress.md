@@ -31,3 +31,9 @@ https://res.cloudinary.com/dyhju2mcs/image/upload/v1747135837/products/2025/05/1
 
 ->formik , yup validation of form
 ->hook form react
+
+react query
+axios
+
+context api
+headless ui - transition
