@@ -40,3 +40,7 @@ export interface ProductReturn {
   inventory: number;
   images?: string[];
 }
+
+export interface SellerProductReturn extends ProductReturn {
+  active: boolean;
+}

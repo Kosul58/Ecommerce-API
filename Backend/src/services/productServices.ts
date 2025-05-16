@@ -3,6 +3,7 @@ import {
   AddProduct,
   Product,
   ProductReturn,
+  SellerProductReturn,
   UpdateProdcut,
 } from "../common/types/productType.js";
 import CategoryService from "./categoryServices.js";
@@ -12,6 +13,7 @@ import logger from "../utils/logger.js";
 import CloudService from "./cloudService.js";
 import Utils from "../utils/utils.js";
 import EmailService from "./emailService.js";
+import { boolean } from "joi";
 
 @injectable()
 export default class ProductServices {
@@ -47,30 +49,6 @@ export default class ProductServices {
     };
   }
 
-  private returnProductData<
-    T extends {
-      _id: any;
-      name: string;
-      sellerid: string;
-      price: number;
-      description: string;
-      category: string;
-      inventory: number;
-      images: string[];
-    }
-  >(product: T): ProductReturn {
-    return {
-      id: product._id.toString(),
-      name: product.name,
-      sellerid: product.sellerid,
-      price: product.price,
-      description: product.description,
-      category: product.category,
-      inventory: product.inventory,
-      images: product.images,
-    };
-  }
-
   public async getProducts() {
     try {
       logger.info("Fetching all products");
@@ -96,7 +74,7 @@ export default class ProductServices {
         logger.warn(`No products found for seller: ${id}`);
         return null;
       }
-      return products.map((p: any) => this.returnProductData(p));
+      return products.map((p: any) => this.returnSellerProductData(p));
     } catch (err) {
       logger.error(`Error fetching seller products for seller: ${id}`);
       throw err;
@@ -524,5 +502,55 @@ export default class ProductServices {
       logger.error("Error modifying product inventory");
       throw err;
     }
+  }
+
+  private returnProductData<
+    T extends {
+      _id: any;
+      name: string;
+      sellerid: string;
+      price: number;
+      description: string;
+      category: string;
+      inventory: number;
+      images: string[];
+    }
+  >(product: T): ProductReturn {
+    return {
+      id: product._id.toString(),
+      name: product.name,
+      sellerid: product.sellerid,
+      price: product.price,
+      description: product.description,
+      category: product.category,
+      inventory: product.inventory,
+      images: product.images,
+    };
+  }
+
+  private returnSellerProductData<
+    T extends {
+      _id: any;
+      name: string;
+      sellerid: string;
+      price: number;
+      description: string;
+      category: string;
+      inventory: number;
+      active: boolean;
+      images: string[];
+    }
+  >(product: T): SellerProductReturn {
+    return {
+      id: product._id.toString(),
+      name: product.name,
+      sellerid: product.sellerid,
+      price: product.price,
+      description: product.description,
+      category: product.category,
+      inventory: product.inventory,
+      active: product.active,
+      images: product.images,
+    };
   }
 }

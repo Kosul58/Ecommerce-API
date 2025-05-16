@@ -1,9 +1,9 @@
 import Joi from "joi";
 export const addSchema = Joi.object({
-  name: Joi.string().min(1).max(100).required().invalid(""),
+  name: Joi.string().min(1).max(200).required().invalid(""),
   price: Joi.number().positive().required().invalid(""),
   inventory: Joi.number().positive().required().invalid(""),
-  description: Joi.string().max(500).required().invalid(""),
+  description: Joi.string().max(1000).required().invalid(""),
   category: Joi.string().required().invalid(""),
   image: Joi.string().optional(),
 });

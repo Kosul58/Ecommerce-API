@@ -12,6 +12,7 @@ export const signUpSchema = Joi.object({
       "any.invalid": "Email cannot be empty",
     }),
   password: Joi.string().min(2).required(),
+  confirmpassword: Joi.string().min(2).required(),
   phone: Joi.number().integer().min(1000000000).max(9999999999).required(),
   address: Joi.string().min(5).max(100).required(),
 });

@@ -1,7 +1,6 @@
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import CategorySelect from "./Category";
-import { useEffect, useState } from "react";
 
 type CategoryTree = {
   [key: string]: string | CategoryTree;
@@ -46,12 +45,14 @@ const initialValues = {
   description: "",
   images: [] as File[],
 };
+interface Category {
+  categoryData: CategoryTree | null;
+}
 
-const AddProduct = () => {
-  const [categoryData, setCategoryData] = useState<CategoryTree | null>(null);
+const AddProduct: React.FC<Category> = ({ categoryData }) => {
   const handleSubmit = async (
-    values: typeof initialValues
-    // { resetForm }: { resetForm: () => void }
+    values: typeof initialValues,
+    { resetForm }: { resetForm: () => void }
   ) => {
     const form = new FormData();
     Object.entries(values).forEach(([key, value]) => {
@@ -76,36 +77,13 @@ const AddProduct = () => {
       const result = await res.json();
       if (result.success === true) {
         sessionStorage.setItem("productdata", JSON.stringify(result.data));
-        // resetForm();
+        resetForm();
       }
       console.log("Server response:", result);
     } catch (err) {
       console.error("Error:", err);
     }
   };
-
-  useEffect(() => {
-    const fetchCategories = async () => {
-      try {
-        const response = await fetch(
-          "http://localhost:3000/api/category/list",
-          {
-            method: "GET",
-            credentials: "include",
-          }
-        );
-        const data = await response.json();
-        if (data.data) {
-          setCategoryData(data.data);
-        }
-      } catch (error) {
-        console.error("Error fetching categories:", error);
-        setCategoryData(null);
-      }
-    };
-
-    fetchCategories();
-  }, []);
 
   return (
     <section className="w-[95%] h-[95%] flex flex-col justify-center items-center gap-4 overflow-y-auto ">

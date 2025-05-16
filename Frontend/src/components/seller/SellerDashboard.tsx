@@ -20,8 +20,13 @@ export interface SellerResponse {
   result: Seller;
   token: string;
 }
+type CategoryTree = {
+  [key: string]: string | CategoryTree;
+};
 
 const SellerDashboard = () => {
+  const [categoryData, setCategoryData] = useState<CategoryTree | null>(null);
+
   const navigate = useNavigate();
   const [sellerData, setSellerData] = useState<SellerResponse | null>(null);
   const [selectedSection, setSelectedSection] = useState<
@@ -35,6 +40,29 @@ const SellerDashboard = () => {
     } else {
       console.log("no data");
     }
+  }, []);
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const response = await fetch(
+          "http://localhost:3000/api/category/list",
+          {
+            method: "GET",
+            credentials: "include",
+          }
+        );
+        const data = await response.json();
+        if (data.data) {
+          setCategoryData(data.data);
+        }
+      } catch (error) {
+        console.error("Error fetching categories:", error);
+        setCategoryData(null);
+      }
+    };
+
+    fetchCategories();
   }, []);
 
   const logOut = () => {
@@ -99,9 +127,14 @@ const SellerDashboard = () => {
           <main className="w-[77%] h-[95%] bg-indigo-300 rounded-r-xl flex justify-center items-center">
             {selectedSection === "sales" && <SalesDetails />}
             {selectedSection === "products" && (
-              <SellerProducts seller={sellerData.result} />
+              <SellerProducts
+                seller={sellerData.result}
+                categoryData={categoryData}
+              />
             )}
-            {selectedSection === "addProduct" && <AddProduct />}
+            {selectedSection === "addProduct" && (
+              <AddProduct categoryData={categoryData} />
+            )}
           </main>
         </section>
       )}

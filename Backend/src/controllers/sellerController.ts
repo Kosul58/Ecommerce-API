@@ -60,7 +60,7 @@ export default class SellerController {
         httpOnly: true,
         secure: false,
         sameSite: "lax",
-        maxAge: 3600000,
+        maxAge: 3600000 * 8,
       });
       return this.responseHandler.created(res, "Seller created successfully", {
         result,
@@ -90,7 +90,7 @@ export default class SellerController {
         httpOnly: true,
         secure: false,
         sameSite: "lax",
-        maxAge: 3600000,
+        maxAge: 3600000 * 8,
       });
       return this.responseHandler.success(res, "Seller sign in successful", {
         result,

@@ -58,7 +58,7 @@ const AdminSignUp = () => {
       return;
     }
     try {
-      const res = await fetch("http://localhost:3000/api/user/signup", {
+      const res = await fetch("http://localhost:3000/api/admin/signup", {
         method: "POST",
         credentials: "include",
         body: form,

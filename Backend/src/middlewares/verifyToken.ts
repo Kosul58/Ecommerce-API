@@ -8,6 +8,7 @@ class VerifyToken {
   public verify: RequestHandler = (req, res, next) => {
     let token: string | undefined;
     const authHeader = req.cookies.token || req.headers.authorization;
+
     if (typeof authHeader === "string") {
       if (!req.cookies.token) {
         token = authHeader.split(" ")[1];
