@@ -56,6 +56,12 @@ export default class SellerController {
         return this.responseHandler.error(res, "Failed to sign up seller");
       }
       logger.info(`Seller created successfully: ${seller.username}`);
+      res.cookie("token", token, {
+        httpOnly: true,
+        secure: false,
+        sameSite: "lax",
+        maxAge: 3600000,
+      });
       return this.responseHandler.created(res, "Seller created successfully", {
         result,
         token,
@@ -79,8 +85,13 @@ export default class SellerController {
         logger.warn(`No seller found for credentials: ${username || email}`);
         return this.responseHandler.error(res, "No seller found");
       }
-
       logger.info(`Seller sign-in successful: ${username || email}`);
+      res.cookie("token", token, {
+        httpOnly: true,
+        secure: false,
+        sameSite: "lax",
+        maxAge: 3600000,
+      });
       return this.responseHandler.success(res, "Seller sign in successful", {
         result,
         token,

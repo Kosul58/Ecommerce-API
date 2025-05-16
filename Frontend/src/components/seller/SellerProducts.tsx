@@ -1,9 +1,5 @@
 import React, { useState, useEffect } from "react";
-
-interface ProductProps {
-  token: string;
-}
-
+import type { Seller } from "./SellerDashboard";
 interface Product {
   id: string;
   name: string;
@@ -15,18 +11,20 @@ interface Product {
   images: string[];
 }
 
-const SellerProducts: React.FC<ProductProps> = ({ token }) => {
-  const [productData, setProductData] = useState<Product[] | null>(null);
+interface SellerData {
+  seller: Seller;
+}
 
+const SellerProducts: React.FC<SellerData> = ({ seller }) => {
+  const [productData, setProductData] = useState<Product[] | null>(null);
+  console.log(seller);
   const getSellerProducts = async (): Promise<Product[] | null> => {
     try {
       const response = await fetch(
         "http://localhost:3000/api/product/myproduct",
         {
           method: "GET",
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+          credentials: "include",
         }
       );
       const result = await response.json();
@@ -44,10 +42,10 @@ const SellerProducts: React.FC<ProductProps> = ({ token }) => {
       setProductData(data);
     };
     fetchData();
-  }, [token]);
+  }, []);
 
   return (
-    <section className="w-[95%] h-[95%] flex flex-col  items-center gap-4 overflow-y-auto mt-2 ">
+    <section className="w-[95%] h-[95%] flex flex-wrap justify-center items-center gap-2 overflow-y-auto scrollbar-cool ">
       {productData === null ? (
         <p>Loading...</p>
       ) : productData.length === 0 ? (
@@ -56,21 +54,29 @@ const SellerProducts: React.FC<ProductProps> = ({ token }) => {
         productData.map((product) => (
           <div
             key={product.id}
-            className="p-4 w-[80%] h-[auto] flex flex-row items-center justify-evenly bg-white shadow-lg rounded-lg m-4 "
+            className="p-4 w-[45%] h-[auto] flex flex-row items-center justify-evenly bg-white rounded-lg m-2 shadow-2xl hover:scale-101 cursor-pointer gap-2"
           >
-            <div>
-              <h2 className="text-lg font-bold">{product.name}</h2>
-              <p>Category: {product.category}</p>
-              <p>{product.description}</p>
+            <div className="size-[30%]">
+              <h2 className="text-lg font-bold max-w-[100px]">
+                <span className="block">Name:</span>
+                <span className="block truncate">{product.name}</span>
+              </h2>
+              <p className="max-w-[150px]">
+                <span className="block">Category:</span>
+                <span className="block truncate">{product.category}</span>
+              </p>
+              <p className="max-w-[150px]">
+                <span className="block">Description:</span>
+                <span className="block truncate">{product.description}</span>
+              </p>
               <p>Inventory: {product.inventory}</p>
               <p>Price: Rs.{product.price}</p>
             </div>
-
             {product.images.length > 0 && (
               <img
                 src={product.images[0]}
                 alt={product.name}
-                className="w-[70%] h-32 object-cover rounded"
+                className="size-[70%] object-cover rounded-md"
               />
             )}
           </div>

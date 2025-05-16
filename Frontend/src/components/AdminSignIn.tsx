@@ -25,6 +25,8 @@ const AdminSignIn: React.FC<SignInProps> = ({ formState, setFormState }) => {
     try {
       const res = await fetch("http://localhost:3000/api/admin/signin", {
         method: "POST",
+        credentials: "include",
+
         headers: {
           "Content-Type": "application/json",
         },

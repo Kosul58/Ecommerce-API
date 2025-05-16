@@ -33,6 +33,7 @@ const SellerSignIn: React.FC<SignInProps> = ({ setSellerSigned }) => {
         headers: {
           "Content-Type": "application/json",
         },
+        credentials: "include",
         body: JSON.stringify(values),
       });
       const result = await res.json();

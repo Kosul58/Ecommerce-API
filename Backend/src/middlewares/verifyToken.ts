@@ -7,10 +7,13 @@ dotenv.config();
 class VerifyToken {
   public verify: RequestHandler = (req, res, next) => {
     let token: string | undefined;
-    const authHeader = req.headers.authorization || req.headers.Authorization;
-
-    if (typeof authHeader === "string" && authHeader.startsWith("Bearer")) {
-      token = authHeader.split(" ")[1];
+    const authHeader = req.cookies.token || req.headers.authorization;
+    if (typeof authHeader === "string") {
+      if (!req.cookies.token) {
+        token = authHeader.split(" ")[1];
+      } else {
+        token = authHeader;
+      }
       if (!token) {
         logger.warn("No token provided in the authorization header");
         res.status(401).json({ message: "No token, authorization required" });

@@ -27,6 +27,8 @@ const UserSignIn: React.FC<SignInProps> = () => {
       console.log(values);
       const res = await fetch("http://localhost:3000/api/user/signin", {
         method: "POST",
+        credentials: "include",
+
         headers: {
           "Content-Type": "application/json",
         },

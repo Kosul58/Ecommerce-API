@@ -168,6 +168,7 @@ export default class SellerServices {
           `Sign-up succeeded but email failed to send to ${savedSeller.email}`
         );
       }
+
       return {
         result: this.returnData(savedSeller),
         token: this.authService.generateToken(

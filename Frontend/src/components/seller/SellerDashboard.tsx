@@ -44,7 +44,11 @@ const SellerDashboard = () => {
   };
   return (
     <>
-      {sellerData && (
+      {sellerData === null ? (
+        <p>Loading...</p>
+      ) : Object.keys(sellerData.result).length === 0 ? (
+        <p>No Products Found.</p>
+      ) : (
         <section className="w-full h-screen absolute p-2 bg-white opacity-90 flex justify-center items-center">
           <aside className="w-[20%] h-[95%] bg-sky-300 rounded-l-xl flex justify-center-safe items-center flex-col gap-3 p-2">
             <img
@@ -92,11 +96,10 @@ const SellerDashboard = () => {
               Log Out
             </button>
           </aside>
-
           <main className="w-[77%] h-[95%] bg-indigo-300 rounded-r-xl flex justify-center items-center">
             {selectedSection === "sales" && <SalesDetails />}
             {selectedSection === "products" && (
-              <SellerProducts token={sellerData.token} />
+              <SellerProducts seller={sellerData.result} />
             )}
             {selectedSection === "addProduct" && <AddProduct />}
           </main>

@@ -1,6 +1,6 @@
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
-import CategorySelect from "./category";
+import CategorySelect from "./Category";
 import { useEffect, useState } from "react";
 
 type CategoryTree = {
@@ -49,19 +49,6 @@ const initialValues = {
 
 const AddProduct = () => {
   const [categoryData, setCategoryData] = useState<CategoryTree | null>(null);
-  const [token, setToken] = useState<string>("");
-  useEffect(() => {
-    const sellerDataString = sessionStorage.getItem("sellerdata");
-    if (sellerDataString) {
-      try {
-        const sellerData = JSON.parse(sellerDataString);
-        setToken(sellerData.token);
-      } catch {
-        console.warn("Failed to parse sellerdata from sessionStorage");
-      }
-    }
-  }, []);
-
   const handleSubmit = async (
     values: typeof initialValues
     // { resetForm }: { resetForm: () => void }
@@ -83,9 +70,7 @@ const AddProduct = () => {
     try {
       const res = await fetch("http://localhost:3000/api/product", {
         method: "POST",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+        credentials: "include",
         body: form,
       });
       const result = await res.json();
@@ -106,9 +91,7 @@ const AddProduct = () => {
           "http://localhost:3000/api/category/list",
           {
             method: "GET",
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
+            credentials: "include",
           }
         );
         const data = await response.json();
@@ -122,10 +105,10 @@ const AddProduct = () => {
     };
 
     fetchCategories();
-  }, [token]);
+  }, []);
 
   return (
-    <section className="w-[95%] h-[95%] flex flex-col justify-center items-center gap-4 overflow-y-auto bg-red-50">
+    <section className="w-[95%] h-[95%] flex flex-col justify-center items-center gap-4 overflow-y-auto ">
       <Formik
         initialValues={initialValues}
         validationSchema={validationSchema}

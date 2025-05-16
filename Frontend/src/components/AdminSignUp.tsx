@@ -60,6 +60,7 @@ const AdminSignUp = () => {
     try {
       const res = await fetch("http://localhost:3000/api/user/signup", {
         method: "POST",
+        credentials: "include",
         body: form,
       });
       const result = await res.json();
