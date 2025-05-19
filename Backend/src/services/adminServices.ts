@@ -24,9 +24,16 @@ export default class AdminServices {
     @inject(AuthServices) private authService: AuthServices
   ) {}
 
-  public async signUp(user: AddUser, file: Express.Multer.File) {
+  public async signUp(
+    user: AddUser
+    //  file: Express.Multer.File
+  ) {
     try {
-      const admin = await this.userServices.signUp(user, file, "Admin");
+      const admin = await this.userServices.signUp(
+        user,
+        //  file,
+        "Admin"
+      );
       if (!admin) {
         const error = new Error("Failed to register admin");
         (error as any).statusCode = 500;

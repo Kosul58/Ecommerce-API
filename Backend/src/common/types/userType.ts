@@ -11,6 +11,7 @@ export interface User {
   phone: number;
   address: string;
   role: UserRole;
+  image: string;
 }
 
 export enum UserRole {

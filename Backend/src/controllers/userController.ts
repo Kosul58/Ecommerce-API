@@ -14,10 +14,13 @@ export default class UserController {
 
   public signUp: RequestHandler = async (req, res, next) => {
     const user: AddUser = req.body;
-    const file = req.file as Express.Multer.File;
+    // const file = req.file as Express.Multer.File;
     try {
       logger.info(`Attempting to register user: ${user.username}`);
-      const data = await this.userServices.signUp(user, file);
+      const data = await this.userServices.signUp(
+        user
+        // file
+      );
       const { result, token } = data;
       if (!result) {
         logger.error("Failed to sign up User", { user });

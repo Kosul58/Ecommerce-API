@@ -16,10 +16,13 @@ export default class AdminController {
 
   public signUp: RequestHandler = async (req, res, next) => {
     const user: AddUser = req.body;
-    const file = req.file as Express.Multer.File;
+    // const file = req.file as Express.Multer.File;
     try {
       logger.info("Registering Admin.");
-      const data = await this.adminServices.signUp(user, file);
+      const data = await this.adminServices.signUp(
+        user
+        // file
+      );
       logger.info("Admin registered successfully");
       const { result, token } = data;
       return this.responseHandler.created(

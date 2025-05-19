@@ -13,7 +13,7 @@ const adminRoutes = express.Router();
 // Admin signup
 adminRoutes.post(
   "/signup",
-  upload.single("image"),
+  // upload.single("image"),
   dataValidation.validateBody(signUpSchema),
   createAudit({ action: "admin signup" }),
   adminController.signUp

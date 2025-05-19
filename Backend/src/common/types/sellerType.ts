@@ -9,6 +9,7 @@ export interface Seller {
   address: string;
   timestamp?: Date;
   role: UserRole;
+  image: string;
 }
 
 export interface SellerUpadte {

@@ -41,6 +41,7 @@ export default class UserServices {
         phone: user.phone,
         address: user.address,
         role: role === "Admin" ? UserRole.ADMIN : UserRole.USER,
+        image: "userimage",
       };
     } catch (err) {
       logger.error(
@@ -84,7 +85,11 @@ export default class UserServices {
     return uploadResult;
   }
 
-  public async signUp(user: AddUser, file: Express.Multer.File, role?: string) {
+  public async signUp(
+    user: AddUser,
+    //  file: Express.Multer.File,
+    role?: string
+  ) {
     try {
       logger.info("Checking input fields");
       const [usernameTaken, emailTaken, phoneTaken] = await Promise.all([
@@ -112,37 +117,37 @@ export default class UserServices {
       }
       const userid = result._id.toString();
 
-      const uploadResult = await this.uploadImage(file, userid, role);
-      if (!uploadResult) {
-        await this.userRepository.deleteOne(userid);
-        const error = new Error("Image upload failed");
-        (error as any).statusCode = 500;
-        throw error;
-      }
-      const savedUser = await this.userRepository.updateOne(userid, {
-        image: uploadResult,
-      });
-      if (!savedUser) {
-        await this.deleteUser(userid, userid, "User");
-        const error = new Error("Failed to save user after image upload");
-        (error as any).statusCode = 500;
-        throw error;
-      }
+      // const uploadResult = await this.uploadImage(file, userid, role);
+      // if (!uploadResult) {
+      //   await this.userRepository.deleteOne(userid);
+      //   const error = new Error("Image upload failed");
+      //   (error as any).statusCode = 500;
+      //   throw error;
+      // }
+      // const savedUser = await this.userRepository.updateOne(userid, {
+      //   image: uploadResult,
+      // });
+      // if (!savedUser) {
+      //   await this.deleteUser(userid, userid, "User");
+      //   const error = new Error("Failed to save user after image upload");
+      //   (error as any).statusCode = 500;
+      //   throw error;
+      // }
       if (!role) await this.cartService.createCart(userid);
       const emailSent = await this.emailService.signUpMail(
         {
-          email: savedUser.email,
-          username: savedUser.username,
+          email: result.email,
+          username: result.username,
         },
         role?.toLowerCase() === "admin" ? UserRole.ADMIN : UserRole.USER
       );
       if (!emailSent) {
         logger.warn(
-          `Sign-up succeeded but email failed to send to ${savedUser.email}`
+          `Sign-up succeeded but email failed to send to ${result.email}`
         );
       }
       return {
-        result: this.returnData(savedUser),
+        result: this.returnData(result),
         token: this.authService.generateToken(
           result._id.toString(),
           user.username,

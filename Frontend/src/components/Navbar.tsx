@@ -1,20 +1,15 @@
-import AdminSignUp from "./AdminSignUp";
-import SellerSignUp from "./seller/SellerSignUp";
-import UserSignUp from "./UserSignUp";
-import AdminSignIn from "./AdminSignIn";
-import SellerSignIn from "./seller/SellerSignIn";
-import UserSignIn from "./UserSignIn";
-import { useState } from "react";
+import AdminSignUp from "./forms/react-hook/AdminSignUp";
+import SellerSignUp from "./forms/react-hook/SellerSignUp";
+import UserSignUp from "./forms/react-hook/UserSignUp";
+import AdminSignIn from "./forms/react-hook/AdminSignIn";
+import SellerSignIn from "./forms/react-hook/SellerSignIn";
+import UserSignIn from "./forms/react-hook/UserSignIn";
 
 interface SignInProps {
   setSellerSigned: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 const NavBar: React.FC<SignInProps> = ({ setSellerSigned }) => {
-  const [formState4, setFormState4] = useState(false);
-  const [formState5, setFormState5] = useState(false);
-  const [formState6, setFormState6] = useState(false);
-
   return (
     <>
       <nav className="w-[80%] h-[80px] bg-slate-500 flex justify-evenly gap-2 p-2 rounded-lg">
@@ -32,13 +27,9 @@ const NavBar: React.FC<SignInProps> = ({ setSellerSigned }) => {
           Sign In components check
         </h1>
         <div className="flex justify-end gap-2">
-          <AdminSignIn setFormState={setFormState4} formState={formState4} />
-          <SellerSignIn
-            setFormState={setFormState5}
-            setSellerSigned={setSellerSigned}
-            formState={formState5}
-          />
-          <UserSignIn setFormState={setFormState6} formState={formState6} />
+          <AdminSignIn />
+          <SellerSignIn setSellerSigned={setSellerSigned} />
+          <UserSignIn />
         </div>
       </nav>
     </>

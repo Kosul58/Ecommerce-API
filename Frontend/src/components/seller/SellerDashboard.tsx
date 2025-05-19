@@ -30,7 +30,12 @@ const SellerDashboard = () => {
   const navigate = useNavigate();
   const [sellerData, setSellerData] = useState<SellerResponse | null>(null);
   const [selectedSection, setSelectedSection] = useState<
-    "sales" | "products" | "addProduct" | "logout"
+    | "sales"
+    | "productdetails"
+    | "viewproducts"
+    | "addProduct"
+    | "logout"
+    | "seller"
   >("sales");
 
   useEffect(() => {
@@ -75,15 +80,18 @@ const SellerDashboard = () => {
       {sellerData === null ? (
         <p>Loading...</p>
       ) : Object.keys(sellerData.result).length === 0 ? (
-        <p>No Products Found.</p>
+        <p>No Seller Found.</p>
       ) : (
         <section className="w-full h-screen absolute p-2 bg-white opacity-90 flex justify-center items-center">
           <aside className="w-[20%] h-[95%] bg-sky-300 rounded-l-xl flex justify-center-safe items-center flex-col gap-3 p-2">
-            <img
-              src={sellerData.result.image}
-              alt="Seller"
-              className="size-20 rounded-full object-cover shadow-md"
-            />
+            {sellerData.result.image !== "Seller image" && (
+              <img
+                src={sellerData.result.image}
+                alt="Seller"
+                className="size-20 rounded-full object-cover shadow-md"
+              />
+            )}
+
             <h1>Shop Name: {sellerData.result.username}</h1>
 
             <button
@@ -97,9 +105,29 @@ const SellerDashboard = () => {
               Sales Details
             </button>
             <button
-              onClick={() => setSelectedSection("products")}
+              onClick={() => setSelectedSection("productdetails")}
               className={`w-full px-4 py-2 rounded shadow hover:bg-gray-400 ${
-                selectedSection === "products"
+                selectedSection === "productdetails"
+                  ? "bg-green-500 text-white"
+                  : "bg-white"
+              }`}
+            >
+              Product Details
+            </button>
+            <button
+              onClick={() => setSelectedSection("seller")}
+              className={`w-full px-4 py-2 rounded shadow hover:bg-gray-400 ${
+                selectedSection === "seller"
+                  ? "bg-green-500 text-white"
+                  : "bg-white"
+              }`}
+            >
+              Seller Details
+            </button>
+            <button
+              onClick={() => setSelectedSection("viewproducts")}
+              className={`w-full px-4 py-2 rounded shadow hover:bg-gray-400 ${
+                selectedSection === "viewproducts"
                   ? "bg-green-500 text-white"
                   : "bg-white"
               }`}
@@ -126,7 +154,9 @@ const SellerDashboard = () => {
           </aside>
           <main className="w-[77%] h-[95%] bg-indigo-300 rounded-r-xl flex justify-center items-center">
             {selectedSection === "sales" && <SalesDetails />}
-            {selectedSection === "products" && (
+            {selectedSection === "productdetails" && <div>Product details</div>}
+            {selectedSection === "seller" && <div>Seller details</div>}
+            {selectedSection === "viewproducts" && (
               <SellerProducts
                 seller={sellerData.result}
                 categoryData={categoryData}

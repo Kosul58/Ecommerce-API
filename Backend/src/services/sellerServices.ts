@@ -36,6 +36,7 @@ export default class SellerServices {
         phone: seller.phone,
         address: seller.address,
         role: UserRole.SELLER,
+        image: "Seller image",
       };
     } catch (err) {
       logger.error("Password encryption failed");
@@ -112,7 +113,10 @@ export default class SellerServices {
     }
   }
 
-  public async signUp(seller: AddSeller, file: Express.Multer.File) {
+  public async signUp(
+    seller: AddSeller
+    // , file: Express.Multer.File
+  ) {
     try {
       const [usernameTaken, emailTaken, phoneTaken] = await Promise.all([
         this.sellerRepository.findUserName(seller.username),
@@ -140,37 +144,37 @@ export default class SellerServices {
         (error as any).statusCode = 500;
         throw error;
       }
-      const uploadResult = await this.uploadImage(file, sellerid);
-      if (!uploadResult) {
-        await this.sellerRepository.deleteOne(sellerid);
-        const error = new Error("Image upload failed");
-        (error as any).statusCode = 500;
-        throw error;
-      }
-      const savedSeller = await this.sellerRepository.updateOne(sellerid, {
-        image: uploadResult,
-      });
-      if (!savedSeller) {
-        await this.sellerRepository.deleteOne(sellerid);
-        const error = new Error("Failed to save user after image upload");
-        (error as any).statusCode = 500;
-        throw error;
-      }
+      // const uploadResult = await this.uploadImage(file, sellerid);
+      // if (!uploadResult) {
+      //   await this.sellerRepository.deleteOne(sellerid);
+      //   const error = new Error("Image upload failed");
+      //   (error as any).statusCode = 500;
+      //   throw error;
+      // }
+      // const savedSeller = await this.sellerRepository.updateOne(sellerid, {
+      //   image: uploadResult,
+      // });
+      // if (!savedSeller) {
+      //   await this.sellerRepository.deleteOne(sellerid);
+      //   const error = new Error("Failed to save user after image upload");
+      //   (error as any).statusCode = 500;
+      //   throw error;
+      // }
       const emailSent = await this.emailService.signUpMail(
         {
-          email: savedSeller.email,
-          username: savedSeller.username,
+          email: result.email,
+          username: result.username,
         },
         UserRole.SELLER
       );
       if (!emailSent) {
         logger.warn(
-          `Sign-up succeeded but email failed to send to ${savedSeller.email}`
+          `Sign-up succeeded but email failed to send to ${result.email}`
         );
       }
 
       return {
-        result: this.returnData(savedSeller),
+        result: this.returnData(result),
         token: this.authService.generateToken(
           sellerid,
           seller.username,

@@ -35,7 +35,7 @@ userRoutes.get(
 
 userRoutes.post(
   "/signup",
-  upload.single("image"),
+  // upload.single("image"),
   dataValidation.validateBody(signUpSchema),
   createAudit({ action: "signup user" }),
   userController.signUp
