@@ -1,49 +1,34 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
-import * as Yup from "yup";
 import { IoIosCloseCircleOutline } from "react-icons/io";
+import type { SignInValues } from "../../../types/sellertypes";
+import { SignInSchema } from "../../../validations/formValidations";
+import { useSignIn } from "../../../hooks/useAuth";
 
-type FormValues = {
-  username: string;
-  email: string;
-  password: string;
-};
-
-const validationSchema = Yup.object({
-  username: Yup.string().required("Username is required"),
-  email: Yup.string().email("Invalid email").required("Email is required"),
-  password: Yup.string().min(6).required("Password is required"),
-});
-
-const UserSignIn = () => {
+const AdminSignIn = () => {
   const [formState, setFormState] = useState(false);
-
   const {
     register,
     handleSubmit,
     formState: { errors },
     reset,
-  } = useForm<FormValues>({
-    resolver: yupResolver(validationSchema),
+  } = useForm<SignInValues>({
+    resolver: yupResolver(SignInSchema),
     mode: "onTouched",
   });
 
-  const onSubmit = async (values: FormValues) => {
+  const signInMutation = useSignIn("http://localhost:3000/api/admin/signin");
+
+  const onSubmit = async (values: SignInValues) => {
     try {
-      console.log(values);
-      const res = await fetch("http://localhost:3000/api/user/signin", {
-        method: "POST",
-        credentials: "include",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(values),
-      });
-      const result = await res.json();
+      const res = await signInMutation.mutateAsync(values);
+      const result = res.data;
       if (result.success === true) {
         reset();
         sessionStorage.setItem("userData", result.data);
+      } else {
+        alert("Failed to Sign In as a Admin");
       }
       console.log("Server response:", result);
     } catch (err) {
@@ -74,7 +59,6 @@ const UserSignIn = () => {
           </div>
           <div className="flex flex-col gap-4 justify-center items-center">
             {[
-              { label: "Username:", name: "username", type: "text" },
               { label: "Email:", name: "email", type: "email" },
               { label: "Password:", name: "password", type: "password" },
             ].map((field) => (
@@ -92,12 +76,12 @@ const UserSignIn = () => {
                   id={field.name}
                   type={field.type}
                   placeholder={field.label}
-                  {...register(field.name as keyof FormValues)}
+                  {...register(field.name as keyof SignInValues)}
                   className="h-[40px] bg-amber-50 p-2 shadow-xl rounded-lg"
                 />
-                {errors[field.name as keyof FormValues] && (
+                {errors[field.name as keyof SignInValues] && (
                   <p className="text-red-600 ml-1 text-xs">
-                    {errors[field.name as keyof FormValues]?.message}
+                    {errors[field.name as keyof SignInValues]?.message}
                   </p>
                 )}
               </div>
@@ -117,4 +101,4 @@ const UserSignIn = () => {
   );
 };
 
-export default UserSignIn;
+export default AdminSignIn;

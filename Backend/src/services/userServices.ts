@@ -161,9 +161,9 @@ export default class UserServices {
     }
   }
 
-  public async signIn(username: string, email: string, password: string) {
+  public async signIn(email: string, password: string) {
     try {
-      const result = await this.userRepository.signIn(username, email);
+      const result = await this.userRepository.signIn(email);
       if (!result || Object.keys(result).length === 0) {
         const error = new Error("Signin failed. User not found");
         (error as any).statusCode = 404;
@@ -180,7 +180,7 @@ export default class UserServices {
         result: this.returnData(result),
         token: this.authService.generateToken(
           result._id.toString(),
-          username,
+          result.username,
           email,
           result.role
         ),

@@ -2,21 +2,10 @@ import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { IoIosCloseCircleOutline } from "react-icons/io";
 import { yupResolver } from "@hookform/resolvers/yup";
-import * as Yup from "yup";
 import { useNavigate } from "react-router-dom";
-
-const validationSchema = Yup.object({
-  username: Yup.string().required("Username is required"),
-  email: Yup.string().email("Invalid email").required("Email is required"),
-  password: Yup.string().min(1).required("Password is required"),
-});
-
-type FormValues = {
-  username: string;
-  email: string;
-  password: string;
-};
-
+import type { SignInValues } from "../../../types/sellertypes";
+import { SignInSchema } from "../../../validations/formValidations";
+import { useSignIn } from "../../../hooks/useAuth";
 interface SignInProps {
   setSellerSigned: React.Dispatch<React.SetStateAction<boolean>>;
 }
@@ -30,30 +19,23 @@ const SellerSignIn: React.FC<SignInProps> = ({ setSellerSigned }) => {
     handleSubmit,
     reset,
     formState: { errors },
-  } = useForm<FormValues>({
-    resolver: yupResolver(validationSchema),
+  } = useForm<SignInValues>({
+    resolver: yupResolver(SignInSchema),
     mode: "onTouched",
   });
+  const signInMutation = useSignIn("http://localhost:3000/api/seller/signin");
 
-  const onSubmit = async (values: FormValues) => {
+  const onSubmit = async (values: SignInValues) => {
     try {
-      const res = await fetch("http://localhost:3000/api/seller/signin", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        credentials: "include",
-        body: JSON.stringify(values),
-      });
-      const result = await res.json();
-
+      const result = await signInMutation.mutateAsync(values);
       if (result.success === true) {
         reset();
         setSellerSigned(true);
         sessionStorage.setItem("sellerdata", JSON.stringify(result.data));
         navigate("/sellerdashboard");
+      } else {
+        alert("Failed to Sign In as a Seller");
       }
-
       console.log("Server response:", result);
     } catch (err) {
       console.error("Error:", err);
@@ -84,7 +66,6 @@ const SellerSignIn: React.FC<SignInProps> = ({ setSellerSigned }) => {
 
           <div className="flex flex-col gap-4 justify-center items-center">
             {[
-              { label: "Username", name: "username", type: "text" },
               { label: "Email", name: "email", type: "email" },
               { label: "Password", name: "password", type: "password" },
             ].map((field) => (
@@ -99,15 +80,15 @@ const SellerSignIn: React.FC<SignInProps> = ({ setSellerSigned }) => {
                   {field.label}
                 </label>
                 <input
-                  {...register(field.name as keyof FormValues)}
+                  {...register(field.name as keyof SignInValues)}
                   id={field.name}
                   type={field.type}
                   placeholder={field.label}
                   className="h-[40px] bg-amber-50 p-2 shadow-xl rounded-lg"
                 />
-                {errors[field.name as keyof FormValues] && (
+                {errors[field.name as keyof SignInValues] && (
                   <p className="text-red-600 ml-1 text-xs">
-                    {errors[field.name as keyof FormValues]?.message}
+                    {errors[field.name as keyof SignInValues]?.message}
                   </p>
                 )}
               </div>

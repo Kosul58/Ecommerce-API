@@ -269,10 +269,7 @@ export default class CategoryService {
     try {
       const categories = await this.categoryRepository.findSubs(parentid);
       if (!categories || categories.length === 0) {
-        // const error = new Error("No categories found");
-        // (error as any).statusCode = 404;
         logger.warn(`No subcategories found for parent ID: ${parentid}`);
-        // throw error;
         return;
       }
       return categories.map((c: any) => ({
@@ -294,7 +291,6 @@ export default class CategoryService {
         return {};
       }
 
-      // Step 1: Initialize nodes with empty children
       const idMap: Record<string, any> = {};
       categories.forEach((cat: any) => {
         idMap[cat._id.toString()] = {
@@ -304,7 +300,6 @@ export default class CategoryService {
         };
       });
 
-      // Step 2: Populate children references
       categories.forEach((cat: any) => {
         const id = cat._id.toString();
         const node = idMap[id];
@@ -315,7 +310,6 @@ export default class CategoryService {
         }
       });
 
-      // Step 3: Build the tree from root nodes (no parentId)
       const tree: any = {};
       for (const id in idMap) {
         const node = idMap[id];
@@ -324,11 +318,9 @@ export default class CategoryService {
         }
       }
 
-      // Step 4: Convert leaf children to strings recursively
       function simplifyNode(node: any): any {
         const keys = Object.keys(node.children);
         if (keys.length === 0) {
-          // Leaf node: replace with name string
           return node.name;
         }
         const simplifiedChildren: any = {};

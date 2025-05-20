@@ -64,6 +64,7 @@ export default class SellerController {
         secure: false,
         sameSite: "lax",
         maxAge: 3600000 * 8,
+        path: "/",
       });
       return this.responseHandler.created(res, "Seller created successfully", {
         result,
@@ -76,24 +77,24 @@ export default class SellerController {
   };
 
   public signIn: RequestHandler = async (req, res, next) => {
-    const { username, email, password } = req.body;
+    const { email, password } = req.body;
     try {
-      logger.info(`Attempting to sign in seller: ${username || email}`);
+      logger.info(`Attempting to sign in seller: ${email}`);
       const { result, token } = await this.sellerServices.signIn(
-        username,
         email,
         password
       );
       if (!result) {
-        logger.warn(`No seller found for credentials: ${username || email}`);
+        logger.warn(`No seller found for credentials: ${email}`);
         return this.responseHandler.error(res, "No seller found");
       }
-      logger.info(`Seller sign-in successful: ${username || email}`);
+      logger.info(`Seller sign-in successful: ${email}`);
       res.cookie("token", token, {
         httpOnly: true,
         secure: false,
         sameSite: "lax",
         maxAge: 3600000 * 8,
+        path: "/",
       });
       return this.responseHandler.success(res, "Seller sign in successful", {
         result,

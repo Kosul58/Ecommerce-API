@@ -38,15 +38,11 @@ export default class UserController {
   };
 
   public signIn: RequestHandler = async (req, res, next) => {
-    const { username, email, password } = req.body;
+    const { email, password } = req.body;
     try {
-      logger.info(`User attempting to sign in: ${username || email}`);
-      const { result, token } = await this.userServices.signIn(
-        username,
-        email,
-        password
-      );
-      logger.info(`${username || email} signed in successfully`);
+      logger.info(`User attempting to sign in: ${email}`);
+      const { result, token } = await this.userServices.signIn(email, password);
+      logger.info(`${email} signed in successfully`);
       return this.responseHandler.success(res, "Signin successful", {
         result,
         token,

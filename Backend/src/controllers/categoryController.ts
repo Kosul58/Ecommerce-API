@@ -181,7 +181,7 @@ export default class CategoryController {
         logger.warn("No actuve categories found");
         return this.responseHandler.notFound(res, "Category not found");
       }
-      logger.info("Subcategories found", { result });
+      logger.info("Subcategories found");
       return this.responseHandler.success(res, "Sub Categories found", result);
     } catch (err) {
       logger.error("Error finding subcategories", err);

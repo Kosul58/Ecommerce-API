@@ -16,7 +16,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch }) => {
   };
 
   return (
-    <div className="w-full flex items-center justify-center mt-4 gap-2">
+    <div className="w-full  flex items-center justify-center mt-4 gap-2">
       <input
         type="text"
         placeholder="Search products..."

@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import type { CategoryTree } from "../../types/sellertypes";
 
 export const categoryData: CategoryTree = {
   electronics: {
@@ -23,10 +24,6 @@ export const categoryData: CategoryTree = {
       },
     },
   },
-};
-
-type CategoryTree = {
-  [key: string]: string | CategoryTree;
 };
 
 const getSubcategories = (path: string[], data: CategoryTree): string[] => {

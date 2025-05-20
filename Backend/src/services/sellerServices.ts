@@ -188,9 +188,9 @@ export default class SellerServices {
     }
   }
 
-  public async signIn(username: string, email: string, password: string) {
+  public async signIn(email: string, password: string) {
     try {
-      const result = await this.sellerRepository.signIn(username, email);
+      const result = await this.sellerRepository.signIn(email);
       if (!result) {
         const error = new Error("Signin failed. No seller found");
         (error as any).statusCode = 404;
@@ -208,7 +208,7 @@ export default class SellerServices {
         result: this.returnData(result),
         token: this.authService.generateToken(
           result._id.toString(),
-          username,
+          result.username,
           email,
           result.role
         ),

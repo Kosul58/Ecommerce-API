@@ -46,14 +46,14 @@ export interface SellerRepositoryInterface extends Repository {
   findUserName(username: string, excludeId?: string): Promise<boolean | null>;
   findEmail(email: string, excludeId?: string): Promise<boolean | null>;
   findPhone(phone: number, excludeId?: string): Promise<boolean | null>;
-  signIn(username: string, email: string): Promise<any>;
+  signIn(email: string): Promise<any>;
   signup(seller: Seller): Promise<any>;
 }
 export interface UserRepositoryInterface extends Repository {
   findUserName(username: string, excludeId?: string): Promise<boolean | null>;
   findEmail(email: string, excludeId?: string): Promise<boolean | null>;
   findPhoneNumber(phone: number, excludeId?: string): Promise<boolean | null>;
-  signIn(username: string, email: string): Promise<any>;
+  signIn(email: string): Promise<any>;
   signUp(user: User): Promise<any>;
   updatePassword(userid: string, password: string): Promise<any>;
   updateEmail(userid: string, email: string): Promise<any>;

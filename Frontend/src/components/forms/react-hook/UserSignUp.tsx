@@ -1,35 +1,10 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { IoIosCloseCircleOutline } from "react-icons/io";
 import { yupResolver } from "@hookform/resolvers/yup";
-import * as Yup from "yup";
-
-type FormValues = {
-  firstname: string;
-  lastname: string;
-  username: string;
-  email: string;
-  password: string;
-  confirmpassword: string;
-  phone: string;
-  address: string;
-};
-
-const validationSchema = Yup.object({
-  firstname: Yup.string().min(2).required("First name is required"),
-  lastname: Yup.string().required("Last name is required"),
-  username: Yup.string().required("Username is required"),
-  email: Yup.string().email("Invalid email").required("Email is required"),
-  password: Yup.string().min(6).required("Password is required"),
-  confirmpassword: Yup.string()
-    .oneOf([Yup.ref("password")], "Passwords must match")
-    .required("Confirm Password is required"),
-  phone: Yup.string()
-    .required("Phone is required")
-    .matches(/^\d{10}$/, "Phone number must be exactly 10 digits"),
-  address: Yup.string().required("Address is required"),
-});
-
+import type { UserValues } from "../../../types/sellertypes";
+import { UserSignUpSchema } from "../../../validations/formValidations";
+import { useSignUp } from "../../../hooks/useAuth";
 const UserSignUp = () => {
   const [formState, setFormState] = useState(false);
   const [step, setStep] = useState(1);
@@ -42,30 +17,24 @@ const UserSignUp = () => {
     trigger,
     reset,
     formState: { errors },
-  } = useForm<FormValues>({
-    resolver: yupResolver(validationSchema),
+  } = useForm<UserValues>({
+    resolver: yupResolver(UserSignUpSchema),
     mode: "onTouched",
   });
 
-  const onSubmit = async (values: FormValues) => {
+  const signUpMutation = useSignUp("http://localhost:3000/api/user/signup");
+  const onSubmit = async (values: UserValues) => {
     setIsSubmitting(true);
     try {
-      const res = await fetch("http://localhost:3000/api/user/signup", {
-        method: "POST",
-        credentials: "include",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(values),
-      });
-
-      const result = await res.json();
+      const result = await signUpMutation.mutateAsync(values);
       if (result.success === true) {
         reset();
         setResult(true);
       } else {
         setResult(false);
         setIsSubmitting(false);
+        alert("Failed to Sign Up as a User");
+        return;
       }
     } catch (err) {
       setResult(false);
@@ -90,7 +59,7 @@ const UserSignUp = () => {
 
   const handleNext = async () => {
     const result = await trigger(
-      step1Fields.map((f) => f.name as keyof FormValues)
+      step1Fields.map((f) => f.name as keyof UserValues)
     );
     if (result) setStep(2);
   };
@@ -199,15 +168,15 @@ const UserSignUp = () => {
                   {field.label}
                 </label>
                 <input
-                  {...register(field.name as keyof FormValues)}
+                  {...register(field.name as keyof UserValues)}
                   id={field.name}
                   type={field.type}
                   placeholder={field.label}
                   className="h-[40px] bg-amber-50 p-2 shadow-xl rounded-lg"
                 />
-                {errors[field.name as keyof FormValues] && (
+                {errors[field.name as keyof UserValues] && (
                   <p className="text-red-600 ml-1 text-xs">
-                    {errors[field.name as keyof FormValues]?.message as string}
+                    {errors[field.name as keyof UserValues]?.message as string}
                   </p>
                 )}
               </div>

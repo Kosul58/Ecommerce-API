@@ -24,8 +24,8 @@ export default class SellerRepository
     const seller = await this.model.findOne({ phone });
     return seller && seller._id.toString() !== excludeId;
   }
-  public async signIn(username: string, email: string) {
-    return await this.model.findOne({ username, email });
+  public async signIn(email: string) {
+    return await this.model.findOne({ email });
   }
   public async signup(seller: Seller) {
     return await this.create(seller);

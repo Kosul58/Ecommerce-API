@@ -24,9 +24,9 @@ export default class UserRepository
     const user = await this.model.findOne({ phone });
     return user && user._id.toString() !== excludeId;
   }
-  public async signIn(username: string, email: string) {
+  public async signIn(email: string) {
     try {
-      return await this.model.findOne({ username, email });
+      return await this.model.findOne({ email });
     } catch (err) {
       throw err;
     }

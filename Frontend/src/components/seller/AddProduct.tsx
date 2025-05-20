@@ -1,10 +1,8 @@
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import CategorySelect from "./Category";
-
-type CategoryTree = {
-  [key: string]: string | CategoryTree;
-};
+import type { CategoryTree } from "../../types/sellertypes";
+import axios from "axios";
 
 const validationSchema = Yup.object({
   name: Yup.string().required("Username is required"),
@@ -64,17 +62,14 @@ const AddProduct: React.FC<Category> = ({ categoryData }) => {
         form.append(key, String(value));
       }
     });
-
-    for (const [key, value] of form.entries()) {
-      console.log(`${key}:`, value);
-    }
     try {
-      const res = await fetch("http://localhost:3000/api/product", {
-        method: "POST",
-        credentials: "include",
-        body: form,
+      const res = await axios.post("http://localhost:3000/api/product", form, {
+        withCredentials: true,
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
       });
-      const result = await res.json();
+      const result = res.data;
       if (result.success === true) {
         sessionStorage.setItem("productdata", JSON.stringify(result.data));
         resetForm();
@@ -232,7 +227,6 @@ const AddProduct: React.FC<Category> = ({ categoryData }) => {
               />
             </div>
 
-            {/* Submit button */}
             <div className="w-full flex justify-center mt-6">
               <button
                 type="submit"

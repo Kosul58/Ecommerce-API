@@ -1,32 +1,15 @@
 import React, { useEffect, useState } from "react";
-import SellerProducts from "./SellerProducts";
-import AddProduct from "./AddProduct";
+import SellerProducts from "../components/seller/SellerProducts";
+import AddProduct from "../components/seller/AddProduct";
 import { useNavigate } from "react-router-dom";
+import type { CategoryTree, SellerResponse } from "../types/sellertypes";
 
 const SalesDetails = () => (
   <div className="text-white text-xl">Sales Details View</div>
 );
 
-export interface Seller {
-  id: string;
-  username: string;
-  email: string;
-  phone: number;
-  address: string;
-  image: string;
-}
-
-export interface SellerResponse {
-  result: Seller;
-  token: string;
-}
-type CategoryTree = {
-  [key: string]: string | CategoryTree;
-};
-
 const SellerDashboard = () => {
   const [categoryData, setCategoryData] = useState<CategoryTree | null>(null);
-
   const navigate = useNavigate();
   const [sellerData, setSellerData] = useState<SellerResponse | null>(null);
   const [selectedSection, setSelectedSection] = useState<
@@ -122,7 +105,7 @@ const SellerDashboard = () => {
                   : "bg-white"
               }`}
             >
-              Seller Details
+              My Details
             </button>
             <button
               onClick={() => setSelectedSection("viewproducts")}
@@ -132,7 +115,7 @@ const SellerDashboard = () => {
                   : "bg-white"
               }`}
             >
-              Seller Products
+              My Products
             </button>
             <button
               onClick={() => setSelectedSection("addProduct")}

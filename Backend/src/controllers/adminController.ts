@@ -40,15 +40,14 @@ export default class AdminController {
   };
 
   public signIn: RequestHandler = async (req, res, next) => {
-    const { username, email, password } = req.body;
+    const { email, password } = req.body;
     try {
-      logger.info(`Admin attempting to sign in: ${username || email}`);
+      logger.info(`Admin attempting to sign in: ${email}`);
       const { result, token } = await this.adminServices.signIn(
-        username,
         email,
         password
       );
-      logger.info(`Admin ${username} signed in successfully`);
+      logger.info(`Admin ${result.username} signed in successfully`);
       return this.responseHandler.success(res, "Signin successful", {
         result,
         token,
@@ -189,8 +188,6 @@ export default class AdminController {
       return next(err);
     }
   };
-
-  // method to get data from the file mongo database
   public getFileData: RequestHandler = async (req, res, next) => {
     try {
       logger.info("Fetching file data from database");

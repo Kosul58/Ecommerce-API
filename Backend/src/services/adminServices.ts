@@ -46,9 +46,9 @@ export default class AdminServices {
     }
   }
 
-  public async signIn(username: string, email: string, password: string) {
+  public async signIn(email: string, password: string) {
     try {
-      const result = await this.userServices.signIn(username, email, password);
+      const result = await this.userServices.signIn(email, password);
       return result;
     } catch (err) {
       logger.error("Error during sign-in process");

@@ -1,6 +1,6 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import NavBar from "./components/Navbar";
-import SellerDashboard from "./components/seller/SellerDashboard";
+import SellerDashboard from "./pages/SellerDashboard";
 import ProtectedRoute from "./components/ProtectedRoute";
 import { useState } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";

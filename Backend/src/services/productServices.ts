@@ -383,6 +383,22 @@ export default class ProductServices {
         (error as any).statusCode = 500;
         throw error;
       }
+      const deletedImages = result.images.map((image: string) => {
+        const match = image.match(/products\/.+/);
+        return match ? match[0] : "";
+      });
+
+      const cloudResult = await this.cloudService.deleteCloudFiles(
+        deletedImages,
+        "upload",
+        "image"
+      );
+
+      if (cloudResult.length === 0) {
+        logger.warn(
+          "Product deleted from database but product data could not be deleted from the cloud"
+        );
+      }
       logger.info(`Product with ID: ${productid} deleted successfully`);
       return "success";
     } catch (err) {
@@ -397,13 +413,32 @@ export default class ProductServices {
       if (!products || products.length === 0) {
         return null;
       }
+      const cloudImages = [];
+      for (const product of products) {
+        const deletedImages = product.images.map((image: string) => {
+          const match = image.match(/products\/.+/);
+          return match ? match[0] : "";
+        });
 
+        cloudImages.push(...deletedImages);
+      }
       const deleteIds = products.map((p: any) => p.id);
       const result = await this.productRepository.deleteProducts(deleteIds);
       if (!result || result.deletedCount === 0) {
         const error = new Error("Products deletion failed");
         (error as any).statusCode = 500;
         throw error;
+      }
+
+      const cloudResult = await this.cloudService.deleteCloudFiles(
+        cloudImages,
+        "upload",
+        "image"
+      );
+      if (cloudResult.length === 0) {
+        logger.warn(
+          "Products deleted from database but products data could not be deleted from the cloud"
+        );
       }
       logger.info(`Products deleted successfully for seller: ${id}`);
       return "success";
