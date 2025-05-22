@@ -4,9 +4,11 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { IoIosCloseCircleOutline } from "react-icons/io";
 import type { SignInValues } from "../../../types/sellertypes";
 import { SignInSchema } from "../../../validations/formValidations";
-import { useSignIn } from "../../../hooks/useAuth";
+import { useUserSignIn } from "../../../hooks/useAuth";
+import { useNavigate } from "react-router-dom";
 
 const UserSignIn = () => {
+  const navigate = useNavigate();
   const [formState, setFormState] = useState(false);
   const {
     register,
@@ -18,15 +20,16 @@ const UserSignIn = () => {
     mode: "onTouched",
   });
 
-  const signInMutation = useSignIn("http://localhost:3000/api/user/signin");
+  const signInMutation = useUserSignIn();
   const onSubmit = async (values: SignInValues) => {
     try {
       const result = await signInMutation.mutateAsync(values);
       if (result.success === true) {
         reset();
-        sessionStorage.setItem("userData", result.data);
+        navigate("/userdashboard");
       } else {
         alert("Failed to Sign In as a User");
+        navigate("/");
       }
       console.log("Server response:", result);
     } catch (err) {

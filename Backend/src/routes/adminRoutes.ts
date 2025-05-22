@@ -27,6 +27,9 @@ adminRoutes.post(
   adminController.signIn
 );
 
+// genereate new access token
+adminRoutes.post("/refreshtoken", adminController.refreshToken);
+
 // Get one cloud file
 adminRoutes.get(
   "/cloudFile",

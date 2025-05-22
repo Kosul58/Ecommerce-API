@@ -5,7 +5,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { useNavigate } from "react-router-dom";
 import type { SellerValues } from "../../../types/sellertypes";
 import { SellerSignUpSchema } from "../../../validations/formValidations";
-import { useSignUp } from "../../../hooks/useAuth";
+import { useSellerSignUp } from "../../../hooks/useAuth";
 
 const SellerSignUp = () => {
   const [formState, setFormState] = useState(false);
@@ -37,26 +37,26 @@ const SellerSignUp = () => {
     { label: "Phone", name: "phone", type: "tel" },
     { label: "Address", name: "address", type: "text" },
   ];
-  const signUpMutation = useSignUp("http://localhost:3000/api/seller/signup");
+  const signUpMutation = useSellerSignUp();
   const onSubmit = async (values: SellerValues) => {
     setIsSubmitting(true);
-
     try {
       const result = await signUpMutation.mutateAsync(values);
       if (result.success === true) {
         reset();
         setResult(true);
-        sessionStorage.setItem("sellerdata", JSON.stringify(result.data));
         navigate("/sellerdashboard");
       } else {
         setResult(false);
         setIsSubmitting(false);
         alert("Failed to Sign Up as a Seller");
+        navigate("/");
       }
     } catch (err) {
       console.error("Error:", err);
       setResult(false);
       setIsSubmitting(false);
+      navigate("/");
     }
   };
 

@@ -1,17 +1,16 @@
 import React, { useState } from "react";
-import type { Product, SellerData } from "../../types/sellertypes";
+import type { Datum, SellerData } from "../../types/sellertypes";
 import SearchBar from "./SearchBar";
 import ViewProduct from "./ViewProduct";
 import { FaFilter } from "react-icons/fa";
 import ProductIndicator from "./ProductIndicator";
-import { useMyProducts } from "../../hooks/useProductList";
+import { useProducts } from "../../api/seller";
 
-const SellerProducts: React.FC<SellerData> = ({ seller, categoryData }) => {
+const SellerProducts: React.FC<SellerData> = ({ seller }) => {
   console.log(seller);
-  console.log(categoryData);
-  const { data: productData, isLoading, isError, error } = useMyProducts();
+  const { data: productData, isLoading, isError, error } = useProducts();
   const [viewProduct, setViewProduct] = useState(false);
-  const [viewData, setViewData] = useState<Product | null>(null);
+  const [viewData, setViewData] = useState<Datum | null>(null);
   const [viewFilter, setViewFilter] = useState(false);
   const [openFilter, setOpenFilter] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
@@ -22,11 +21,10 @@ const SellerProducts: React.FC<SellerData> = ({ seller, categoryData }) => {
   const [tempMinPrice, setTempMinPrice] = useState("");
   const [tempMaxPrice, setTempMaxPrice] = useState("");
 
-  const filteredProducts = productData?.filter((product) => {
+  const filteredProducts = productData?.data.filter((product: Datum) => {
     const matchesSearch =
       product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       product.category.toLowerCase().includes(searchQuery.toLowerCase());
-
     const matchesCategory =
       categoryFilter === "" ||
       product.category.toLowerCase().includes(categoryFilter.toLowerCase());
@@ -48,20 +46,20 @@ const SellerProducts: React.FC<SellerData> = ({ seller, categoryData }) => {
     return <div>Error: {error?.message}</div>;
   }
 
-  if (!productData || productData.length === 0) {
+  if (!productData || productData.data.length === 0) {
     return <div>No products found</div>;
   }
 
   return (
-    <section className="w-[95%] h-[95%] flex flex-col items-center overflow-y-auto scrollbar-cool relative">
-      <div className="absolute top-2 right-2 text-white flex items-center">
-        {viewFilter && <p className="text-2xl mr-4">Filter:</p>}
+    <section className="w-[100%] h-[100%] flex flex-col  items-center overflow-y-auto scrollbar-cool relative">
+      <div className="absolute top-5 left-5 text-white flex items-center">
         <FaFilter
           className="size-7 cursor-pointer"
           onClick={() => setOpenFilter(!openFilter)}
           onMouseEnter={() => setViewFilter(true)}
           onMouseLeave={() => setViewFilter(false)}
         />
+        {viewFilter && <p className="text-2xl mr-4">Filter:</p>}
       </div>
 
       {openFilter && (
@@ -135,10 +133,10 @@ const SellerProducts: React.FC<SellerData> = ({ seller, categoryData }) => {
         {filteredProducts && filteredProducts.length === 0 ? (
           <p>No products match your search.</p>
         ) : (
-          filteredProducts?.map((product: Product) => (
+          filteredProducts?.map((product: Datum) => (
             <div
               key={product.id}
-              className="py-8 w-[300px] h-[380px] flex flex-col items-center justify-evenly bg-white rounded-lg m-2 shadow-2xl hover:scale-101 cursor-pointer min-w-[300px] relative"
+              className="p-4 py-8 w-[30%] h-[380px] flex flex-col items-center justify-evenly bg-white rounded-lg m-2 shadow-2xl hover:scale-101 cursor-pointer min-w-[300px] relative"
               onClick={() => {
                 setViewProduct(true);
                 setViewData(product);
@@ -149,7 +147,7 @@ const SellerProducts: React.FC<SellerData> = ({ seller, categoryData }) => {
                 <img
                   src={product.images[0]}
                   alt={product.name}
-                  className="h-[70%] w-[300px] object-cover border"
+                  className="h-[80%] w-[100%] object-cover"
                 />
               )}
               <div className="w-full h-[100px] p-1">

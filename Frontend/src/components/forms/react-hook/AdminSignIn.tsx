@@ -4,9 +4,11 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { IoIosCloseCircleOutline } from "react-icons/io";
 import type { SignInValues } from "../../../types/sellertypes";
 import { SignInSchema } from "../../../validations/formValidations";
-import { useSignIn } from "../../../hooks/useAuth";
+import { useAdminSignIn } from "../../../hooks/useAuth";
+import { useNavigate } from "react-router-dom";
 
 const AdminSignIn = () => {
+  const navigate = useNavigate();
   const [formState, setFormState] = useState(false);
   const {
     register,
@@ -18,21 +20,22 @@ const AdminSignIn = () => {
     mode: "onTouched",
   });
 
-  const signInMutation = useSignIn("http://localhost:3000/api/admin/signin");
+  const signInMutation = useAdminSignIn();
 
   const onSubmit = async (values: SignInValues) => {
     try {
-      const res = await signInMutation.mutateAsync(values);
-      const result = res.data;
+      const result = await signInMutation.mutateAsync(values);
       if (result.success === true) {
         reset();
-        sessionStorage.setItem("userData", result.data);
+        navigate("/admindashboard");
       } else {
         alert("Failed to Sign In as a Admin");
+        navigate("/");
       }
       console.log("Server response:", result);
     } catch (err) {
       console.error("Error:", err);
+      navigate("/");
     }
   };
 

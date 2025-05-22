@@ -46,7 +46,7 @@ export default class CategoryController {
         logger.warn("No categories found");
         return this.responseHandler.notFound(res, "No categories found");
       }
-      logger.info("Categories read successful", { result });
+      logger.info("Categories read successful");
       return this.responseHandler.success(
         res,
         "Categories read successful",

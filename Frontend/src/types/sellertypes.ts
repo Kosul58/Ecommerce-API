@@ -15,6 +15,12 @@ export interface CategoryTree {
   [key: string]: string | CategoryTree;
 }
 
+export interface CategoryListResponse {
+  success: boolean;
+  message: string;
+  data: CategoryTree;
+}
+
 export interface Product {
   id: string;
   name: string;
@@ -29,7 +35,7 @@ export interface Product {
 
 export interface SellerData {
   seller: Seller;
-  categoryData: CategoryTree | null;
+  // categoryData: CategoryTree | null;
 }
 
 export type SignInValues = {
@@ -56,3 +62,50 @@ export type SellerValues = BaseUser & {
 };
 
 export type SignUpValues = UserValues | SellerValues;
+
+export interface AddProduct {
+  name: string;
+  price: number;
+  inventory: number;
+  category: string;
+  description: string;
+  images: File[];
+}
+
+export interface ProductListResponse {
+  success: boolean;
+  message: string;
+  data: Datum[];
+}
+
+export interface Datum {
+  id: string;
+  name: string;
+  sellerid: string;
+  price: number;
+  description: string;
+  category: string;
+  inventory: number;
+  active: boolean;
+  images: string[];
+}
+
+export interface SignInResponse {
+  success: boolean;
+  message: string;
+  data: Data;
+}
+
+export interface Data {
+  result: Result;
+  token: string;
+}
+
+export interface Result {
+  id: string;
+  username: string;
+  email: string;
+  phone: number;
+  address: string;
+  image: string;
+}

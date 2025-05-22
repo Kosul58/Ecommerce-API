@@ -1,26 +1,16 @@
 import React from "react";
 import { IoClose } from "react-icons/io5";
 import ImageSlider from "./ImageSlider";
+import type { Datum } from "../../types/sellertypes";
 
 interface ProductData {
-  viewData: {
-    id: string;
-    name: string;
-    sellerid: string;
-    price: number;
-    description: string;
-    category: string;
-    inventory: string;
-    active: boolean;
-    images: string[];
-  } | null;
+  viewData: Datum;
 
   setViewProduct: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 const ViewProduct: React.FC<ProductData> = ({ viewData, setViewProduct }) => {
   if (!viewData) return <div>No Product Data</div>;
-
   return (
     <div className="w-[80vw] h-[80vh] fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white rounded-xl shadow-lg p-6 flex flex-col z-10 ">
       <IoClose

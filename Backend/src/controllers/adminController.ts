@@ -14,6 +14,28 @@ export default class AdminController {
     @inject(CloudService) private cloudService: CloudService
   ) {}
 
+  public refreshToken: RequestHandler = async (req, res, next) => {
+    const token = req.cookies.refreshToken;
+    try {
+      logger.info("Generating new access token based on refresh token");
+      const data = await this.adminServices.accessToken(token);
+      logger.info("New Access token generated successfully");
+      res.cookie("token", data, {
+        httpOnly: true,
+        secure: false,
+        sameSite: "lax",
+        maxAge: 1000 * 60 * 2, // 15 min bro
+        path: "/",
+      });
+      return this.responseHandler.created(
+        res,
+        "New Access token generated successfully"
+      );
+    } catch (err) {
+      logger.error("Failed to generate new Access Token ", err);
+      return next(err);
+    }
+  };
   public signUp: RequestHandler = async (req, res, next) => {
     const user: AddUser = req.body;
     // const file = req.file as Express.Multer.File;

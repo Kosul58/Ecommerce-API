@@ -38,10 +38,9 @@ categoryRoutes.get(
 );
 categoryRoutes.get(
   "/",
-  verifyRole.verify("Admin"),
+  verifyRole.verify("Admin", "Seller"),
   categoryController.readCategories
 );
-
 categoryRoutes.get(
   "/:categoryid",
   verifyRole.verify("Admin"),

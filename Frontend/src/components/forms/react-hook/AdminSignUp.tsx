@@ -4,9 +4,11 @@ import { IoIosCloseCircleOutline } from "react-icons/io";
 import { yupResolver } from "@hookform/resolvers/yup";
 import type { UserValues } from "../../../types/sellertypes";
 import { UserSignUpSchema } from "../../../validations/formValidations";
-import { useSignUp } from "../../../hooks/useAuth";
+import { useAdminSignUp } from "../../../hooks/useAuth";
+import { useNavigate } from "react-router-dom";
 
 const AdminSignUp = () => {
+  const navigate = useNavigate();
   const [formState, setFormState] = useState(false);
   const [step, setStep] = useState(1);
   const [result, setResult] = useState<boolean | null>(null);
@@ -22,7 +24,7 @@ const AdminSignUp = () => {
     mode: "onTouched",
   });
 
-  const signUpMutation = useSignUp("http://localhost:3000/api/admin/signup");
+  const signUpMutation = useAdminSignUp();
   const onSubmit = async (values: UserValues) => {
     setIsSubmitting(true);
     try {
@@ -30,15 +32,17 @@ const AdminSignUp = () => {
       if (result.success === true) {
         reset();
         setResult(true);
+        navigate("/admindashboard");
       } else {
         setResult(false);
         setIsSubmitting(false);
         alert("Failed to Sign Up as a Admin");
+        navigate("/");
       }
-    } catch (err) {
+    } catch {
       setResult(false);
       setIsSubmitting(false);
-      throw err;
+      navigate("/");
     }
   };
 

@@ -4,6 +4,7 @@ import SellerDashboard from "./pages/SellerDashboard";
 import ProtectedRoute from "./components/ProtectedRoute";
 import { useState } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import CategorySelect from "./components/selects/CategorySelect";
 const queryClient = new QueryClient();
 const App = () => {
   const [sellerSigned, setSellerSigned] = useState(true);
@@ -18,6 +19,7 @@ const App = () => {
                 <>
                   <main className="w-full h-screen flex flex-col min-h-fit bg-black gap-4 justify-center items-center">
                     <NavBar setSellerSigned={setSellerSigned} />
+                    <CategorySelect />
                   </main>
                 </>
               }

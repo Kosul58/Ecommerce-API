@@ -24,6 +24,18 @@ export default class AdminServices {
     @inject(AuthServices) private authService: AuthServices
   ) {}
 
+  public async accessToken(refreshToken: string) {
+    try {
+      const verifyToken = this.authService.verifyRefreshToken(refreshToken);
+      if (!verifyToken) {
+        logger.error("Failed to verify refresh token");
+        return null;
+      }
+      return this.authService.newAccessToken(refreshToken);
+    } catch (err) {
+      throw err;
+    }
+  }
   public async signUp(
     user: AddUser
     //  file: Express.Multer.File

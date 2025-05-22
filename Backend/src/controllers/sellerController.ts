@@ -50,7 +50,7 @@ export default class SellerController {
     // const file = req.file as Express.Multer.File;
     try {
       logger.info(`Attempting to sign up seller: ${seller.username}`);
-      const { result, token } = await this.sellerServices.signUp(
+      const { result, token, refreshToken } = await this.sellerServices.signUp(
         seller
         //  file
       );
@@ -59,13 +59,21 @@ export default class SellerController {
         return this.responseHandler.error(res, "Failed to sign up seller");
       }
       logger.info(`Seller created successfully: ${seller.username}`);
-      res.cookie("token", token, {
-        httpOnly: true,
-        secure: false,
-        sameSite: "lax",
-        maxAge: 3600000 * 8,
-        path: "/",
-      });
+      res
+        .cookie("token", token, {
+          httpOnly: true,
+          secure: false,
+          sameSite: "lax",
+          maxAge: 1000 * 60 * 15, // 15 min bro
+          path: "/",
+        })
+        .cookie("refreshToken", refreshToken, {
+          httpOnly: true,
+          secure: false,
+          sameSite: "lax",
+          maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days bro
+          path: "/",
+        });
       return this.responseHandler.created(res, "Seller created successfully", {
         result,
         token,
@@ -80,7 +88,7 @@ export default class SellerController {
     const { email, password } = req.body;
     try {
       logger.info(`Attempting to sign in seller: ${email}`);
-      const { result, token } = await this.sellerServices.signIn(
+      const { result, token, refreshToken } = await this.sellerServices.signIn(
         email,
         password
       );
@@ -89,13 +97,21 @@ export default class SellerController {
         return this.responseHandler.error(res, "No seller found");
       }
       logger.info(`Seller sign-in successful: ${email}`);
-      res.cookie("token", token, {
-        httpOnly: true,
-        secure: false,
-        sameSite: "lax",
-        maxAge: 3600000 * 8,
-        path: "/",
-      });
+      res
+        .cookie("token", token, {
+          httpOnly: true,
+          secure: false,
+          sameSite: "lax",
+          maxAge: 1000 * 60 * 1, // 15 min bro
+          path: "/",
+        })
+        .cookie("refreshToken", refreshToken, {
+          httpOnly: true,
+          secure: false,
+          sameSite: "lax",
+          maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days bro
+          path: "/",
+        });
       return this.responseHandler.success(res, "Seller sign in successful", {
         result,
         token,

@@ -1,8 +1,7 @@
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
-import CategorySelect from "./Category";
-import type { CategoryTree } from "../../types/sellertypes";
-import axios from "axios";
+import ProcutCategory from "./ProductCategory";
+import { useAddProduct } from "../../api/product";
 
 const validationSchema = Yup.object({
   name: Yup.string().required("Username is required"),
@@ -43,11 +42,9 @@ const initialValues = {
   description: "",
   images: [] as File[],
 };
-interface Category {
-  categoryData: CategoryTree | null;
-}
 
-const AddProduct: React.FC<Category> = ({ categoryData }) => {
+const AddProduct = () => {
+  const { mutateAsync } = useAddProduct();
   const handleSubmit = async (
     values: typeof initialValues,
     { resetForm }: { resetForm: () => void }
@@ -55,31 +52,25 @@ const AddProduct: React.FC<Category> = ({ categoryData }) => {
     const form = new FormData();
     Object.entries(values).forEach(([key, value]) => {
       if (key === "images" && Array.isArray(value)) {
-        value.forEach((file) => {
-          form.append("images", file);
-        });
+        value.forEach((file) => form.append("images", file));
       } else {
         form.append(key, String(value));
       }
     });
+
     try {
-      const res = await axios.post("http://localhost:3000/api/product", form, {
-        withCredentials: true,
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      });
-      const result = res.data;
+      const result = await mutateAsync(form);
       if (result.success === true) {
         sessionStorage.setItem("productdata", JSON.stringify(result.data));
         resetForm();
+      } else {
+        console.log("Failed to add product:", result.message);
       }
       console.log("Server response:", result);
     } catch (err) {
       console.error("Error:", err);
     }
   };
-
   return (
     <section className="w-[95%] h-[95%] flex flex-col justify-center items-center gap-4 overflow-y-auto ">
       <Formik
@@ -160,18 +151,16 @@ const AddProduct: React.FC<Category> = ({ categoryData }) => {
                 <label className="text-sm font-semibold text-gray-700 ml-1 mb-[-1px] z-10">
                   Category:
                 </label>
-                <CategorySelect
-                  data={categoryData || {}}
-                  onSelect={(categoryId) => {
+                <ProcutCategory
+                  onCategorySelect={(categoryName) => {
                     if (
-                      categoryId === "select" ||
-                      categoryId === "" ||
-                      !categoryId
+                      categoryName === "select" ||
+                      categoryName === "" ||
+                      !categoryName
                     ) {
-                      // if the user selects the placeholder option
                       setFieldValue("category", "");
                     } else {
-                      setFieldValue("category", categoryId);
+                      setFieldValue("category", categoryName);
                     }
                   }}
                 />

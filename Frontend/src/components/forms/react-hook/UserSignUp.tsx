@@ -4,8 +4,10 @@ import { IoIosCloseCircleOutline } from "react-icons/io";
 import { yupResolver } from "@hookform/resolvers/yup";
 import type { UserValues } from "../../../types/sellertypes";
 import { UserSignUpSchema } from "../../../validations/formValidations";
-import { useSignUp } from "../../../hooks/useAuth";
+import { useUserSignUp } from "../../../hooks/useAuth";
+import { useNavigate } from "react-router-dom";
 const UserSignUp = () => {
+  const navigate = useNavigate();
   const [formState, setFormState] = useState(false);
   const [step, setStep] = useState(1);
   const [result, setResult] = useState<boolean | null>(null);
@@ -22,7 +24,7 @@ const UserSignUp = () => {
     mode: "onTouched",
   });
 
-  const signUpMutation = useSignUp("http://localhost:3000/api/user/signup");
+  const signUpMutation = useUserSignUp();
   const onSubmit = async (values: UserValues) => {
     setIsSubmitting(true);
     try {
@@ -30,11 +32,12 @@ const UserSignUp = () => {
       if (result.success === true) {
         reset();
         setResult(true);
+        navigate("/userdashboard");
       } else {
         setResult(false);
         setIsSubmitting(false);
         alert("Failed to Sign Up as a User");
-        return;
+        navigate("/");
       }
     } catch (err) {
       setResult(false);

@@ -181,6 +181,12 @@ export default class SellerServices {
           seller.email,
           result.role
         ),
+        refreshToken: this.authService.generateRefreshToken(
+          result._id.toString(),
+          seller.username,
+          seller.email,
+          result.role
+        ),
       };
     } catch (err) {
       logger.error("Failed to sign up seller");
@@ -196,17 +202,21 @@ export default class SellerServices {
         (error as any).statusCode = 404;
         throw error;
       }
-
       const check = await Utils.comparePassword(password, result.password);
       if (!check) {
         const error = new Error("Signin failed. Incorrect password");
         (error as any).statusCode = 401;
         throw error;
       }
-
       return {
         result: this.returnData(result),
         token: this.authService.generateToken(
+          result._id.toString(),
+          result.username,
+          email,
+          result.role
+        ),
+        refreshToken: this.authService.generateRefreshToken(
           result._id.toString(),
           result.username,
           email,

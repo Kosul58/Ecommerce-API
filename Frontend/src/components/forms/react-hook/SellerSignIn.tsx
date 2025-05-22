@@ -5,7 +5,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { useNavigate } from "react-router-dom";
 import type { SignInValues } from "../../../types/sellertypes";
 import { SignInSchema } from "../../../validations/formValidations";
-import { useSignIn } from "../../../hooks/useAuth";
+import { useSellerSignIn } from "../../../hooks/useAuth";
 interface SignInProps {
   setSellerSigned: React.Dispatch<React.SetStateAction<boolean>>;
 }
@@ -23,22 +23,23 @@ const SellerSignIn: React.FC<SignInProps> = ({ setSellerSigned }) => {
     resolver: yupResolver(SignInSchema),
     mode: "onTouched",
   });
-  const signInMutation = useSignIn("http://localhost:3000/api/seller/signin");
+  const { mutateAsync: signIn, isPending } = useSellerSignIn();
 
   const onSubmit = async (values: SignInValues) => {
     try {
-      const result = await signInMutation.mutateAsync(values);
+      const result = await signIn(values);
       if (result.success === true) {
         reset();
         setSellerSigned(true);
-        sessionStorage.setItem("sellerdata", JSON.stringify(result.data));
         navigate("/sellerdashboard");
       } else {
         alert("Failed to Sign In as a Seller");
+        navigate("/");
       }
       console.log("Server response:", result);
     } catch (err) {
       console.error("Error:", err);
+      navigate("/");
     }
   };
 
@@ -100,7 +101,7 @@ const SellerSignIn: React.FC<SignInProps> = ({ setSellerSigned }) => {
               type="submit"
               className="px-10 py-2 bg-indigo-500 text-white rounded-lg shadow-lg cursor-pointer hover:scale-110"
             >
-              Sign In
+              {isPending ? "Signining in ..." : "Sign In"}
             </button>
           </div>
         </form>

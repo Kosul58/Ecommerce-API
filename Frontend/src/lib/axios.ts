@@ -34,9 +34,9 @@ export const addProduct = axios.create({
   },
 });
 
-export const sellerSignUp = signIn("http://localhost:3000/api/seller/signup");
-export const userSignUp = signIn("http://localhost:3000/api/user/signup");
-export const adminSignUp = signUp("http://localhost:3000/api/admin/signup");
-export const sellerSignIn = signIn("http://localhost:3000/api/seller/signin");
-export const userSignIn = signUp("http://localhost:3000/api/user/signin");
-export const adminSignIn = signUp("http://localhost:3000/api/admin/signin");
+// export const sellerSignUp = signIn("http://localhost:3000/api/seller/signup");
+// export const userSignUp = signIn("http://localhost:3000/api/user/signup");
+// export const adminSignUp = signUp("http://localhost:3000/api/admin/signup");
+// export const sellerSignIn = signIn("http://localhost:3000/api/seller/signin");
+// export const userSignIn = signUp("http://localhost:3000/api/user/signin");
+// export const adminSignIn = signUp("http://localhost:3000/api/admin/signin");
