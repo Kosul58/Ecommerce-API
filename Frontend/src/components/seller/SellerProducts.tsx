@@ -5,6 +5,7 @@ import ViewProduct from "./ViewProduct";
 import { FaFilter } from "react-icons/fa";
 import ProductCard from "../cards/ProductCard";
 import { useProducts } from "../../api/seller";
+import ProductCategory from "./ProductCategory";
 
 const SellerProducts: React.FC<SellerData> = ({ seller }) => {
   console.log(seller);
@@ -51,7 +52,7 @@ const SellerProducts: React.FC<SellerData> = ({ seller }) => {
   }
 
   return (
-    <section className="w-[95%] h-[100%] flex flex-col  items-center overflow-y-auto scrollbar-cool relative xl:left-20">
+    <section className="w-[95%] h-[100%] flex flex-col  items-center overflow-y-auto scrollbar-cool relative md:left-20">
       <div className="absolute top-5 right-5 text-white flex items-center">
         {viewFilter && <p className="text-2xl mr-4">Filter:</p>}
         <FaFilter
@@ -68,12 +69,7 @@ const SellerProducts: React.FC<SellerData> = ({ seller }) => {
 
           <label className="flex flex-col">
             Category:
-            <input
-              type="text"
-              value={tempCategory}
-              onChange={(e) => setTempCategory(e.target.value)}
-              className="border p-2 rounded"
-            />
+            <ProductCategory onCategorySelect={(cat) => setTempCategory(cat)} />
           </label>
           <label className="flex flex-col">
             Min Price:

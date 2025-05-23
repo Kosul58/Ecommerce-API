@@ -24,6 +24,11 @@ interface AddImage {
   message: string;
   data: string[];
 }
+
+interface RemoveImage {
+  success: boolean;
+  message: string;
+}
 interface AddImagePayload {
   formData: FormData;
   url: string;
@@ -37,6 +42,52 @@ export const useAddImages = () => {
           "Content-Type": "multipart/form-data",
         },
       });
+      return response.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["Products"] });
+    },
+    retry: false,
+  });
+};
+interface RemoveImagePayload {
+  imageUrl: string[];
+  productid: string;
+}
+
+export const useRemoveImages = () => {
+  const queryClient = useQueryClient();
+  return useMutation<RemoveImage, Error, RemoveImagePayload>({
+    mutationFn: async (values) => {
+      const response = await axios.delete("/product/image", { data: values });
+      return response.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["Products"] });
+    },
+    retry: false,
+  });
+};
+
+interface UpdatePayload {
+  name: string;
+  price: number;
+  inventory: number;
+  category: string;
+  description: string;
+  url: string;
+}
+interface UpdateProduct {
+  success: boolean;
+  message: string;
+  data: string;
+}
+
+export const useUpdateProduct = () => {
+  const queryClient = useQueryClient();
+  return useMutation<UpdateProduct, Error, UpdatePayload>({
+    mutationFn: async (values) => {
+      const response = await axios.put(values.url, values);
       return response.data;
     },
     onSuccess: () => {

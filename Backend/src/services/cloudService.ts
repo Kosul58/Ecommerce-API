@@ -358,15 +358,19 @@ export default class CloudService implements CloudinaryService {
   //   }
   // }
 
-  public async filterData(imageUrl: string) {
+  public async filterData(imageUrl: string[]) {
     try {
-      const data = await this.fileRepository.filterFile(imageUrl);
-      if (!data) {
-        logger.warn("No data found for the given url");
-        return null;
+      const ids = [];
+      for (const url of imageUrl) {
+        const data = await this.fileRepository.filterFile(url);
+        if (!data) {
+          logger.warn("No data found for the given url");
+          return null;
+        }
+        const public_id = `${data.blob_path}/${data.publicid}`;
+        ids.push(public_id);
       }
-      const public_id = `${data.blob_path}/${data.publicid}`;
-      return public_id;
+      return ids;
     } catch (err) {
       throw err;
     }

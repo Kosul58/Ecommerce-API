@@ -12,13 +12,15 @@ type Section =
   | "viewproducts"
   | "addProduct"
   | "logout"
-  | "seller";
+  | "seller"
+  | "Orders";
 
 const menuItems: { key: Section; label: string }[] = [
   { key: "sales", label: "Sales Details" },
   { key: "productdetails", label: "Product Details" },
   { key: "seller", label: "My Details" },
   { key: "viewproducts", label: "My Products" },
+  { key: "Orders", label: "Orders" },
   { key: "addProduct", label: "Add Product" },
 ];
 
@@ -26,6 +28,9 @@ const SalesDetails = () => (
   <div className="text-white text-xl">Sales Details View</div>
 );
 
+const Orders = () => (
+  <div className="text-white text-xl">Orders Details View</div>
+);
 const SellerDashboard = () => {
   const navigate = useNavigate();
   const [hideHamburger, setHideHamburger] = useState(true); // true means hidden
@@ -36,6 +41,7 @@ const SellerDashboard = () => {
     | "addProduct"
     | "logout"
     | "seller"
+    | "Orders"
   >("sales");
 
   const { data: sellerData, isError, isLoading } = useSellerData();
@@ -128,6 +134,7 @@ const SellerDashboard = () => {
           <SellerProducts seller={sellerData} />
         )}
         {selectedSection === "addProduct" && <AddProduct />}
+        {selectedSection === "Orders" && <Orders />}
       </main>
     </section>
   );

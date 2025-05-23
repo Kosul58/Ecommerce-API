@@ -11,7 +11,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onClick }) => {
   return (
     <div
       onClick={onClick}
-      className="w-full  max-md:w-[200px] max-lg:w-[260px] xl:w-[300px] rounded-lg m-4 bg-white shadow-lg overflow-hidden cursor-pointer transform transition duration-300 hover:shadow-xl hover:scale-101 relative"
+      className="w-full  max-md:w-[200px] max-lg:w-[260px] xl:w-[300px] rounded-lg m-4 bg-white shadow-lg overflow-hidden cursor-pointer transform transition duration-300 hover:shadow-xl hover:scale-101 relative max-w-[300px]"
     >
       <ProductIndicator active={product.active} />
 

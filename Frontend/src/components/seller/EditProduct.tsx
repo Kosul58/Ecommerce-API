@@ -4,9 +4,14 @@ import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { IoClose, IoAddCircleOutline } from "react-icons/io5";
 import { MdDeleteForever } from "react-icons/md";
-import { useAddImages } from "../../api/product";
-
+import {
+  useAddImages,
+  useRemoveImages,
+  useUpdateProduct,
+} from "../../api/product";
 import { EditProductSchema } from "../../validations/productValidation";
+import ProductCategory from "./ProductCategory";
+
 interface EditProps {
   product: Datum;
   onClose: () => void;
@@ -24,14 +29,20 @@ interface EditProductForm {
 const EditProduct: React.FC<EditProps> = ({ product, onClose, onSave }) => {
   const [images, setImages] = useState<string[]>(product.images || []);
   const [deleteMode, setDeleteMode] = useState(false);
-  const [selectedToDelete, setSelectedToDelete] = useState<Set<number>>(
+  const [selectedToDelete, setSelectedToDelete] = useState<Set<string>>(
     new Set()
   );
   const { mutateAsync: uploadImages, isPending } = useAddImages();
+  const { mutateAsync: removeImages, isPending: removalPending } =
+    useRemoveImages();
+
+  const { mutateAsync: updateProduct, isPending: updatePending } =
+    useUpdateProduct();
   const {
     register,
     handleSubmit,
     formState: { errors },
+    setValue,
   } = useForm<EditProductForm>({
     defaultValues: {
       name: product.name,
@@ -41,10 +52,28 @@ const EditProduct: React.FC<EditProps> = ({ product, onClose, onSave }) => {
       description: product.description ?? "",
     },
     resolver: yupResolver(EditProductSchema),
+    mode: "onTouched",
   });
 
-  const onSubmit = (data: EditProductForm) => {
+  const onSubmit = async (data: EditProductForm) => {
     const updatedProduct: Datum = { ...product, ...data, images };
+    const payload = {
+      name: updatedProduct.name,
+      price: updatedProduct.price,
+      inventory: updatedProduct.inventory,
+      category: updatedProduct.category,
+      description: updatedProduct.description,
+      url: `/product/${product.id}`,
+    };
+    try {
+      const response = await updateProduct(payload);
+      console.log(response);
+      const updateResult = response.data;
+      if (!response.success) throw new Error("No response data");
+      console.log("Update successful:", updateResult);
+    } catch (err) {
+      console.log("error:", err);
+    }
     onSave(updatedProduct);
     onClose();
   };
@@ -74,7 +103,10 @@ const EditProduct: React.FC<EditProps> = ({ product, onClose, onSave }) => {
     try {
       const response = await uploadImages(values);
       const uploadData = response.data;
-      setImages((prev) => [...prev, ...uploadData]);
+      const newImages = [...images, ...uploadData];
+      setImages(newImages);
+      const updatedProduct: Datum = { ...product, images: newImages };
+      onSave(updatedProduct);
     } catch (err) {
       console.log("Error in adding images", err);
       alert("Failed to upload images.");
@@ -83,19 +115,32 @@ const EditProduct: React.FC<EditProps> = ({ product, onClose, onSave }) => {
     onSave(updatedProduct);
     e.target.value = "";
   };
-  const toggleSelectImage = (index: number) => {
+  const toggleSelectImage = (url: string) => {
     setSelectedToDelete((prev) => {
       const newSet = new Set(prev);
-      if (newSet.has(index)) {
-        newSet.delete(index);
+      if (newSet.has(url)) {
+        newSet.delete(url);
       } else {
-        newSet.add(index);
+        newSet.add(url);
       }
       return newSet;
     });
   };
-  const confirmDelete = () => {
-    setImages((prev) => prev.filter((_, idx) => !selectedToDelete.has(idx)));
+  const confirmDelete = async () => {
+    const deleteImages = [...selectedToDelete];
+    console.log(deleteImages);
+    const payload = {
+      imageUrl: deleteImages,
+      productid: product.id,
+    };
+    try {
+      const response = await removeImages(payload);
+      console.log(response);
+      const newImages = images.filter((i) => !deleteImages.includes(i));
+      setImages(newImages);
+    } catch (err) {
+      console.log("Error in removing images", err);
+    }
     setSelectedToDelete(new Set());
     setDeleteMode(false);
   };
@@ -117,50 +162,56 @@ const EditProduct: React.FC<EditProps> = ({ product, onClose, onSave }) => {
             <h2 className="text-xl font-bold mb-4">Edit Product Details</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label className="block font-medium">Name</label>
-                <input
-                  {...register("name")}
-                  className="w-full border rounded px-3 py-2 mt-1"
-                />
-                {errors.name && (
-                  <p className="text-red-500 text-sm">{errors.name.message}</p>
-                )}
-              </div>
+                <div>
+                  <label className="block font-medium">Name</label>
+                  <input
+                    {...register("name")}
+                    className="w-full border rounded px-3 py-2 mt-1"
+                  />
+                  {errors.name && (
+                    <p className="text-red-500 text-sm">
+                      {errors.name.message}
+                    </p>
+                  )}
+                </div>
 
-              <div>
-                <label className="block font-medium">Price</label>
-                <input
-                  type="number"
-                  {...register("price")}
-                  className="w-full border rounded px-3 py-2 mt-1"
-                />
-                {errors.price && (
-                  <p className="text-red-500 text-sm">{errors.price.message}</p>
-                )}
-              </div>
+                <div>
+                  <label className="block font-medium">Price</label>
+                  <input
+                    type="number"
+                    {...register("price")}
+                    className="w-full border rounded px-3 py-2 mt-1"
+                  />
+                  {errors.price && (
+                    <p className="text-red-500 text-sm">
+                      {errors.price.message}
+                    </p>
+                  )}
+                </div>
 
-              <div>
-                <label className="block font-medium">Inventory</label>
-                <input
-                  type="number"
-                  {...register("inventory")}
-                  className="w-full border rounded px-3 py-2 mt-1"
-                />
-                {errors.inventory && (
-                  <p className="text-red-500 text-sm">
-                    {errors.inventory.message}
-                  </p>
-                )}
+                <div>
+                  <label className="block font-medium">Inventory</label>
+                  <input
+                    type="number"
+                    {...register("inventory")}
+                    className="w-full border rounded px-3 py-2 mt-1"
+                  />
+                  {errors.inventory && (
+                    <p className="text-red-500 text-sm">
+                      {errors.inventory.message}
+                    </p>
+                  )}
+                </div>
               </div>
-
               <div>
-                <label className="block font-medium">Category</label>
-                <input
-                  {...register("category")}
-                  className="w-full border rounded px-3 py-2 mt-1"
+                <label className="block font-medium mb-2">Category</label>
+                <ProductCategory
+                  onCategorySelect={(categoryName) =>
+                    setValue("category", categoryName)
+                  }
                 />
                 {errors.category && (
-                  <p className="text-red-500 text-sm">
+                  <p className="text-red-500 text-sm mt-1">
                     {errors.category.message}
                   </p>
                 )}
@@ -181,40 +232,42 @@ const EditProduct: React.FC<EditProps> = ({ product, onClose, onSave }) => {
               </div>
             </div>
           </div>
-
           <div className="flex flex-col">
             <h2 className="text-xl font-bold mb-4">Edit Product Images</h2>
-
             <div className="text-xl font-bold mb-4 flex flex-col justify-between items-center">
-              <div className="w-full flex justify-between">
-                <div>
-                  <label
-                    htmlFor="add-image-input"
-                    className="gap-1 text-black cursor-pointer bg-green-300 hover:bg-green-400 rounded flex justify-center items-center w-[200px] h-[40px] text-xl"
-                  >
-                    <IoAddCircleOutline size={20} />
-                    Add Image
-                  </label>
-                  <input
-                    id="add-image-input"
-                    type="file"
-                    multiple
-                    accept="image/*"
-                    onChange={handleAddImage}
-                    className="hidden"
-                    disabled={isPending}
-                  />
-                  <div className="mt-2 text-sm text-gray-700">
-                    {isPending && <span>Uploading images...</span>}
+              <div className="w-full flex justify-between max-sm:flex-col max-sm:h-fit">
+                {!deleteMode && (
+                  <div>
+                    <label
+                      htmlFor="add-image-input"
+                      className="gap-1 text-black cursor-pointer bg-green-300 hover:bg-green-400 rounded flex justify-center items-center w-[200px] h-[40px] text-xl"
+                    >
+                      <IoAddCircleOutline size={20} />
+                      Add Image
+                    </label>
+                    <input
+                      id="add-image-input"
+                      type="file"
+                      multiple
+                      accept="image/*"
+                      onChange={handleAddImage}
+                      className="hidden"
+                      disabled={isPending}
+                    />
+                    <div className="mt-2 text-sm text-gray-700">
+                      {isPending && <span>Uploading images...</span>}
+                    </div>
                   </div>
-                </div>
+                )}
+
                 {!deleteMode && (
                   <button
                     type="button"
                     onClick={() => setDeleteMode(true)}
                     className="bg-red-600 text-white rounded hover:bg-red-700 flex justify-center items-center w-[200px] h-[40px] text-xl gap-1 cursor-pointer"
                   >
-                    <MdDeleteForever /> Delete Images
+                    <MdDeleteForever />{" "}
+                    {removalPending ? "Deleting Images..." : "Delete Images"}
                   </button>
                 )}
               </div>
@@ -259,8 +312,8 @@ const EditProduct: React.FC<EditProps> = ({ product, onClose, onSave }) => {
                       <input
                         type="checkbox"
                         className="absolute top-2 left-2 w-5 h-5 cursor-pointer"
-                        checked={selectedToDelete.has(idx)}
-                        onChange={() => toggleSelectImage(idx)}
+                        checked={selectedToDelete.has(img)}
+                        onChange={() => toggleSelectImage(img)}
                       />
                     )}
                   </div>
@@ -283,7 +336,7 @@ const EditProduct: React.FC<EditProps> = ({ product, onClose, onSave }) => {
               type="submit"
               className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
             >
-              Save Changes
+              {updatePending ? "Saving Changes..." : "    Save Changes"}
             </button>
           </div>
         </form>

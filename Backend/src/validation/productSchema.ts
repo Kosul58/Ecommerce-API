@@ -23,6 +23,9 @@ export const modifySchema = Joi.object({
   modification: Joi.string().min(7).required(),
 });
 export const removeImageSchema = Joi.object({
-  imageUrl: Joi.string().min(15).required(),
+  imageUrl: Joi.array()
+    .items(Joi.string().min(15).required())
+    .min(1)
+    .required(),
   productid: Joi.string().min(15).required(),
 });

@@ -119,7 +119,7 @@ productRoutes.delete(
   verifyRole.verify("Seller"),
   dataValidation.validateTokenData(idSchema),
   dataValidation.validateBody(removeImageSchema),
-  createAudit({ action: "delete a product image" }),
+  createAudit({ action: "delete product image" }),
   productController.removeImage
 );
 productRoutes.delete(

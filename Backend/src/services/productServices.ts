@@ -289,7 +289,7 @@ export default class ProductServices {
   }
 
   public async removeImage(
-    imageurl: string,
+    imageurl: string[],
     productid: string,
     sellerid: string
   ) {
@@ -300,13 +300,15 @@ export default class ProductServices {
         (error as any).statusCode = 404;
         throw error;
       }
-      const public_id = await this.cloudService.filterData(imageurl);
-      if (!public_id) {
+      const public_ids = await this.cloudService.filterData(imageurl);
+      if (!public_ids || public_ids.length === 0) {
         const error = new Error("Failed to find image data");
         (error as any).statusCode = 404;
         throw error;
       }
-      product.images = product.images.filter((url: string) => url !== imageurl);
+      product.images = product.images.filter(
+        (url: string) => !imageurl.includes(url)
+      );
       const saveResult = await this.productRepository.save(product);
       if (!saveResult) {
         logger.warn("Failed to remove image url from the database");
@@ -314,8 +316,8 @@ export default class ProductServices {
         (error as any).statusCode = 500;
         throw error;
       }
-      const deleteResult = await this.cloudService.deleteCloudFile(
-        public_id,
+      const deleteResult = await this.cloudService.deleteCloudFiles(
+        public_ids,
         "upload",
         "image"
       );
@@ -337,6 +339,7 @@ export default class ProductServices {
   ) {
     try {
       logger.info(`Updating product with ID: ${productid}`);
+      console.log(update);
       const updateFields = Object.fromEntries(
         Object.entries(update).filter(([_, value]) => value !== undefined)
       ) as Partial<UpdateProdcut>;
