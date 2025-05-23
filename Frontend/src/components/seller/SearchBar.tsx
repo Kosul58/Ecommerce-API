@@ -16,13 +16,13 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch }) => {
   };
 
   return (
-    <div className="w-full  flex items-center justify-center mt-4 gap-2">
+    <div className="xl:w-[500px] md:w-[80%] flex items-center justify-center mt-4 gap-2 relative xl:left-40">
       <input
         type="text"
         placeholder="Search products..."
         value={searchQuery}
         onChange={handleInputChange}
-        className="w-[500px] px-4 py-2  border-white border-2 rounded-lg  focus:outline-none hover:border-gray-800 focus:ring-2 focus:ring-blue-400 shadow-2xl"
+        className="w-[80%] px-4 py-2 bg-gray-200  border-none hover:scale-101 rounded-lg focus:outline-none hover:border-gray-800 focus:ring-2 focus:ring-blue-400 shadow-2xl"
       />
       <button
         onClick={handleSearchClick}

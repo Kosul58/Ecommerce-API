@@ -8,47 +8,47 @@ interface ImageSliderProps {
 const ImageSlider: React.FC<ImageSliderProps> = ({ images }) => {
   const [current, setCurrent] = useState(0);
 
-  const prev = () => {
+  const prev = () =>
     setCurrent((prevIndex) =>
       prevIndex === 0 ? images.length - 1 : prevIndex - 1
     );
-  };
-
-  const next = () => {
+  const next = () =>
     setCurrent((prevIndex) =>
       prevIndex === images.length - 1 ? 0 : prevIndex + 1
     );
-  };
 
   return (
     <div className="relative w-full h-full flex items-center justify-center">
-      {images.length > 0 ? (
-        <>
-          <img
-            src={images[current]}
-            alt={`Product Image ${current + 1}`}
-            className="max-w-full max-h-full object-contain rounded-lg border transition-all duration-300"
+      <img
+        src={images[current]}
+        alt={`Product ${current + 1}`}
+        className="object-contain max-h-[300px] md:max-h-[500px] w-full rounded-lg transition duration-300"
+      />
+
+      <button
+        onClick={prev}
+        className="absolute left-2 md:left-4 bg-white/80 hover:bg-white p-2 rounded-full shadow transition"
+      >
+        <FaChevronLeft />
+      </button>
+      <button
+        onClick={next}
+        className="absolute right-2 md:right-4 bg-white/80 hover:bg-white p-2 rounded-full shadow transition"
+      >
+        <FaChevronRight />
+      </button>
+
+      <div className="absolute bottom-4 flex gap-2 justify-center w-full">
+        {images.map((_, index) => (
+          <div
+            key={index}
+            className={`w-2.5 h-2.5 rounded-full ${
+              index === current ? "bg-blue-600" : "bg-gray-300"
+            } transition`}
+            onClick={() => setCurrent(index)}
           />
-
-          <button
-            className="absolute left-4 bg-white p-2 rounded-full shadow hover:bg-gray-100 cursor-pointer"
-            onClick={prev}
-          >
-            <FaChevronLeft />
-          </button>
-
-          <button
-            className="absolute right-4 bg-white p-2 rounded-full shadow hover:bg-gray-100 cursor-pointer"
-            onClick={next}
-          >
-            <FaChevronRight />
-          </button>
-        </>
-      ) : (
-        <div className="w-full h-full flex justify-center items-center bg-gray-200 rounded-lg">
-          No Image
-        </div>
-      )}
+        ))}
+      </div>
     </div>
   );
 };

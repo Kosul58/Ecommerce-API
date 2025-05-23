@@ -14,15 +14,21 @@ const ProductCategory: React.FC<CategoryProps> = ({ onCategorySelect }) => {
   if (!categoryList?.data) return <p>No Categories Found</p>;
 
   const handleCategorySelect = (level: number, selectedId: string) => {
+    if (selectedId === "") {
+      setSelectedCategories([...selectedCategories.slice(0, level)]);
+      return;
+    }
+
     const newSelected = [...selectedCategories.slice(0, level), selectedId];
     setSelectedCategories(newSelected);
+
     const hasChildren = categoryList.data.some(
       (cat: Category) => cat.parentId === selectedId
     );
+
     if (!hasChildren) {
-      const category = categoryList.data.filter((c) => c.id === selectedId)[0]
-        .name;
-      onCategorySelect(category);
+      const category = categoryList.data.find((c) => c.id === selectedId)?.name;
+      if (category) onCategorySelect(category);
     }
   };
 
@@ -49,7 +55,11 @@ const ProductCategory: React.FC<CategoryProps> = ({ onCategorySelect }) => {
     );
   }
 
-  return <div className="flex flex-col gap-4 w-full max-w-md">{dropdowns}</div>;
+  return (
+    <div className="flex flex-col gap-4 w-full max-w-md justify-center items-center">
+      {dropdowns}
+    </div>
+  );
 };
 
 export default ProductCategory;

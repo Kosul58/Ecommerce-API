@@ -44,7 +44,7 @@ productRoutes.post(
   "/image/:productid",
   verifyToken.verify,
   verifyRole.verify("Seller"),
-  upload.single("image"),
+  upload.array("images", 10),
   dataValidation.validateTokenData(idSchema),
   dataValidation.validateParams(productParamsSchema),
   createAudit({ action: "add product image" }),

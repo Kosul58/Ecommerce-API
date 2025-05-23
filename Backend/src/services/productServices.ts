@@ -261,7 +261,7 @@ export default class ProductServices {
   public async addImage(
     productid: string,
     sellerid: string,
-    file: Express.Multer.File
+    files: Express.Multer.File[]
   ) {
     try {
       const product = await this.productRepository.findOne(productid);
@@ -271,7 +271,7 @@ export default class ProductServices {
         (error as any).statusCode = 404;
         throw error;
       }
-      const uploadResult = await this.uploadImages([file], productid);
+      const uploadResult = await this.uploadImages(files, productid);
       if (!uploadResult || uploadResult.length === 0) {
         logger.warn("Failed to upload image to cloud");
         return;
@@ -282,7 +282,7 @@ export default class ProductServices {
         logger.warn(
           "Image uploaded to cloud but not saved in product imgaes array"
         );
-      return "success";
+      return uploadResult;
     } catch (err) {
       throw err;
     }

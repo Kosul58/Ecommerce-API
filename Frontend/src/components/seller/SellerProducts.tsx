@@ -3,7 +3,7 @@ import type { Datum, SellerData } from "../../types/sellertypes";
 import SearchBar from "./SearchBar";
 import ViewProduct from "./ViewProduct";
 import { FaFilter } from "react-icons/fa";
-import ProductIndicator from "./ProductIndicator";
+import ProductCard from "../cards/ProductCard";
 import { useProducts } from "../../api/seller";
 
 const SellerProducts: React.FC<SellerData> = ({ seller }) => {
@@ -51,19 +51,19 @@ const SellerProducts: React.FC<SellerData> = ({ seller }) => {
   }
 
   return (
-    <section className="w-[100%] h-[100%] flex flex-col  items-center overflow-y-auto scrollbar-cool relative">
-      <div className="absolute top-5 left-5 text-white flex items-center">
+    <section className="w-[95%] h-[100%] flex flex-col  items-center overflow-y-auto scrollbar-cool relative xl:left-20">
+      <div className="absolute top-5 right-5 text-white flex items-center">
+        {viewFilter && <p className="text-2xl mr-4">Filter:</p>}
         <FaFilter
           className="size-7 cursor-pointer"
           onClick={() => setOpenFilter(!openFilter)}
           onMouseEnter={() => setViewFilter(true)}
           onMouseLeave={() => setViewFilter(false)}
         />
-        {viewFilter && <p className="text-2xl mr-4">Filter:</p>}
       </div>
 
       {openFilter && (
-        <aside className="fixed top-1/2 right-[5rem] w-[400px] h-[600px] rounded-lg bg-white p-6 shadow-xl z-50 transform -translate-y-1/2 flex flex-col gap-4 overflow-y-auto ">
+        <aside className="fixed top-1/2 right-[5rem] w-[400px] h-[600px] rounded-lg bg-white p-6 shadow-xl z-30 transform -translate-y-1/2 flex flex-col gap-4 overflow-y-auto ">
           <h2 className="text-xl font-bold mb-4">Filter Products</h2>
 
           <label className="flex flex-col">
@@ -134,39 +134,17 @@ const SellerProducts: React.FC<SellerData> = ({ seller }) => {
           <p>No products match your search.</p>
         ) : (
           filteredProducts?.map((product: Datum) => (
-            <div
+            <ProductCard
               key={product.id}
-              className="p-4 py-8 w-[30%] h-[380px] flex flex-col items-center justify-evenly bg-white rounded-lg m-2 shadow-2xl hover:scale-101 cursor-pointer min-w-[300px] relative"
+              product={product}
               onClick={() => {
                 setViewProduct(true);
                 setViewData(product);
               }}
-            >
-              <ProductIndicator active={product.active} />
-              {product.images.length > 0 && (
-                <img
-                  src={product.images[0]}
-                  alt={product.name}
-                  className="h-[80%] w-[100%] object-cover"
-                />
-              )}
-              <div className="w-full h-[100px] p-1">
-                <h2 className="font-bold text-md truncate max-w-[200px]">
-                  Name: {product.name}
-                </h2>
-                <p className="truncate max-w-[300px]">
-                  Category: {product.category}
-                </p>
-                <div className="flex w-full justify-start gap-4">
-                  <p>Inventory: {product.inventory}</p>
-                  <p>Price: Rs.{product.price}</p>
-                </div>
-              </div>
-            </div>
+            />
           ))
         )}
       </section>
-
       {viewProduct && viewData && (
         <ViewProduct viewData={viewData} setViewProduct={setViewProduct} />
       )}

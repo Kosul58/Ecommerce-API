@@ -26,7 +26,7 @@ const CategorySelect: React.FC<CategoryProps> = ({
       <select
         name="Headline"
         id="Headline"
-        className="mt-0.5 w-full rounded border-gray-300 shadow-sm sm:text-sm bg-amber-50"
+        className="mt-0.5 w-[200px] p-4 rounded border-gray-300 shadow-sm sm:text-sm bg-amber-50"
         value={selectedId}
         onChange={handleChange}
       >

@@ -127,7 +127,7 @@ export default class ProductController {
   public addImage: RequestHandler = async (req, res, next) => {
     const { productid } = req.params;
     const sellerid: string = req.user.id;
-    const file = req.file as Express.Multer.File;
+    const files = req.files as Express.Multer.File[];
     try {
       logger.info(
         `Attempting to add a new image to a product for seller with id: ${sellerid}`
@@ -135,7 +135,7 @@ export default class ProductController {
       const result = await this.productService.addImage(
         productid,
         sellerid,
-        file
+        files
       );
       if (!result) {
         logger.error(
@@ -151,8 +151,8 @@ export default class ProductController {
       );
       return this.responseHandler.success(
         res,
-        `New Product image added successfully`
-        // result
+        `New Product image added successfully`,
+        result
       );
     } catch (err) {
       logger.error(`Error adding new product image`, err);

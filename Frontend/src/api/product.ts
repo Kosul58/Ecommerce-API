@@ -18,3 +18,30 @@ export const useAddProduct = () => {
     retry: false,
   });
 };
+
+interface AddImage {
+  success: boolean;
+  message: string;
+  data: string[];
+}
+interface AddImagePayload {
+  formData: FormData;
+  url: string;
+}
+export const useAddImages = () => {
+  const queryClient = useQueryClient();
+  return useMutation<AddImage, Error, AddImagePayload>({
+    mutationFn: async ({ formData, url }) => {
+      const response = await axios.post(url, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+      return response.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["Products"] });
+    },
+    retry: false,
+  });
+};

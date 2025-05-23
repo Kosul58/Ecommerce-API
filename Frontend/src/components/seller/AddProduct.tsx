@@ -1,6 +1,6 @@
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
-import ProcutCategory from "./ProductCategory";
+import ProductCategory from "./ProductCategory";
 import { useAddProduct } from "../../api/product";
 
 const validationSchema = Yup.object({
@@ -72,18 +72,19 @@ const AddProduct = () => {
     }
   };
   return (
-    <section className="w-[95%] h-[95%] flex flex-col justify-center items-center gap-4 overflow-y-auto ">
+    <section className="w-[90%] h-[90vh] flex justify-center items-center ">
+      {" "}
       <Formik
         initialValues={initialValues}
         validationSchema={validationSchema}
         onSubmit={handleSubmit}
       >
         {({ setFieldValue }) => (
-          <Form className="w-[90%] h-auto flex justify-center items-center flex-col bg-indigo-100 rounded-2xl p-6">
+          <Form className="w-[90%] min-w-[300px]  h-[90vh] flex flex-col  items-center bg-indigo-100 rounded-2xl p-6 relative md:left-24 overflow-y-auto">
             <div className="w-[90%] flex justify-center items-center mb-8">
               <p className="text-xl font-bold">Add Product</p>
             </div>
-            <div className="flex  flex-row justify-center items-center w-[100%] gap-2">
+            <div className="flex  flex-row justify-center items-center w-[100%] gap-2 max-sm:flex-col max-sm:mb-8">
               <div className="flex flex-col justify-center items-center gap-2 w-1/2 p-4 rounded">
                 <div className="flex flex-col w-full min-w-[200px]">
                   <label
@@ -147,23 +148,25 @@ const AddProduct = () => {
                   />
                 </div>
               </div>
-              <div className="flex flex-col w-[50%] min-w-[200px]">
-                <label className="text-sm font-semibold text-gray-700 ml-1 mb-[-1px] z-10">
+              <div className="flex flex-col w-[50%] min-w-[200px] items-center justify-center">
+                <label className="text-sm font-semibold text-gray-700 mb-1">
                   Category:
                 </label>
-                <ProcutCategory
-                  onCategorySelect={(categoryName) => {
-                    if (
-                      categoryName === "select" ||
-                      categoryName === "" ||
-                      !categoryName
-                    ) {
-                      setFieldValue("category", "");
-                    } else {
-                      setFieldValue("category", categoryName);
-                    }
-                  }}
-                />
+                <div className="w-full flex justify-center">
+                  <ProductCategory
+                    onCategorySelect={(categoryName) => {
+                      if (
+                        categoryName === "select" ||
+                        categoryName === "" ||
+                        !categoryName
+                      ) {
+                        setFieldValue("category", "");
+                      } else {
+                        setFieldValue("category", categoryName);
+                      }
+                    }}
+                  />
+                </div>
                 <ErrorMessage
                   name="category"
                   component="div"
@@ -194,7 +197,7 @@ const AddProduct = () => {
               />
             </div>
 
-            <div className="w-[400px] mt-6 sm:w-[50%]">
+            <div className="w-[400px] mt-6 max-sm:w-[80%]">
               <label htmlFor="images" className="block font-medium">
                 Upload Images:
               </label>

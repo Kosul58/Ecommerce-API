@@ -22,7 +22,7 @@ body,
 }
 
 .scrollbar-cool::-webkit-scrollbar-track {
-  background: transparent; /* makes track invisible */
+  background: transparent;
 }
 
 .scrollbar-cool::-webkit-scrollbar-thumb {
@@ -32,4 +32,27 @@ body,
 
 .scrollbar-cool::-webkit-scrollbar-thumb:hover {
   background-color: #4b5563;
+}
+
+.scrollbar2 {
+  scrollbar-width: 10px;
+  scrollbar-color: #032aef transparent;
+  scroll-behavior: smooth;
+}
+
+.scrollbar2::-webkit-scrollbar {
+  width: 12px;
+  background-color: #f5f5f5;
+}
+
+.scrollbar2::-webkit-scrollbar-thumb {
+  border-radius: 10px;
+  box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+  background-color: #555;
+}
+
+.scrollbar2::-webkit-scrollbar-track {
+  box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+  border-radius: 10px;
+  background-color: #eee;
 }

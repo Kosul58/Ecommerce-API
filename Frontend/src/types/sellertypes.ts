@@ -90,6 +90,16 @@ export interface Datum {
   images: string[];
 }
 
+export interface EditProduct {
+  id: string;
+  name: string;
+  sellerid: string;
+  price: number;
+  description: string;
+  category: string;
+  inventory: number;
+}
+
 export interface SignInResponse {
   success: boolean;
   message: string;
