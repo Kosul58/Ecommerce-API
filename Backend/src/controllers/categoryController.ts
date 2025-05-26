@@ -1,12 +1,9 @@
-import {
-  CategoryOption,
-  UpdateCategory,
-} from "../common/types/categoryType.js";
+import { CategoryOption, UpdateCategory } from "../common/types/categoryType";
 import { RequestHandler } from "express";
 import { inject, injectable } from "tsyringe";
-import CategoryService from "../services/categoryServices.js";
-import ResponseHandler from "../utils/apiResponse.js";
-import logger from "../utils/logger.js";
+import CategoryService from "../services/categoryServices";
+import ResponseHandler from "../utils/apiResponse";
+import logger from "../utils/logger";
 
 @injectable()
 export default class CategoryController {

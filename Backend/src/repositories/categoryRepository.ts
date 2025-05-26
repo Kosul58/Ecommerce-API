@@ -1,9 +1,9 @@
-import { Category, UpdateCategory } from "../common/types/categoryType.js";
-import { CategoryRepositoryInterface } from "../common/types/classInterfaces.js";
+import { Category, UpdateCategory } from "../common/types/categoryType";
+import { CategoryRepositoryInterface } from "../common/types/classInterfaces";
 import mongoose from "mongoose";
-import CategorySchema from "../models/category.js";
+import CategorySchema from "../models/category";
 import { injectable } from "tsyringe";
-import { BaseRepository } from "./baseRepository.js";
+import { BaseRepository } from "./baseRepository";
 
 @injectable()
 export default class CategoryRepository

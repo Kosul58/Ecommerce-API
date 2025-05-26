@@ -1,8 +1,8 @@
-import { User, UpdateUser } from "./userType.js";
-import { Cart, CartDocument } from "./cartType.js";
-import { Category, UpdateCategory } from "./categoryType.js";
-import { Order, OrderType, OrderDocumnet } from "./orderType.js";
-import { Product, UpdateProdcut } from "./productType.js";
+import { User, UpdateUser } from "./userType";
+import { Cart, CartDocument } from "./cartType";
+import { Category, UpdateCategory } from "./categoryType";
+import { Order, OrderType, OrderDocumnet } from "./orderType";
+import { Product, UpdateProdcut } from "./productType";
 import { Seller, SellerUpadte } from "./sellerType";
 
 export interface Repository {

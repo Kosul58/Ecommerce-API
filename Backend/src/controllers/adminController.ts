@@ -1,11 +1,10 @@
 import { RequestHandler } from "express";
 import { injectable, inject } from "tsyringe";
-import { AddUser, UpdateUser } from "../common/types/userType.js";
-import UserServices from "../services/userServices.js";
-import ResponseHandler from "../utils/apiResponse.js";
-import logger from "../utils/logger.js";
-import CloudService from "../services/cloudService.js";
-import AdminServices from "../services/adminServices.js";
+import { AddUser, UpdateUser } from "../common/types/userType";
+import ResponseHandler from "../utils/apiResponse";
+import logger from "../utils/logger";
+import CloudService from "../services/cloudService";
+import AdminServices from "../services/adminServices";
 @injectable()
 export default class AdminController {
   constructor(

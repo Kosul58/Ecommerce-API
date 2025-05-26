@@ -5,17 +5,10 @@ import {
   User,
   UserReturn,
   UserRole,
-} from "../common/types/userType.js";
-import AuthServices from "./authServices.js";
-import CartService from "./cartServices.js";
-import { UserRepositoryInterface } from "../common/types/classInterfaces.js";
-import Utils from "../utils/utils.js";
-import EmailService from "./emailService.js";
-import CloudService from "./cloudService.js";
-import UserFactory from "../factories/userRepositoryFactory.js";
-import logger from "../utils/logger.js";
-import { error } from "winston";
-import UserServices from "./userServices.js";
+} from "../common/types/userType";
+import AuthServices from "./authServices";
+import logger from "../utils/logger";
+import UserServices from "./userServices";
 
 @injectable()
 export default class AdminServices {

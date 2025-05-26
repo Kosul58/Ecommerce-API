@@ -1,9 +1,9 @@
-import { Product, UpdateProdcut } from "../common/types/productType.js";
+import { Product, UpdateProdcut } from "../common/types/productType";
 import { injectable } from "tsyringe";
-import ProductSchema from "../models/product.js";
+import ProductSchema from "../models/product";
 import mongoose, { Document } from "mongoose";
-import { ProductRepositoryInteface } from "../common/types/classInterfaces.js";
-import { BaseRepository } from "./baseRepository.js";
+import { ProductRepositoryInteface } from "../common/types/classInterfaces";
+import { BaseRepository } from "./baseRepository";
 
 @injectable()
 export default class ProductRepository

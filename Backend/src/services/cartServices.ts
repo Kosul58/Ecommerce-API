@@ -1,9 +1,9 @@
-import { CartProduct } from "../common/types/cartType.js";
+import { CartProduct } from "../common/types/cartType";
 import { inject, injectable } from "tsyringe";
-import ProductServices from "./productServices.js";
-import CartFactory from "../factories/cartRepositoryFactory.js";
-import { CartRepositoryInterface } from "../common/types/classInterfaces.js";
-import logger from "../utils/logger.js";
+import ProductServices from "./productServices";
+import CartFactory from "../factories/cartRepositoryFactory";
+import { CartRepositoryInterface } from "../common/types/classInterfaces";
+import logger from "../utils/logger";
 
 @injectable()
 export default class CartService {

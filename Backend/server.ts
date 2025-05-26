@@ -1,17 +1,17 @@
 import "reflect-metadata";
 import express from "express";
 import cors from "cors";
-import routes from "./src/routes/router.js";
-import db from "./src/config/index.js";
-import "./src/config/dependencyConfig.js";
-import ErrorMiddleware from "./src/middlewares/errorMiddleware.js";
+import routes from "./src/routes/router";
+import db from "./src/config/index";
+import "./src/config/dependencyConfig";
+import ErrorMiddleware from "./src/middlewares/errorMiddleware";
 import { container } from "tsyringe";
 import dotenv from "dotenv";
 import {
   requestLogger,
   responseLogger,
-} from "./src/middlewares/morganMiddleware.js";
-import logger from "./src/utils/logger.js";
+} from "./src/middlewares/morganMiddleware";
+import logger from "./src/utils/logger";
 import cookieParser from "cookie-parser";
 
 dotenv.config();

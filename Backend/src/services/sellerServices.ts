@@ -1,14 +1,14 @@
 import { inject, injectable } from "tsyringe";
-import { AddSeller, Seller, SellerUpadte } from "../common/types/sellerType.js";
-import { UserReturn, UserRole } from "../common/types/userType.js";
-import AuthService from "./authServices.js";
-import ProductServices from "./productServices.js";
-import SellerFactory from "../factories/sellerRepositoryFactory.js";
-import { SellerRepositoryInterface } from "../common/types/classInterfaces.js";
-import logger from "../utils/logger.js";
-import Utils from "../utils/utils.js";
-import CloudService from "./cloudService.js";
-import EmailService from "./emailService.js";
+import { AddSeller, Seller, SellerUpadte } from "../common/types/sellerType";
+import { UserReturn, UserRole } from "../common/types/userType";
+import AuthService from "./authServices";
+import ProductServices from "./productServices";
+import SellerFactory from "../factories/sellerRepositoryFactory";
+import { SellerRepositoryInterface } from "../common/types/classInterfaces";
+import logger from "../utils/logger";
+import Utils from "../utils/utils";
+import CloudService from "./cloudService";
+import EmailService from "./emailService";
 
 @injectable()
 export default class SellerServices {

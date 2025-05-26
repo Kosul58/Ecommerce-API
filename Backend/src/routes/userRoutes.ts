@@ -1,17 +1,16 @@
 import express from "express";
-import verifyRole from "../middlewares/verifyRole.js";
-import verifyToken from "../middlewares/verifyToken.js";
-import UserController from "../controllers/userController.js";
+import verifyRole from "../middlewares/verifyRole";
+import verifyToken from "../middlewares/verifyToken";
+import UserController from "../controllers/userController";
 import { container } from "tsyringe";
-import DataValidation from "../middlewares/validateData.js";
+import DataValidation from "../middlewares/validateData";
 import {
   idSchema,
   signInSchema,
   signUpSchema,
   updateSchema,
-} from "../validation/userSchema.js";
-import { createAudit } from "../middlewares/auditMiddleware.js";
-import { upload } from "../middlewares/imageMiddleware.js";
+} from "../validation/userSchema";
+import { createAudit } from "../middlewares/auditMiddleware";
 
 const userController = container.resolve(UserController);
 const dataValidation = container.resolve(DataValidation);

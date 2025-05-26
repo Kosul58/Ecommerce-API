@@ -1,9 +1,9 @@
 import express from "express";
-import OrderController from "../controllers/orderController.js";
-import verifyRole from "../middlewares/verifyRole.js";
+import OrderController from "../controllers/orderController";
+import verifyRole from "../middlewares/verifyRole";
 import { container } from "tsyringe";
-import DataValidation from "../middlewares/validateData.js";
-import { idSchema } from "../validation/userSchema.js";
+import DataValidation from "../middlewares/validateData";
+import { idSchema } from "../validation/userSchema";
 import {
   cancelSingleSchema,
   cancelWholeSchema,
@@ -12,8 +12,8 @@ import {
   ordersSchema,
   orderStatusSchema,
   productStatusSchema,
-} from "../validation/orderSchema.js";
-import { createAudit } from "../middlewares/auditMiddleware.js";
+} from "../validation/orderSchema";
+import { createAudit } from "../middlewares/auditMiddleware";
 
 const orderRoutes = express.Router();
 

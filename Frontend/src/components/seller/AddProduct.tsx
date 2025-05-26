@@ -44,7 +44,7 @@ const initialValues = {
 };
 
 const AddProduct = () => {
-  const { mutateAsync } = useAddProduct();
+  const { mutateAsync, isPending, isSuccess, isError } = useAddProduct();
   const handleSubmit = async (
     values: typeof initialValues,
     { resetForm }: { resetForm: () => void }
@@ -224,9 +224,17 @@ const AddProduct = () => {
                 type="submit"
                 className="px-10 py-2 bg-indigo-500 text-white rounded-lg shadow-lg cursor-pointer hover:scale-110 transition-transform"
               >
-                Add Product
+                {isPending ? "Adding Product..." : "AddProduct"}
               </button>
             </div>
+            {isSuccess && (
+              <div className="text-sm text-green-800">
+                Added Product Successfully
+              </div>
+            )}
+            {isError && (
+              <div className="text-sm text-red-600">Failed to Add Product</div>
+            )}
           </Form>
         )}
       </Formik>

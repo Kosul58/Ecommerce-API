@@ -1,8 +1,8 @@
-import { Cart, CartDocument, CartProduct } from "../common/types/cartType.js";
-import { CartRepositoryInterface } from "../common/types/classInterfaces.js";
-import CartSchema from "../models/cart.js";
+import { Cart, CartDocument, CartProduct } from "../common/types/cartType";
+import { CartRepositoryInterface } from "../common/types/classInterfaces";
+import CartSchema from "../models/cart";
 import { injectable } from "tsyringe";
-import { BaseRepository } from "./baseRepository.js";
+import { BaseRepository } from "./baseRepository";
 
 @injectable()
 export default class CartRepository

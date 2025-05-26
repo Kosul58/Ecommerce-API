@@ -1,16 +1,16 @@
 import express from "express";
-import CartController from "../controllers/cartController.js";
-import verifyRole from "../middlewares/verifyRole.js";
+import CartController from "../controllers/cartController";
+import verifyRole from "../middlewares/verifyRole";
 import { container } from "tsyringe";
-import DataValidation from "../middlewares/validateData.js";
-import { idSchema } from "../validation/userSchema.js";
+import DataValidation from "../middlewares/validateData";
+import { idSchema } from "../validation/userSchema";
 import {
   addCartSchema,
   removeProductsSchema,
   updateSchema,
   viewCartParamsSchema,
-} from "../validation/cartSchema.js";
-import { createAudit } from "../middlewares/auditMiddleware.js";
+} from "../validation/cartSchema";
+import { createAudit } from "../middlewares/auditMiddleware";
 
 const cartRoutes = express.Router();
 

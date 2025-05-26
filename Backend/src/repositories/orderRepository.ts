@@ -1,11 +1,11 @@
-import { Order, OrderType, OrderDocumnet } from "../common/types/orderType.js";
-import OrderSchema from "../models/order.js";
+import { Order, OrderType, OrderDocumnet } from "../common/types/orderType";
+import OrderSchema from "../models/order";
 import { injectable } from "tsyringe";
 import {
   Repository,
   OrderRepositoryInterface,
-} from "../common/types/classInterfaces.js";
-import { BaseRepository } from "./baseRepository.js";
+} from "../common/types/classInterfaces";
+import { BaseRepository } from "./baseRepository";
 
 @injectable()
 export default class OrderRepository

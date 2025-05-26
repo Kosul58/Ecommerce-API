@@ -1,8 +1,8 @@
 import { RequestHandler } from "express";
 import { inject, injectable } from "tsyringe";
-import CartService from "../services/cartServices.js";
-import ResponseHandler from "../utils/apiResponse.js";
-import logger from "../utils/logger.js"; // import your logger
+import CartService from "../services/cartServices";
+import ResponseHandler from "../utils/apiResponse";
+import logger from "../utils/logger";
 
 @injectable()
 export default class CartController {

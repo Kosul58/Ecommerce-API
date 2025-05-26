@@ -33,7 +33,7 @@ const Orders = () => (
 );
 const SellerDashboard = () => {
   const navigate = useNavigate();
-  const [hideHamburger, setHideHamburger] = useState(true); // true means hidden
+  const [hideHamburger, setHideHamburger] = useState(true);
   const [selectedSection, setSelectedSection] = useState<
     | "sales"
     | "productdetails"
@@ -50,8 +50,14 @@ const SellerDashboard = () => {
     sessionStorage.removeItem("productdata");
     navigate("/");
   };
+
+  if (isError) {
+    alert("error fetching data from the server");
+    navigate("/");
+  }
+
   if (!sellerData || isLoading) return <p>Loading...</p>;
-  if (Object.keys(sellerData).length === 0 || isError)
+  if (Object.keys(sellerData).length === 0)
     return <p className="text-red-400">No Seller Found.</p>;
 
   return (

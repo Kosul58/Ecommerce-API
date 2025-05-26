@@ -1,14 +1,14 @@
 import express from "express";
 
-import orderRoutes from "./orderRoutes.js";
-import cartRoutes from "./cartRoutes.js";
-import productRoutes from "./productRoutes.js";
-import categoryRoutes from "./categoryRoutes.js";
-import userRoutes from "./userRoutes.js";
-import verifyToken from "../middlewares/verifyToken.js";
-import sellerRoutes from "./sellerRoutes.js";
-import adminRoutes from "./adminRoutes.js";
-import mailRoutes from "./mailRoutes.js";
+import orderRoutes from "./orderRoutes";
+import cartRoutes from "./cartRoutes";
+import productRoutes from "./productRoutes";
+import categoryRoutes from "./categoryRoutes";
+import userRoutes from "./userRoutes";
+import verifyToken from "../middlewares/verifyToken";
+import sellerRoutes from "./sellerRoutes";
+import adminRoutes from "./adminRoutes";
+import mailRoutes from "./mailRoutes";
 const router = express.Router();
 
 router.use("/order", verifyToken.verify, orderRoutes);

@@ -1,18 +1,18 @@
 import express from "express";
-import ProductController from "../controllers/productController.js";
-import verifyRole from "../middlewares/verifyRole.js";
-import verifyToken from "../middlewares/verifyToken.js";
+import ProductController from "../controllers/productController";
+import verifyRole from "../middlewares/verifyRole";
+import verifyToken from "../middlewares/verifyToken";
 import { container } from "tsyringe";
-import DataValidation from "../middlewares/validateData.js";
-import { hideSchema, idSchema } from "../validation/userSchema.js";
+import DataValidation from "../middlewares/validateData";
+import { hideSchema, idSchema } from "../validation/userSchema";
 import {
   addSchema,
   modifySchema,
   productParamsSchema,
   removeImageSchema,
-} from "../validation/productSchema.js";
-import { createAudit } from "../middlewares/auditMiddleware.js";
-import { upload } from "../middlewares/imageMiddleware.js";
+} from "../validation/productSchema";
+import { createAudit } from "../middlewares/auditMiddleware";
+import { upload } from "../middlewares/imageMiddleware";
 
 const productRoutes = express.Router();
 

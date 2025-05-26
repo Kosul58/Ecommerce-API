@@ -9,18 +9,18 @@ import {
   OrderDocumnet,
   PaymentMethod,
   Order,
-} from "../common/types/orderType.js";
-import CartService from "./cartServices.js";
-import ProductServices from "./productServices.js";
-import { CartProduct } from "../common/types/cartType.js";
+} from "../common/types/orderType";
+import CartService from "./cartServices";
+import ProductServices from "./productServices";
+import { CartProduct } from "../common/types/cartType";
 import { inject, injectable, container } from "tsyringe";
-import OrderFactory from "../factories/orderRepositoryFactory.js";
-import { OrderRepositoryInterface } from "../common/types/classInterfaces.js";
-import logger from "../utils/logger.js";
-import SellerServices from "./sellerServices.js";
-import EmailService from "./emailService.js";
-import UserServices from "./userServices.js";
-import { OrderMailData } from "../common/types/mailType.js";
+import OrderFactory from "../factories/orderRepositoryFactory";
+import { OrderRepositoryInterface } from "../common/types/classInterfaces";
+import logger from "../utils/logger";
+import SellerServices from "./sellerServices";
+import EmailService from "./emailService";
+import UserServices from "./userServices";
+import { OrderMailData } from "../common/types/mailType";
 
 @injectable()
 export default class OrderService {

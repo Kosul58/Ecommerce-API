@@ -1,4 +1,4 @@
-import { CartProduct } from "./cartType.js";
+import { CartProduct } from "./cartType";
 import { Document, Types } from "mongoose";
 
 export interface Order {

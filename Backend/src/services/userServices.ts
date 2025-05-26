@@ -5,16 +5,16 @@ import {
   User,
   UserReturn,
   UserRole,
-} from "../common/types/userType.js";
-import AuthServices from "./authServices.js";
-import CartService from "./cartServices.js";
-import { UserRepositoryInterface } from "../common/types/classInterfaces.js";
-import Utils from "../utils/utils.js";
-import EmailService from "./emailService.js";
-import CloudService from "./cloudService.js";
-import UserFactory from "../factories/userRepositoryFactory.js";
-import logger from "../utils/logger.js";
-import { DeliveryStatus } from "../common/types/orderType.js";
+} from "../common/types/userType";
+import AuthServices from "./authServices";
+import CartService from "./cartServices";
+import { UserRepositoryInterface } from "../common/types/classInterfaces";
+import Utils from "../utils/utils";
+import EmailService from "./emailService";
+import CloudService from "./cloudService";
+import UserFactory from "../factories/userRepositoryFactory";
+import logger from "../utils/logger";
+import { DeliveryStatus } from "../common/types/orderType";
 
 @injectable()
 export default class UserServices {

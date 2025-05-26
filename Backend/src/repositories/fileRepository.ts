@@ -1,6 +1,6 @@
 import { inject, injectable } from "tsyringe";
-import { BaseRepository } from "./baseRepository.js";
-import FileSchema from "../models/file.js";
+import { BaseRepository } from "./baseRepository";
+import FileSchema from "../models/file";
 @injectable()
 export default class FileRepository extends BaseRepository {
   constructor() {

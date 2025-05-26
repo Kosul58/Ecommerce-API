@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import { container } from "tsyringe";
-import AuditService from "../services/auditService.js";
-import logger from "../utils/logger.js";
+import AuditService from "../services/auditService";
+import logger from "../utils/logger";
 interface AuditOptions {
   action: string;
   targetId?: string;

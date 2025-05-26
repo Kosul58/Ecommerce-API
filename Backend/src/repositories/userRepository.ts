@@ -1,8 +1,8 @@
 import { inject, injectable } from "tsyringe";
-import { UpdateUser, User } from "../common/types/userType.js";
-import { UserRepositoryInterface } from "../common/types/classInterfaces.js";
-import UserSchema from "../models/user.js";
-import { BaseRepository } from "./baseRepository.js";
+import { UpdateUser, User } from "../common/types/userType";
+import { UserRepositoryInterface } from "../common/types/classInterfaces";
+import UserSchema from "../models/user";
+import { BaseRepository } from "./baseRepository";
 
 @injectable()
 export default class UserRepository

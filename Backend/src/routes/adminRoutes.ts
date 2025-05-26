@@ -1,10 +1,9 @@
 import express from "express";
 import { container } from "tsyringe";
-import DataValidation from "../middlewares/validateData.js";
-import { signInSchema, signUpSchema } from "../validation/userSchema.js";
-import AdminController from "../controllers/adminController.js";
-import { createAudit } from "../middlewares/auditMiddleware.js";
-import { upload } from "../middlewares/imageMiddleware.js";
+import DataValidation from "../middlewares/validateData";
+import { signInSchema, signUpSchema } from "../validation/userSchema";
+import AdminController from "../controllers/adminController";
+import { createAudit } from "../middlewares/auditMiddleware";
 
 const adminController = container.resolve(AdminController);
 const dataValidation = container.resolve(DataValidation);

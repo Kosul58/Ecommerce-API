@@ -5,15 +5,14 @@ import {
   ProductReturn,
   SellerProductReturn,
   UpdateProdcut,
-} from "../common/types/productType.js";
-import CategoryService from "./categoryServices.js";
-import ProductFactory from "../factories/productRepositoryFactory.js";
-import { ProductRepositoryInteface } from "../common/types/classInterfaces.js";
-import logger from "../utils/logger.js";
-import CloudService from "./cloudService.js";
-import Utils from "../utils/utils.js";
-import EmailService from "./emailService.js";
-import { boolean } from "joi";
+} from "../common/types/productType";
+import CategoryService from "./categoryServices";
+import ProductFactory from "../factories/productRepositoryFactory";
+import { ProductRepositoryInteface } from "../common/types/classInterfaces";
+import logger from "../utils/logger";
+import CloudService from "./cloudService";
+import Utils from "../utils/utils";
+import EmailService from "./emailService";
 
 @injectable()
 export default class ProductServices {

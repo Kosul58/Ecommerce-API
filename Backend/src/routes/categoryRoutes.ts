@@ -1,15 +1,15 @@
 import express from "express";
-import CategoryController from "../controllers/categoryController.js";
-import verifyRole from "../middlewares/verifyRole.js";
+import CategoryController from "../controllers/categoryController";
+import verifyRole from "../middlewares/verifyRole";
 import { container } from "tsyringe";
-import DataValidation from "../middlewares/validateData.js";
+import DataValidation from "../middlewares/validateData";
 import {
   categoryParamsSchema,
   createSchema,
   StatusSchema,
   updateSchema,
-} from "../validation/catagorySchema.js";
-import { createAudit } from "../middlewares/auditMiddleware.js";
+} from "../validation/catagorySchema";
+import { createAudit } from "../middlewares/auditMiddleware";
 
 const categoryRoutes = express.Router();
 

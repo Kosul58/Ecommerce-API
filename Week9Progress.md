@@ -2,9 +2,26 @@
 
 ## Monday
 
+-> learned about react-hook-form
+-> learned axios
+-> made a new step form using react-hook-form
+-> refactored frontend folder structure
+-> changed all fetch request to axios
+
 ## Tuesday
 
+-> learend axios instance
+-> learned about react-query
+-> learned about custom hooks
+-> implemented axios with react-query
+-> axios and react-query implementation fix
+-> worked on add product component
+
 ## Wednusday
+
+-> continued work on add product component and finished its implementation
+-> made add product componenet responsive
+-> fixed loading errors in components
 
 ## Thursday
 
@@ -17,15 +34,12 @@
 
 ## Friday
 
+-> made UI more responsive
+-> worked on and implemented edit product component (update product details, add images , remove images)
+
 ## Next week goals:
 
-## To Do:
-
-react query
-axios
-
-context api
-headless ui - transition
-
-->formik , yup validation of form
-->hook form react
+-> learn and implement context-api
+-> work on user based components
+-> continue working on seller components
+-> start working on landing page

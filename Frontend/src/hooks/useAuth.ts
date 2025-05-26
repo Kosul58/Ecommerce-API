@@ -91,7 +91,6 @@ export const useSellerSignIn = () => {
       return response.data;
     },
     onSuccess: (data) => {
-      // sessionStorage.setItem("sellerdata", JSON.stringify(data.data));
       queryClient.setQueryData(["seller"], data.data);
     },
   });

@@ -1,5 +1,5 @@
 import { RequestHandler } from "express";
-import logger from "../utils/logger"; // Import your logger
+import logger from "../utils/logger";
 
 class VerifyRole {
   public verify(...allowedRoles: string[]): RequestHandler {

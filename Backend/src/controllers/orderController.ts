@@ -1,9 +1,9 @@
 import { RequestHandler } from "express";
 import { inject, injectable } from "tsyringe";
-import OrderService from "../services/orderServices.js";
-import ResponseHandler from "../utils/apiResponse.js";
-import logger from "../utils/logger.js";
-import { PaymentMethod } from "../common/types/orderType.js";
+import OrderService from "../services/orderServices";
+import ResponseHandler from "../utils/apiResponse";
+import logger from "../utils/logger";
+import { PaymentMethod } from "../common/types/orderType";
 
 @injectable()
 export default class OrderController {

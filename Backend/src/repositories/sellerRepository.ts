@@ -2,7 +2,7 @@ import { SellerRepositoryInterface } from "../common/types/classInterfaces";
 import { Seller, SellerUpadte } from "../common/types/sellerType";
 import SellerSchema from "../models/seller";
 import { injectable } from "tsyringe";
-import { BaseRepository } from "./baseRepository.js";
+import { BaseRepository } from "./baseRepository";
 
 @injectable()
 export default class SellerRepository

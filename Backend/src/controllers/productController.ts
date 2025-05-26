@@ -1,9 +1,9 @@
-import { AddProduct, UpdateProdcut } from "../common/types/productType.js";
+import { AddProduct, UpdateProdcut } from "../common/types/productType";
 import { RequestHandler } from "express";
 import { inject, injectable } from "tsyringe";
-import ProductServices from "../services/productServices.js";
+import ProductServices from "../services/productServices";
 import ResponseHandler from "../utils/apiResponse";
-import logger from "../utils/logger"; // Assuming logger is set up
+import logger from "../utils/logger";
 
 @injectable()
 export default class ProductController {

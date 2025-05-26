@@ -2,11 +2,11 @@ import {
   Category,
   CategoryOption,
   UpdateCategory,
-} from "../common/types/categoryType.js";
-import { CategoryRepositoryInterface } from "../common/types/classInterfaces.js";
-import CategoryFactory from "../factories/categoryRepositoryFactory.js";
+} from "../common/types/categoryType";
+import { CategoryRepositoryInterface } from "../common/types/classInterfaces";
+import CategoryFactory from "../factories/categoryRepositoryFactory";
 import { inject, injectable, container } from "tsyringe";
-import logger from "../utils/logger.js";
+import logger from "../utils/logger";
 type CategoryTree = {
   [key: string]: string | CategoryTree;
 };

@@ -1,9 +1,9 @@
 import { RequestHandler } from "express";
 import { injectable, inject } from "tsyringe";
-import { AddUser, UpdateUser } from "../common/types/userType.js";
-import UserServices from "../services/userServices.js";
-import ResponseHandler from "../utils/apiResponse.js";
-import logger from "../utils/logger.js";
+import { AddUser, UpdateUser } from "../common/types/userType";
+import UserServices from "../services/userServices";
+import ResponseHandler from "../utils/apiResponse";
+import logger from "../utils/logger";
 
 @injectable()
 export default class UserController {

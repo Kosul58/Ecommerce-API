@@ -1,18 +1,16 @@
 import express from "express";
-import verifyRole from "../middlewares/verifyRole.js";
-import verifyToken from "../middlewares/verifyToken.js";
+import verifyRole from "../middlewares/verifyRole";
+import verifyToken from "../middlewares/verifyToken";
 import { container } from "tsyringe";
-import SellerController from "../controllers/sellerController.js";
-import DataValidation from "../middlewares/validateData.js";
-import { idSchema } from "../validation/userSchema.js";
+import SellerController from "../controllers/sellerController";
+import DataValidation from "../middlewares/validateData";
+import { idSchema } from "../validation/userSchema";
 import {
   signInSchema,
   signUpSchema,
   updateSchema,
-} from "../validation/sellerSchema.js";
-import { createAudit } from "../middlewares/auditMiddleware.js";
-import { upload } from "../middlewares/imageMiddleware.js";
-
+} from "../validation/sellerSchema";
+import { createAudit } from "../middlewares/auditMiddleware";
 const sellerController = container.resolve(SellerController);
 const dataValidation = container.resolve(DataValidation);
 const sellerRoutes = express.Router();
