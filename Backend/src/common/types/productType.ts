@@ -8,6 +8,7 @@ export interface Product {
   category: string;
   createdAt?: string;
   updatedAt?: string;
+  discount?: number;
   timestamp?: Date;
   images?: string[];
 }
@@ -19,6 +20,7 @@ export interface AddProduct {
   sellerid: string;
   description: string;
   category: string;
+  discount?: number;
 }
 
 export interface UpdateProdcut {

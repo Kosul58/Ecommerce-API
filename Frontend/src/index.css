@@ -56,3 +56,7 @@ body,
   border-radius: 10px;
   background-color: #eee;
 }
+
+.cyan-custom {
+  background-color: #60efff;
+}

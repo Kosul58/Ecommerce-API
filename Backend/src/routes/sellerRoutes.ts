@@ -39,6 +39,12 @@ sellerRoutes.post(
 );
 
 sellerRoutes.post(
+  "/verifySeller",
+  createAudit({ action: "verify seller" }),
+  sellerController.verifySeller
+);
+
+sellerRoutes.post(
   "/signin",
   dataValidation.validateBody(signInSchema),
   createAudit({ action: "signin seller" }),

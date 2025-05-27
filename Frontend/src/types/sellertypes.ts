@@ -48,8 +48,8 @@ type BaseUser = {
   email: string;
   password: string;
   confirmpassword: string;
-  phone: string;
-  address: string;
+  phone?: string;
+  address?: string;
 };
 
 export type UserValues = BaseUser & {
@@ -58,7 +58,7 @@ export type UserValues = BaseUser & {
 };
 
 export type SellerValues = BaseUser & {
-  shopname: string;
+  shopname?: string;
 };
 
 export type SignUpValues = UserValues | SellerValues;

@@ -48,6 +48,7 @@ export interface SellerRepositoryInterface extends Repository {
   findPhone(phone: number, excludeId?: string): Promise<boolean | null>;
   signIn(email: string): Promise<any>;
   signup(seller: Seller): Promise<any>;
+  emailVerified(email: string): Promise<boolean>;
 }
 export interface UserRepositoryInterface extends Repository {
   findUserName(username: string, excludeId?: string): Promise<boolean | null>;

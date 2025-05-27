@@ -6,11 +6,6 @@
     "auditLog": "C:\\Users\\kosul\\Desktop\\Ecommerce\\Backend\\logs\\.8064a7036e91684973ad2243c33771ce5914a6b0-audit.json",
     "files": [
         {
-            "date": 1747110429010,
-            "name": "C:\\Users\\kosul\\Desktop\\Ecommerce\\Backend\\logs\\combined-2025-05-13.log",
-            "hash": "b8202b5c2349e0372c65d15c0afb4f9a78eca49e61b8fa6d954e0d1ee60c5038"
-        },
-        {
             "date": 1747197735517,
             "name": "C:\\Users\\kosul\\Desktop\\Ecommerce\\Backend\\logs\\combined-2025-05-14.log",
             "hash": "21abbb366e3b5b50b97fa8a8a89e4e9d38c2dc64522e5121cc6a45c5b2966830"
@@ -54,6 +49,11 @@
             "date": 1748242599223,
             "name": "C:\\Users\\kosul\\Desktop\\Ecommerce\\Backend\\logs\\combined-2025-05-26.log",
             "hash": "f68a7fd21f84e42e94a7d1f2806c1e2ea05baf91e49e166535f115ff677ea2af"
+        },
+        {
+            "date": 1748327620610,
+            "name": "C:\\Users\\kosul\\Desktop\\Ecommerce\\Backend\\logs\\combined-2025-05-27.log",
+            "hash": "a35cf1fe391db5fdac93899a1900297a80b74484c9ef3ccc6a7db7bf22d5dfb5"
         }
     ],
     "hashType": "sha256"

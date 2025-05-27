@@ -185,4 +185,15 @@ export default class Utils {
     await browser.close();
     return pdfBuffer;
   }
+  static generateOtp(): string {
+    const otp = Math.floor(100000 + Math.random() * 900000);
+    return otp.toString();
+  }
+
+  static otpMail(otp: string) {
+    const templatePath = path.join(process.cwd(), `templates/otpmail.html`);
+    let template = fs.readFileSync(templatePath, "utf-8");
+    template = template.replace(/{{OTP_CODE}}/g, otp);
+    return template;
+  }
 }

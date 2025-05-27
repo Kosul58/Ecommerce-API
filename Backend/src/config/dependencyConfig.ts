@@ -25,6 +25,9 @@ import EmailService from "../services/emailService";
 import PdfService from "../services/cloudService";
 import FileRepository from "../repositories/fileRepository";
 import AuditService from "../services/auditService";
+import OtpController from "../controllers/otpController";
+import OtpServices from "../services/otpService";
+import OtpRepository from "../repositories/otpRepository";
 // import FactoryService from "../services/factoryService";
 
 container.register(CategoryController, { useClass: CategoryController });
@@ -53,6 +56,9 @@ container.register(EmailService, { useClass: EmailService });
 container.register(PdfService, { useClass: PdfService });
 container.register(FileRepository, { useClass: FileRepository });
 container.register(AuditService, { useClass: AuditService });
+container.register(OtpController, { useClass: OtpController });
+container.register(OtpServices, { useClass: OtpServices });
+container.register(OtpRepository, { useClass: OtpRepository });
 // container.register(FactoryService, {
 //   useClass: FactoryService,
 // });

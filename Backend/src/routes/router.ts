@@ -9,6 +9,7 @@ import verifyToken from "../middlewares/verifyToken";
 import sellerRoutes from "./sellerRoutes";
 import adminRoutes from "./adminRoutes";
 import mailRoutes from "./mailRoutes";
+import otpRoutes from "./otpRoutes";
 const router = express.Router();
 
 router.use("/order", verifyToken.verify, orderRoutes);
@@ -19,5 +20,6 @@ router.use("/user", userRoutes);
 router.use("/seller", sellerRoutes);
 router.use("/admin", adminRoutes);
 router.use("/mail", mailRoutes);
+router.use("/otp", otpRoutes);
 
 export default router;

@@ -1,6 +1,6 @@
 import Joi from "joi";
 export const signUpSchema = Joi.object({
-  shopname: Joi.string().min(2).max(50).required(),
+  // shopname: Joi.string().min(2).max(50).required(),
   username: Joi.string().min(3).max(30).required(),
   email: Joi.string()
     .email({ tlds: { allow: false } })
@@ -13,8 +13,8 @@ export const signUpSchema = Joi.object({
     }),
   password: Joi.string().min(2).required(),
   confirmpassword: Joi.string().min(2).required(),
-  phone: Joi.number().integer().min(1000000000).max(9999999999).required(),
-  address: Joi.string().min(5).max(100).required(),
+  // phone: Joi.number().integer().min(1000000000).max(9999999999).required(),
+  // address: Joi.string().min(5).max(100).required(),
 });
 
 export const signInSchema = Joi.object({

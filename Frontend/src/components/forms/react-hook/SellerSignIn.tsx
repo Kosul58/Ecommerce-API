@@ -28,7 +28,13 @@ const SellerSignIn: React.FC<SignInProps> = ({ setSellerSigned }) => {
   const onSubmit = async (values: SignInValues) => {
     try {
       const result = await signIn(values);
+      console.log(result);
       if (result.success === true) {
+        if (result.message === "Seller email is not verified") {
+          alert("Email is not verifed");
+          navigate("/verify/seller");
+          return;
+        }
         reset();
         setSellerSigned(true);
         navigate("/sellerdashboard");

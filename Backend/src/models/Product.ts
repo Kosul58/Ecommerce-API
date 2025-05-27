@@ -36,6 +36,11 @@ const productSchema = new mongoose.Schema({
     default: true,
     required: true,
   },
+  discound: {
+    type: Number,
+    default: 0,
+    required: true,
+  },
   images: {
     type: Array,
     required: true,

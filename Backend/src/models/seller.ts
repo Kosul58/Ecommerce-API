@@ -1,10 +1,11 @@
 import mongoose from "mongoose";
 import { UserRole } from "../common/types/userType";
+import { boolean, required, string } from "joi";
 
 const sellerSchema = new mongoose.Schema({
   shopname: {
     type: String,
-    required: true,
+    // required: true,
   },
   username: {
     type: String,
@@ -22,11 +23,11 @@ const sellerSchema = new mongoose.Schema({
   },
   phone: {
     type: Number,
-    required: true,
+    // required: true,
   },
   address: {
     type: String,
-    required: true,
+    // required: true,
   },
   image: {
     type: String,
@@ -37,6 +38,11 @@ const sellerSchema = new mongoose.Schema({
     type: Date,
     required: true,
     default: Date.now,
+  },
+  emailVerified: {
+    type: Boolean,
+    default: false,
+    required: true,
   },
   role: {
     type: String,

@@ -49,16 +49,39 @@ export default class SellerController {
     const seller: AddSeller = req.body;
     // const file = req.file as Express.Multer.File;
     try {
-      logger.info(`Attempting to sign up seller: ${seller.username}`);
-      const { result, token, refreshToken } = await this.sellerServices.signUp(
+      logger.info(`Attempting to create a  seller: ${seller.username}`);
+      const result = await this.sellerServices.signUp(
         seller
         //  file
       );
       if (!result) {
-        logger.error("Failed to sign up seller", { seller });
-        return this.responseHandler.error(res, "Failed to sign up seller");
+        logger.error("Failed to create a seller", { seller });
+        return this.responseHandler.error(res, "Failed to create a seller");
       }
       logger.info(`Seller created successfully: ${seller.username}`);
+      return this.responseHandler.created(res, "Seller created successfully");
+    } catch (err) {
+      logger.error("Error during seller creation", err);
+      return next(err);
+    }
+  };
+
+  public verifySeller: RequestHandler = async (req, res, next) => {
+    const { email, otp } = req.body;
+    try {
+      logger.info(`Attempting to verify seller`);
+      const data = await this.sellerServices.verifySeller(
+        email,
+        otp
+        //  file
+      );
+
+      if (data === "otpexpired" || data === "otpinvalid" || !data) {
+        logger.error("Failed to sign up seller");
+        return this.responseHandler.error(res, "Failed to sign up seller");
+      }
+      const { result, token, refreshToken } = data;
+      logger.info(`Seller created successfully: ${result.username}`);
       res
         .cookie("token", token, {
           httpOnly: true,
@@ -94,7 +117,13 @@ export default class SellerController {
       );
       if (!result) {
         logger.warn(`No seller found for credentials: ${email}`);
-        return this.responseHandler.error(res, "No seller found");
+        return this.responseHandler.notFound(res, "No seller found");
+      }
+      if (result === "notverified") {
+        return this.responseHandler.success(
+          res,
+          "Seller email is not verified"
+        );
       }
       logger.info(`Seller sign-in successful: ${email}`);
       res

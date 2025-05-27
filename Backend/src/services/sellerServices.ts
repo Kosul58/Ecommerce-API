@@ -9,6 +9,7 @@ import logger from "../utils/logger";
 import Utils from "../utils/utils";
 import CloudService from "./cloudService";
 import EmailService from "./emailService";
+import OtpServices from "./otpService";
 
 @injectable()
 export default class SellerServices {
@@ -19,7 +20,8 @@ export default class SellerServices {
     @inject(EmailService) private emailService: EmailService,
     @inject(AuthService) private authService: AuthService,
     @inject(ProductServices) private productServices: ProductServices,
-    @inject(CloudService) private cloudService: CloudService
+    @inject(CloudService) private cloudService: CloudService,
+    @inject(OtpServices) private otpServices: OtpServices
   ) {
     this.sellerRepository =
       this.sellerFactory.getRepository() as SellerRepositoryInterface;
@@ -29,13 +31,14 @@ export default class SellerServices {
     try {
       const encryptedPassword = await Utils.encryptPassword(seller.password);
       return {
-        shopname: seller.shopname,
+        // shopname: seller.shopname,
         username: seller.username,
         email: seller.email,
         password: encryptedPassword,
-        phone: seller.phone,
-        address: seller.address,
+        // phone: seller.phone,
+        // address: seller.address,
         role: UserRole.SELLER,
+        emailVerified: false,
         image: "Seller image",
       };
     } catch (err) {
@@ -113,28 +116,96 @@ export default class SellerServices {
     }
   }
 
+  // public async signUp(
+  //   seller: AddSeller
+  //   // , file: Express.Multer.File
+  // ) {
+  //   try {
+  //     const existingSeller = await this.sellerRepository.signIn(seller.email);
+  //     if (existingSeller && existingSeller.emailVerified === true) {
+  //       const error = new Error("User already exists");
+  //       (error as any).statusCode = 409;
+  //       (error as any).details = ["Email already registered and verified"];
+  //       logger.error("User creation failed: email already verified");
+  //       throw error;
+  //     }
+  //     if (existingSeller && existingSeller.emailVerified === false) {
+  //       await this.sellerRepository.deleteOne(existingSeller._id.toString());
+  //     }
+  //     const usernameTaken = await this.sellerRepository.findUserName(
+  //       seller.username
+  //     );
+  //     if (usernameTaken) {
+  //       const error = new Error("User already exists");
+  //       (error as any).statusCode = 409;
+  //       (error as any).details = ["Username already taken"];
+  //       logger.error("User creation failed: username taken");
+  //       throw error;
+  //     }
+  //     const newSeller = await this.generateSeller(seller);
+  //     const result = await this.sellerRepository.signup(newSeller);
+  //     const sellerid = result._id.toString();
+
+  //     if (!result || Object.keys(result).length === 0) {
+  //       await this.sellerRepository.deleteOne(sellerid);
+  //       const error = new Error("Signup failed");
+  //       (error as any).statusCode = 500;
+  //       throw error;
+  //     }
+
+  //     await this.otpServices.send(seller.email);
+  //     return "success";
+  //     // const uploadResult = await this.uploadImage(file, sellerid);
+  //     // if (!uploadResult) {
+  //     //   await this.sellerRepository.deleteOne(sellerid);
+  //     //   const error = new Error("Image upload failed");
+  //     //   (error as any).statusCode = 500;
+  //     //   throw error;
+  //     // }
+  //     // const savedSeller = await this.sellerRepository.updateOne(sellerid, {
+  //     //   image: uploadResult,
+  //     // });
+  //     // if (!savedSeller) {
+  //     //   await this.sellerRepository.deleteOne(sellerid);
+  //     //   const error = new Error("Failed to save user after image upload");
+  //     //   (error as any).statusCode = 500;
+  //     //   throw error;
+  //     // }
+  //   } catch (err) {
+  //     logger.error("Failed to sign up seller");
+  //     throw err;
+  //   }
+  // }
+
   public async signUp(
     seller: AddSeller
     // , file: Express.Multer.File
   ) {
     try {
-      const [usernameTaken, emailTaken, phoneTaken] = await Promise.all([
+      const [
+        usernameTaken,
+        emailTaken,
+        // phoneTaken
+      ] = await Promise.all([
         this.sellerRepository.findUserName(seller.username),
         this.sellerRepository.findEmail(seller.email),
-        this.sellerRepository.findPhone(seller.phone),
+        // this.sellerRepository.findPhone(seller.phone),
       ]);
-      if (usernameTaken || emailTaken || phoneTaken) {
+      if (
+        usernameTaken ||
+        emailTaken
+        //  || phoneTaken
+      ) {
         const reasons = [];
         if (usernameTaken) reasons.push("Username already taken");
         if (emailTaken) reasons.push("Email already registered");
-        if (phoneTaken) reasons.push("Phone number already registered");
+        // if (phoneTaken) reasons.push("Phone number already registered");
         const error = new Error("User already exists");
         (error as any).statusCode = 409;
         (error as any).details = reasons;
         logger.error("User creation failed due to duplicate data");
         throw error;
       }
-
       const newSeller = await this.generateSeller(seller);
       const result = await this.sellerRepository.signup(newSeller);
       const sellerid = result._id.toString();
@@ -160,6 +231,35 @@ export default class SellerServices {
       //   (error as any).statusCode = 500;
       //   throw error;
       // }
+      await this.otpServices.send(seller.email);
+      return "success";
+    } catch (err) {
+      logger.error("Failed to sign up seller");
+      throw err;
+    }
+  }
+  public async verifySeller(email: string, otp: string) {
+    try {
+      const verifyResult = await this.otpServices.verify(email, otp);
+      const seller = await this.sellerRepository.signIn(email);
+      if (!seller) {
+        const error = new Error("No seller found");
+        (error as any).statusCode = 404;
+        throw error;
+      }
+      if (verifyResult !== true) {
+        return verifyResult;
+      }
+      const sellerid = seller._id.toString();
+      const result = await this.sellerRepository.updateOne(sellerid, {
+        emailVerified: true,
+      });
+      if (!result || Object.keys(result).length === 0) {
+        const error = new Error("Signup failed");
+        await this.sellerRepository.deleteOne(sellerid);
+        (error as any).statusCode = 500;
+        throw error;
+      }
       const emailSent = await this.emailService.signUpMail(
         {
           email: result.email,
@@ -189,7 +289,7 @@ export default class SellerServices {
         ),
       };
     } catch (err) {
-      logger.error("Failed to sign up seller");
+      logger.error("Failed to verify seller");
       throw err;
     }
   }
@@ -201,6 +301,10 @@ export default class SellerServices {
         const error = new Error("Signin failed. No seller found");
         (error as any).statusCode = 404;
         throw error;
+      }
+      if (result.emailVerified === false) {
+        logger.warn("Seller email is not verified");
+        return { result: "notverified" };
       }
       const check = await Utils.comparePassword(password, result.password);
       if (!check) {

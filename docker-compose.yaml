@@ -1,0 +1,59 @@
+# version: "3.8"
+
+# services:
+#   mongo:
+#     image: mongo:latest
+#     container_name: mongo_container
+#     ports:
+#       - "27017:27017"
+#     volumes:
+#       - mongo-data2:/data/db
+#     environment:
+#       MONGO_INITDB_ROOT_USERNAME: kosul
+#       MONGO_INITDB_ROOT_PASSWORD: kosul24
+#   backend:
+#     build:
+#       context: ./backend
+#     container_name: backend_container
+#     volumes:
+#       - logsx:/backend/logs
+#     ports:
+#       - "3000:3000"
+#     environment:
+#       MONGO_URI: mongodb://kosul:kosul24@mongo:27017/
+#     depends_on:
+#       - mongo
+
+# volumes:
+#   mongo-data2:
+#   logsx:
+
+version: "3.8"
+
+services:
+  backend:
+    image: my-backend:v1
+    restart: always
+    container_name: backend_container
+    volumes:
+      - logsx:/backend/logs
+    ports:
+      - "3000:3000"
+    env_file:
+      - ./backend/.env
+    depends_on:
+      - mongo
+
+  mongo:
+    image: mongo
+    container_name: mongo_container
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data2:/data/db
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: kosul
+      MONGO_INITDB_ROOT_PASSWORD: kosul24
+volumes:
+  mongo-data2:
+  logsx:

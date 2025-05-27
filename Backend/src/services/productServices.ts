@@ -35,7 +35,8 @@ export default class ProductServices {
     productData: AddProduct,
     sellerid: string
   ): Promise<Product> {
-    const { name, price, inventory, description, category } = productData;
+    const { name, price, inventory, description, category, discount } =
+      productData;
     logger.info(`Creating product with name: ${name}`);
     return {
       name,
@@ -43,6 +44,7 @@ export default class ProductServices {
       price: Number(price),
       inventory: Number(inventory),
       description,
+      discount: Number(discount),
       category,
       images: [],
     };

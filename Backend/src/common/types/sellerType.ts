@@ -1,14 +1,15 @@
 import { UserRole } from "./userType";
 
 export interface Seller {
-  shopname: string;
+  shopname?: string;
   username: string;
   email: string;
   password: string;
-  phone: number;
-  address: string;
+  phone?: number;
+  address?: string;
   timestamp?: Date;
   role: UserRole;
+  emailVerified?: boolean;
   image: string;
 }
 
@@ -20,10 +21,10 @@ export interface SellerUpadte {
 }
 
 export interface AddSeller {
-  shopname: string;
+  // shopname: string;
   username: string;
   email: string;
   password: string;
-  phone: number;
-  address: string;
+  // phone: number;
+  // address: string;
 }

@@ -23,6 +23,7 @@ export default class EmailService implements EmailServiceInterface {
       },
     });
   }
+
   private async sendMail(
     mailData: { email: string; subject: string },
     htmlContent: string
@@ -66,6 +67,24 @@ export default class EmailService implements EmailServiceInterface {
       return await this.sendMail(mailData, htmlContent);
     } catch (err) {
       logger.error("Failed to send singup mail", err);
+      throw err;
+    }
+  }
+
+  public async sendOtp(email: string, otp: string) {
+    try {
+      logger.info("Sending otp for email verification");
+      const htmlContent = Utils.otpMail(otp);
+      if (!htmlContent) {
+        logger.warn("Invalid mailtype");
+        return false;
+      }
+      const mailData = {
+        email: email,
+        subject: "Email Verification",
+      };
+      return await this.sendMail(mailData, htmlContent);
+    } catch (err) {
       throw err;
     }
   }

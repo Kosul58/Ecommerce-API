@@ -2,6 +2,9 @@
 
 ## Monday
 
+- learn docker (Dockerfile , .dockerignore , image , container , volumes )
+- learn frontend ui desgin principles
+
 ## Tuesday
 
 ## Wednusday

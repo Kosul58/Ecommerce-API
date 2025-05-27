@@ -108,3 +108,32 @@ export const useSellerSignUp = () => {
     },
   });
 };
+
+interface VerificationValues {
+  email: string;
+  otp: string;
+}
+export const useSellerVerification = () => {
+  const queryClient = useQueryClient();
+  return useMutation<SignInResponse, Error, VerificationValues>({
+    mutationFn: async (values: VerificationValues) => {
+      const response = await axios.post("/seller/verifyseller", values);
+      return response.data;
+    },
+    onSuccess: (data) => {
+      queryClient.setQueryData(["seller"], data.data);
+    },
+  });
+};
+
+interface ResendValues {
+  email: string;
+}
+export const useResendOtp = () => {
+  return useMutation<SignInResponse, Error, ResendValues>({
+    mutationFn: async (values: ResendValues) => {
+      const response = await axios.post("/otp/resend", values);
+      return response.data;
+    },
+  });
+};

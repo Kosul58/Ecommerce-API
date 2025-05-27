@@ -20,6 +20,10 @@ export default class SellerRepository
     const seller = await this.model.findOne({ email });
     return seller && seller._id.toString() !== excludeId;
   }
+  public async emailVerified(email: string) {
+    const seller = await this.model.findOne({ email });
+    return seller && seller.emailVerified === true;
+  }
   public async findPhone(phone: number, excludeId?: string) {
     const seller = await this.model.findOne({ phone });
     return seller && seller._id.toString() !== excludeId;

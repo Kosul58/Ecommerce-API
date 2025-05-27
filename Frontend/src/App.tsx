@@ -32,6 +32,7 @@ const App = () => {
               }
             ></Route>
             <Route path="/landingpage" element={<LandingPage />}></Route>
+            {/* <Route path="/verify/seller" element={<Verify />} /> */}
           </Routes>
         </Router>
       </QueryClientProvider>
