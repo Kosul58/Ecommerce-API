@@ -1,7 +1,6 @@
-import React, { useState } from "react";
+import React from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
-import { IoIosCloseCircleOutline } from "react-icons/io";
 import { useNavigate } from "react-router-dom";
 
 const validationSchema = Yup.object({
@@ -15,14 +14,10 @@ const initialValues = {
   email: "",
   password: "",
 };
-interface SignInProps {
-  formState: boolean;
-  setFormState: React.Dispatch<React.SetStateAction<boolean>>;
-  setSellerSigned: React.Dispatch<React.SetStateAction<boolean>>;
-}
-const SellerSignIn: React.FC<SignInProps> = ({ setSellerSigned }) => {
-  const [formState, setFormState] = useState(false);
+
+const SellerSignIn = () => {
   const navigate = useNavigate();
+
   const handleSubmit = async (
     values: typeof initialValues,
     { resetForm }: { resetForm: () => void }
@@ -30,18 +25,14 @@ const SellerSignIn: React.FC<SignInProps> = ({ setSellerSigned }) => {
     try {
       const res = await fetch("http://localhost:3000/api/seller/signin", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         credentials: "include",
         body: JSON.stringify(values),
       });
       const result = await res.json();
       if (result.success === true) {
         resetForm();
-        setSellerSigned(true);
         sessionStorage.setItem("sellerdata", JSON.stringify(result.data));
-        console.log("Navigating to sellerdashboard");
         navigate("/sellerdashboard");
       }
       console.log("Server response:", result);
@@ -51,44 +42,51 @@ const SellerSignIn: React.FC<SignInProps> = ({ setSellerSigned }) => {
   };
 
   return (
-    <>
-      <button
-        className="bg-white px-6 py-2 rounded-md text-xl cursor-pointer hover:scale-105 "
-        onClick={() => {
-          setFormState(true);
-        }}
-      >
-        Seller Sign In
-      </button>
+    <div className="min-h-screen w-full flex items-center justify-center bg-gradient-to-br from-indigo-100 to-indigo-300 p-4">
+      <div className="w-full max-w-6xl bg-white rounded-2xl shadow-2xl flex flex-col lg:flex-row overflow-hidden">
+        {/* Left Side Info */}
+        <div className="lg:w-1/2 w-full bg-indigo-500 text-white p-8 flex flex-col justify-center">
+          <h2 className="text-4xl font-bold mb-4">Welcome Back Seller!</h2>
+          <p className="text-lg mb-6">
+            Sign in to manage your products, view sales, and access exclusive
+            tools to grow your business.
+          </p>
+          <ul className="space-y-3 text-md">
+            {[
+              "Real-time Order Management",
+              "Sales Dashboard & Insights",
+              "Fast and Secure Payments",
+              "24/7 Dedicated Support",
+            ].map((item) => (
+              <li key={item} className="flex items-center gap-2">
+                <span className="w-2.5 h-2.5 bg-white rounded-full inline-block" />
+                {item}
+              </li>
+            ))}
+          </ul>
+        </div>
 
-      {formState && (
-        <Formik
-          initialValues={initialValues}
-          validationSchema={validationSchema}
-          onSubmit={handleSubmit}
-        >
-          {() => (
-            <Form className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[400px] h-auto bg-indigo-100 rounded-2xl p-6">
-              <IoIosCloseCircleOutline
-                className="absolute top-2 right-2 text-2xl font-bold text-red-600 cursor-pointer"
-                onClick={() => setFormState(false)}
-              />
-              <div className="w-full flex justify-center items-center mb-8">
-                <p>Seller Sign In</p>
-              </div>
-              <div className="flex flex-col gap-4 justify-center items-center">
+        {/* Right Side Form */}
+        <div className="lg:w-1/2 w-full p-8">
+          <Formik
+            initialValues={initialValues}
+            validationSchema={validationSchema}
+            onSubmit={handleSubmit}
+          >
+            {() => (
+              <Form className="flex flex-col gap-6">
+                <h3 className="text-2xl font-bold text-center text-indigo-700 mb-4">
+                  Seller Sign In
+                </h3>
                 {[
-                  { label: "Username:", name: "username", type: "text" },
-                  { label: "Email:", name: "email", type: "email" },
-                  { label: "Password:", name: "password", type: "password" },
+                  { label: "Username", name: "username", type: "text" },
+                  { label: "Email", name: "email", type: "email" },
+                  { label: "Password", name: "password", type: "password" },
                 ].map((field) => (
-                  <div
-                    key={field.name}
-                    className="flex flex-col w-[48%] min-w-[300px]"
-                  >
+                  <div key={field.name} className="flex flex-col gap-1">
                     <label
                       htmlFor={field.name}
-                      className="text-sm font-semibold text-gray-700 ml-1 mb-[-1px] z-10"
+                      className="text-sm font-semibold text-gray-700"
                     >
                       {field.label}
                     </label>
@@ -96,30 +94,39 @@ const SellerSignIn: React.FC<SignInProps> = ({ setSellerSigned }) => {
                       id={field.name}
                       name={field.name}
                       type={field.type}
-                      placeholder={field.label}
-                      className="h-[40px] bg-amber-50 p-2 shadow-xl rounded-lg"
+                      placeholder={`Enter your ${field.label.toLowerCase()}`}
+                      className="h-10 bg-indigo-50 p-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500"
                     />
                     <ErrorMessage
                       name={field.name}
                       component="div"
-                      className="text-red-600 ml-1 text-xs"
+                      className="text-red-600 text-xs"
                     />
                   </div>
                 ))}
-              </div>
-              <div className="w-full flex justify-center mt-4">
+
                 <button
                   type="submit"
-                  className="px-10 py-2 bg-indigo-500 text-white rounded-lg shadow-lg cursor-pointer hover:scale-110"
+                  className="bg-indigo-600 text-white py-2 rounded-lg font-semibold hover:bg-indigo-700 transition"
                 >
                   Sign In
                 </button>
-              </div>
-            </Form>
-          )}
-        </Formik>
-      )}
-    </>
+
+                <p className="text-sm text-center text-gray-600">
+                  Don’t have an account?{" "}
+                  <a
+                    href="/sellersignup"
+                    className="text-indigo-600 font-medium hover:underline"
+                  >
+                    Sign Up
+                  </a>
+                </p>
+              </Form>
+            )}
+          </Formik>
+        </div>
+      </div>
+    </div>
   );
 };
 

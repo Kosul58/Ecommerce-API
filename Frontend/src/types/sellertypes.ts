@@ -33,11 +33,6 @@ export interface Product {
   images: string[];
 }
 
-export interface SellerData {
-  seller: Seller;
-  // categoryData: CategoryTree | null;
-}
-
 export type SignInValues = {
   email: string;
   password: string;
@@ -53,8 +48,8 @@ type BaseUser = {
 };
 
 export type UserValues = BaseUser & {
-  firstname: string;
-  lastname: string;
+  firstname?: string;
+  lastname?: string;
 };
 
 export type SellerValues = BaseUser & {
@@ -87,6 +82,7 @@ export interface Datum {
   category: string;
   inventory: number;
   active: boolean;
+  discount?: number;
   images: string[];
 }
 

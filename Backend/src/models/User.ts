@@ -5,11 +5,11 @@ import { required } from "joi";
 const userSchema = new mongoose.Schema({
   firstname: {
     type: String,
-    required: true,
+    // required: true,
   },
   lastname: {
     type: String,
-    required: true,
+    // required: true,
   },
   username: {
     type: String,
@@ -27,11 +27,11 @@ const userSchema = new mongoose.Schema({
   },
   phone: {
     type: Number,
-    required: true,
+    // required: true,
   },
   address: {
     type: String,
-    required: true,
+    // required: true,
   },
   timestamp: {
     type: Date,
@@ -42,6 +42,11 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: true,
     default: "",
+  },
+  emailVerified: {
+    type: Boolean,
+    default: false,
+    required: true,
   },
   role: {
     type: String,

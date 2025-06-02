@@ -1,15 +1,15 @@
 export interface User {
   userid?: string;
-  firstname: string;
-  lastname: string;
+  firstname?: string;
+  lastname?: string;
   username: string;
   email: string;
   password: string;
   timestamp?: Date;
   createdAt?: string;
   lastLogin?: string;
-  phone: number;
-  address: string;
+  phone?: number;
+  address?: string;
   role: UserRole;
   image: string;
 }
@@ -30,13 +30,13 @@ export interface UserReturn {
 }
 
 export interface AddUser {
-  firstname: string;
-  lastname: string;
+  // firstname?: string;
+  // lastname?: string;
   username: string;
   email: string;
   password: string;
-  phone: number;
-  address: string;
+  // phone?: number;
+  // address?: string;
 }
 
 export interface UpdateUser {

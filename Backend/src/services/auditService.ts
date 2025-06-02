@@ -29,7 +29,7 @@ export default class AuditService {
       }
       if (url.includes("product")) {
         if (action === "update product status") {
-          targetId = body.products;
+          targetId = body.productids || "unkown";
         } else if (action === "update product") {
           targetId = params.productid;
         } else if (action === "modify product inventory") {
@@ -38,6 +38,8 @@ export default class AuditService {
           targetId = params.productid;
         } else if (action === "delete all products") {
           targetId = "all seller products";
+        } else if (action === "delete selected products") {
+          targetId = body.productids || "selected seller products";
         }
       } else if (url.includes("order")) {
         if (action === "update order status") {

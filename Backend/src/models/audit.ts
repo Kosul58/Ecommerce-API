@@ -14,7 +14,7 @@ interface Audit extends Document {
 const auditSchema = new Schema<Audit>({
   path: { type: String, required: true },
   action: { type: String, required: true },
-  targetId: { type: String, required: true },
+  targetId: { type: Schema.Types.Mixed, required: true },
   data: { type: Object, required: true },
   sourceId: { type: String, required: true },
   sourceType: { type: String, required: true },

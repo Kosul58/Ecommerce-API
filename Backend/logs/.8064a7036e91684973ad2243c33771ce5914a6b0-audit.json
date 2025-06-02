@@ -6,21 +6,6 @@
     "auditLog": "C:\\Users\\kosul\\Desktop\\Ecommerce\\Backend\\logs\\.8064a7036e91684973ad2243c33771ce5914a6b0-audit.json",
     "files": [
         {
-            "date": 1747197735517,
-            "name": "C:\\Users\\kosul\\Desktop\\Ecommerce\\Backend\\logs\\combined-2025-05-14.log",
-            "hash": "21abbb366e3b5b50b97fa8a8a89e4e9d38c2dc64522e5121cc6a45c5b2966830"
-        },
-        {
-            "date": 1747288242774,
-            "name": "C:\\Users\\kosul\\Desktop\\Ecommerce\\Backend\\logs\\combined-2025-05-15.log",
-            "hash": "f8fab7aa7edfb3429c0c6da584dd1510feb8c469d1237ec5a38c4311865a1a18"
-        },
-        {
-            "date": 1747333615054,
-            "name": "C:\\Users\\kosul\\Desktop\\Ecommerce\\Backend\\logs\\combined-2025-05-16.log",
-            "hash": "3f1704971897cc3c20bc7f1db13fccb69ccb2335318b0e8e621a5bc390a1162e"
-        },
-        {
             "date": 1747640371898,
             "name": "C:\\Users\\kosul\\Desktop\\Ecommerce\\Backend\\logs\\combined-2025-05-19.log",
             "hash": "c20f033491ed54f4b7c8867a9580817541fa5b2b6a4475bd921fff80a18408b8"
@@ -54,6 +39,26 @@
             "date": 1748327620610,
             "name": "C:\\Users\\kosul\\Desktop\\Ecommerce\\Backend\\logs\\combined-2025-05-27.log",
             "hash": "a35cf1fe391db5fdac93899a1900297a80b74484c9ef3ccc6a7db7bf22d5dfb5"
+        },
+        {
+            "date": 1748406596443,
+            "name": "C:\\Users\\kosul\\Desktop\\Ecommerce\\Backend\\logs\\combined-2025-05-28.log",
+            "hash": "26987d1b9226232ab6b458dd809bbb98fcadc4491b4f999e6af828e941dc54c9"
+        },
+        {
+            "date": 1748497464407,
+            "name": "C:\\Users\\kosul\\Desktop\\Ecommerce\\Backend\\logs\\combined-2025-05-29.log",
+            "hash": "c647340f7cdcd32ab5738fcca56d14c856d15144477997ef36b6056b7f8c13b0"
+        },
+        {
+            "date": 1748578220658,
+            "name": "C:\\Users\\kosul\\Desktop\\Ecommerce\\Backend\\logs\\combined-2025-05-30.log",
+            "hash": "bea464e665e4657e460229c410b5ef6e4e2adf1b6550e1dd63fe89266dbbc5e6"
+        },
+        {
+            "date": 1748839437559,
+            "name": "C:\\Users\\kosul\\Desktop\\Ecommerce\\Backend\\logs\\combined-2025-06-02.log",
+            "hash": "56c24c2d599d810f567f78fe2081713381898eda92d1c6741b5b2b974a2d4a17"
         }
     ],
     "hashType": "sha256"

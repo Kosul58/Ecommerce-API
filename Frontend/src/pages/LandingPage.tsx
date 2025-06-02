@@ -1,11 +1,15 @@
 import React from "react";
 import Footer from "../components/footer/Footer";
+import NavBar from "../components/Navbar";
+import HeroPage from "../components/HeroPage";
 
 const LandingPage = () => {
   return (
     <>
-      <header></header>
-      <section className="w-full h-[100vh] bg-white z-50">HeroPage</section>;
+      <header className="sticky top-0 z-50 w-full">
+        <NavBar />
+      </header>
+      <HeroPage />
       <footer>
         <Footer />
       </footer>

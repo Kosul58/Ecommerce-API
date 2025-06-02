@@ -10,7 +10,7 @@ const ProductIndicator: React.FC<Status> = ({ active }) => {
       {active ? (
         <div className="flex items-center gap-1 text-xs">
           <p>Active</p>
-          <span className="size-3 rounded-full bg-green-500 inline-block"></span>
+          <span className="size-4 rounded-full bg-green-500 inline-block"></span>
         </div>
       ) : (
         <div className="flex items-center gap-1 text-xs">

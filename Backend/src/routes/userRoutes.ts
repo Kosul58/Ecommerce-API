@@ -41,6 +41,12 @@ userRoutes.post(
 );
 
 userRoutes.post(
+  "/verifyuser",
+  createAudit({ action: "verify seller" }),
+  userController.verifyUser
+);
+
+userRoutes.post(
   "/signin",
   dataValidation.validateBody(signInSchema),
   createAudit({ action: "signin user" }),

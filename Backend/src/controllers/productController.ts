@@ -295,6 +295,34 @@ export default class ProductController {
     }
   };
 
+  public deleteSelected: RequestHandler = async (req, res, next) => {
+    const id = req.user.id || req.body.sellerid;
+    const productids = req.body.productids;
+    try {
+      logger.info(
+        `Attempting to delete selected products for seller with id: ${id}`
+      );
+      const result = await this.productService.deleteSelected(id, productids);
+      if (!result) {
+        logger.warn(`No products found to delete for seller with id: ${id}`);
+        return this.responseHandler.error(res, "No products found to delete");
+      }
+      logger.info(
+        `Selected Products deleted successfully for seller with id: ${id}`
+      );
+      return this.responseHandler.success(
+        res,
+        "Selected Products deleted successfully"
+      );
+    } catch (err) {
+      logger.error(
+        `Error deleting selected products for seller with id: ${id}`,
+        err
+      );
+      return next(err);
+    }
+  };
+
   public deleteProducts: RequestHandler = async (req, res, next) => {
     const id = req.user.id || req.body.sellerid;
     try {
@@ -313,7 +341,7 @@ export default class ProductController {
   };
 
   public updateStatus: RequestHandler = async (req, res, next) => {
-    const products = req.body.products;
+    const products = req.body.productids;
     const status: boolean = req.body.status;
     try {
       logger.info(

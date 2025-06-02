@@ -21,7 +21,7 @@ export default class UserController {
         user
         // file
       );
-      const { result, token } = data;
+      const result = data;
       if (!result) {
         logger.error("Failed to sign up User", { user });
         return this.responseHandler.error(res, "Failed to sign up User");
@@ -29,10 +29,50 @@ export default class UserController {
       logger.info(`${user.username} signed up successfully`);
       return this.responseHandler.created(res, "User registered successfully", {
         result,
-        token,
       });
     } catch (err) {
       logger.error(`Signup failed for ${user.username}`, err);
+      return next(err);
+    }
+  };
+
+  public verifyUser: RequestHandler = async (req, res, next) => {
+    const { email, otp } = req.body;
+    try {
+      logger.info(`Attempting to verify user`);
+      const data = await this.userServices.verifyUser(
+        email,
+        otp
+        //  file
+      );
+
+      if (data === "otpexpired" || data === "otpinvalid" || !data) {
+        logger.error("Failed to sign up user");
+        return this.responseHandler.error(res, "Failed to sign up user");
+      }
+      const { result, token, refreshToken } = data;
+      logger.info(`User created successfully: ${result.username}`);
+      res
+        .cookie("token", token, {
+          httpOnly: true,
+          secure: false,
+          sameSite: "lax",
+          maxAge: 1000 * 60 * 15, // 15 min bro
+          path: "/",
+        })
+        .cookie("refreshToken", refreshToken, {
+          httpOnly: true,
+          secure: false,
+          sameSite: "lax",
+          maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days bro
+          path: "/",
+        });
+      return this.responseHandler.created(res, "Usercreated successfully", {
+        result,
+        token,
+      });
+    } catch (err) {
+      logger.error("Error during User signup", err);
       return next(err);
     }
   };
@@ -41,8 +81,33 @@ export default class UserController {
     const { email, password } = req.body;
     try {
       logger.info(`User attempting to sign in: ${email}`);
-      const { result, token } = await this.userServices.signIn(email, password);
+      const { result, token, refreshToken } = await this.userServices.signIn(
+        email,
+        password
+      );
       logger.info(`${email} signed in successfully`);
+      if (!result) {
+        logger.warn(`No user found for credentials: ${email}`);
+        return this.responseHandler.notFound(res, "No seller found");
+      }
+      if (result === "notverified") {
+        return this.responseHandler.success(res, "User email is not verified");
+      }
+      res
+        .cookie("token", token, {
+          httpOnly: true,
+          secure: false,
+          sameSite: "lax",
+          maxAge: 1000 * 60 * 1, // 15 min bro
+          path: "/",
+        })
+        .cookie("refreshToken", refreshToken, {
+          httpOnly: true,
+          secure: false,
+          sameSite: "lax",
+          maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days bro
+          path: "/",
+        });
       return this.responseHandler.success(res, "Signin successful", {
         result,
         token,

@@ -3,9 +3,9 @@ import Joi from "joi";
 import { UserRole } from "../common/types/userType.js";
 
 export const signUpSchema = Joi.object({
-  firstname: Joi.string().min(2).required(),
-  lastname: Joi.string().min(2).required(),
-  username: Joi.string().alphanum().min(3).max(30).required().invalid(""),
+  // firstname: Joi.string().min(2).required(),
+  // lastname: Joi.string().min(2).required(),
+  username: Joi.string().min(3).max(30).required().invalid(""),
   email: Joi.string()
     .email({ tlds: { allow: false } })
     .required()
@@ -17,9 +17,9 @@ export const signUpSchema = Joi.object({
     }),
   password: Joi.string().min(6).required(),
   confirmpassword: Joi.string().min(6).required(),
-  phone: Joi.number().min(1000000000).max(9999999999).required(),
-  address: Joi.string().min(5).required(),
-  image: Joi.string().optional(),
+  // phone: Joi.number().min(1000000000).max(9999999999).required(),
+  // address: Joi.string().min(5).required(),
+  // image: Joi.string().optional(),
 });
 
 export const signInSchema = Joi.object({
@@ -44,8 +44,15 @@ export const idSchema = Joi.object({
   exp: Joi.optional(),
 });
 
+export const deleteProductSchema = Joi.object({
+  productids: Joi.array()
+    .items(Joi.string().min(15).required())
+    .min(1)
+    .required(),
+});
+
 export const hideSchema = Joi.object({
-  products: Joi.array()
+  productids: Joi.array()
     .items(Joi.string().length(24).hex().required())
     .min(1)
     .required(),

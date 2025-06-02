@@ -29,6 +29,7 @@ export interface UpdateProdcut {
   invetory?: number;
   description?: string;
   category?: string;
+  discount?: number;
   images?: string[];
 }
 
@@ -40,6 +41,7 @@ export interface ProductReturn {
   description: string;
   category: string;
   inventory: number;
+  timestamp: string;
   images?: string[];
 }
 

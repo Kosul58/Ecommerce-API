@@ -10,6 +10,9 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@fortawesome/fontawesome-svg-core": "^6.7.2",
+    "@fortawesome/free-solid-svg-icons": "^6.7.2",
+    "@fortawesome/react-fontawesome": "^0.2.2",
     "@hookform/resolvers": "^5.0.1",
     "@tailwindcss/vite": "^4.1.6",
     "@tanstack/react-query": "^5.76.1",
@@ -20,6 +23,7 @@
     "react-hook-form": "^7.56.4",
     "react-icons": "^5.5.0",
     "react-router-dom": "^7.6.0",
+    "react-spinners": "^0.17.0",
     "tailwindcss": "^4.1.6",
     "yup": "^1.6.1"
   },

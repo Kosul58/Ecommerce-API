@@ -19,7 +19,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onClick }) => {
           <img
             src={product.images[0]}
             alt={product.name}
-            className="object-cover w-full h-full"
+            className="object-contain w-full h-full"
           />
         </div>
       )}

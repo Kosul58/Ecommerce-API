@@ -15,6 +15,7 @@ import CloudService from "./cloudService";
 import UserFactory from "../factories/userRepositoryFactory";
 import logger from "../utils/logger";
 import { DeliveryStatus } from "../common/types/orderType";
+import OtpServices from "./otpService";
 
 @injectable()
 export default class UserServices {
@@ -24,7 +25,8 @@ export default class UserServices {
     @inject(EmailService) private emailService: EmailService,
     @inject(CloudService) private cloudService: CloudService,
     @inject(CartService) private cartService: CartService,
-    @inject(AuthServices) private authService: AuthServices
+    @inject(AuthServices) private authService: AuthServices,
+    @inject(OtpServices) private otpServices: OtpServices
   ) {
     this.userRepository =
       this.userFactory.getRepository() as UserRepositoryInterface;
@@ -33,13 +35,13 @@ export default class UserServices {
     try {
       const encryptedPassword = await Utils.encryptPassword(user.password);
       return {
-        firstname: user.firstname,
-        lastname: user.lastname,
+        // firstname: user.firstname,
+        // lastname: user.lastname,
         username: user.username,
         email: user.email,
         password: encryptedPassword,
-        phone: user.phone,
-        address: user.address,
+        // phone: user.phone,
+        // address: user.address,
         role: role === "Admin" ? UserRole.ADMIN : UserRole.USER,
         image: "userimage",
       };
@@ -92,16 +94,24 @@ export default class UserServices {
   ) {
     try {
       logger.info("Checking input fields");
-      const [usernameTaken, emailTaken, phoneTaken] = await Promise.all([
+      const [
+        usernameTaken,
+        emailTaken,
+        //  phoneTaken
+      ] = await Promise.all([
         this.userRepository.findUserName(user.username),
         this.userRepository.findEmail(user.email),
-        this.userRepository.findPhoneNumber(user.phone),
+        // this.userRepository.findPhoneNumber(user.phone),
       ]);
-      if (usernameTaken || emailTaken || phoneTaken) {
+      if (
+        usernameTaken ||
+        emailTaken
+        // || phoneTaken
+      ) {
         const reasons = [];
         if (usernameTaken) reasons.push("Username already taken");
         if (emailTaken) reasons.push("Email already registered");
-        if (phoneTaken) reasons.push("Phone number already registered");
+        // if (phoneTaken) reasons.push("Phone number already registered");
         const error = new Error("User already exists");
         (error as any).statusCode = 409;
         (error as any).details = reasons;
@@ -116,7 +126,6 @@ export default class UserServices {
         throw error;
       }
       const userid = result._id.toString();
-
       // const uploadResult = await this.uploadImage(file, userid, role);
       // if (!uploadResult) {
       //   await this.userRepository.deleteOne(userid);
@@ -134,12 +143,63 @@ export default class UserServices {
       //   throw error;
       // }
       if (!role) await this.cartService.createCart(userid);
+      // const emailSent = await this.emailService.signUpMail(
+      //   {
+      //     email: result.email,
+      //     username: result.username,
+      //   },
+      //   role?.toLowerCase() === "admin" ? UserRole.ADMIN : UserRole.USER
+      // );
+      // if (!emailSent) {
+      //   logger.warn(
+      //     `Sign-up succeeded but email failed to send to ${result.email}`
+      //   );
+      // }
+      // return {
+      //   result: this.returnData(result),
+      //   token: this.authService.generateToken(
+      //     result._id.toString(),
+      //     user.username,
+      //     user.email,
+      //     result.role
+      //   ),
+      // };
+      await this.otpServices.send(user.email);
+      return "success";
+    } catch (err) {
+      logger.error("Error during sign-up process");
+      throw err;
+    }
+  }
+
+  public async verifyUser(email: string, otp: string) {
+    try {
+      const verifyResult = await this.otpServices.verify(email, otp);
+      const user = await this.userRepository.signIn(email);
+      if (!user) {
+        const error = new Error("No user found");
+        (error as any).statusCode = 404;
+        throw error;
+      }
+      if (verifyResult !== true) {
+        return verifyResult;
+      }
+      const userid = user._id.toString();
+      const result = await this.userRepository.updateOne(userid, {
+        emailVerified: true,
+      });
+      if (!result || Object.keys(result).length === 0) {
+        const error = new Error("Verification failed");
+        await this.userRepository.deleteOne(userid);
+        (error as any).statusCode = 500;
+        throw error;
+      }
       const emailSent = await this.emailService.signUpMail(
         {
           email: result.email,
           username: result.username,
         },
-        role?.toLowerCase() === "admin" ? UserRole.ADMIN : UserRole.USER
+        UserRole.USER
       );
       if (!emailSent) {
         logger.warn(
@@ -149,6 +209,12 @@ export default class UserServices {
       return {
         result: this.returnData(result),
         token: this.authService.generateToken(
+          userid,
+          user.username,
+          user.email,
+          result.role
+        ),
+        refreshToken: this.authService.generateRefreshToken(
           result._id.toString(),
           user.username,
           user.email,
@@ -156,7 +222,7 @@ export default class UserServices {
         ),
       };
     } catch (err) {
-      logger.error("Error during sign-up process");
+      logger.error("Failed to verify User");
       throw err;
     }
   }
@@ -169,7 +235,10 @@ export default class UserServices {
         (error as any).statusCode = 404;
         throw error;
       }
-
+      if (result.emailVerified === false) {
+        logger.warn("User email is not verified");
+        return { result: "notverified" };
+      }
       const check = await Utils.comparePassword(password, result.password);
       if (!check) {
         const error = new Error("Signin failed. Incorrect password");
@@ -179,6 +248,12 @@ export default class UserServices {
       return {
         result: this.returnData(result),
         token: this.authService.generateToken(
+          result._id.toString(),
+          result.username,
+          email,
+          result.role
+        ),
+        refreshToken: this.authService.generateRefreshToken(
           result._id.toString(),
           result.username,
           email,

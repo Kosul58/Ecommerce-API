@@ -3,144 +3,105 @@ import SellerProducts from "../components/seller/SellerProducts";
 import AddProduct from "../components/seller/AddProduct";
 import { useNavigate } from "react-router-dom";
 import { useSellerData } from "../api/seller";
-import { GiHamburgerMenu } from "react-icons/gi";
-import { AiOutlineClose } from "react-icons/ai";
+import Sidebar from "../components/seller/SellerSidebar";
+import type { Datum, Seller } from "../types/sellertypes";
+import EditProduct from "../components/seller/EditProduct";
+import ManageProduct from "../components/seller/ManageProduct";
 
-type Section =
-  | "sales"
+export type Section =
+  | "dashboard"
   | "productdetails"
   | "viewproducts"
   | "addProduct"
   | "logout"
   | "seller"
-  | "Orders";
+  | "Orders"
+  | "editProduct"
+  | "manageProduct"
+  | "manageOrders"
+  | "trackOrder"
+  | "support"
+  | "message"
+  | "setting";
 
-const menuItems: { key: Section; label: string }[] = [
-  { key: "sales", label: "Sales Details" },
-  { key: "productdetails", label: "Product Details" },
-  { key: "seller", label: "My Details" },
-  { key: "viewproducts", label: "My Products" },
-  { key: "Orders", label: "Orders" },
-  { key: "addProduct", label: "Add Product" },
-];
-
-const SalesDetails = () => (
-  <div className="text-white text-xl">Sales Details View</div>
+const Dashboard = () => (
+  <div className="text-white text-xl">Dashboard Details View</div>
 );
 
 const Orders = () => (
   <div className="text-white text-xl">Orders Details View</div>
 );
+
 const SellerDashboard = () => {
   const navigate = useNavigate();
-  const [hideHamburger, setHideHamburger] = useState(true);
-  const [selectedSection, setSelectedSection] = useState<
-    | "sales"
-    | "productdetails"
-    | "viewproducts"
-    | "addProduct"
-    | "logout"
-    | "seller"
-    | "Orders"
-  >("sales");
+  const [selectedSection, setSelectedSection] = useState<Section>("dashboard");
+  const [productData, setProductData] = useState<Datum | null>(null);
+  const {
+    data: sellerData,
+    isLoading: isSellerLoading,
+    isError: isSellerError,
+  } = useSellerData();
+  console.log(sellerData);
 
-  const { data: sellerData, isError, isLoading } = useSellerData();
   const logOut = () => {
     sessionStorage.removeItem("sellerdata");
     sessionStorage.removeItem("productdata");
     navigate("/");
   };
-
-  if (isError) {
-    alert("error fetching data from the server");
+  if (isSellerError) {
+    alert("Error fetching seller data from the server. Please try again.");
     navigate("/");
+    return null;
   }
 
-  if (!sellerData || isLoading) return <p>Loading...</p>;
-  if (Object.keys(sellerData).length === 0)
-    return <p className="text-red-400">No Seller Found.</p>;
+  if (isSellerLoading || !sellerData) {
+    return <p className="text-lg text-gray-700 p-4">Loading seller data...</p>;
+  }
+
+  if (Object.keys(sellerData).length === 0) {
+    return (
+      <p className="text-red-400 p-4">No Seller Found. Please log in again.</p>
+    );
+  }
 
   return (
-    <section className="w-full h-screen absolute bg-indigo-300 opacity-90 flex justify-center items-center">
-      <aside className="absolute top-0 left-0 w-[10%] min-w-[200px] h-full flex items-center flex-col gap-10 p-2 rounded-r-3xl bg-blue-500 overflow-auto max-md:hidden z-10">
-        <h1 className="mt-5 text-white text-2xl">{sellerData.username}</h1>
-        <ul className="flex flex-col gap-3 w-full">
-          {menuItems.map(({ key, label }) => (
-            <li
-              key={key}
-              onClick={() => {
-                setSelectedSection(key);
-                setHideHamburger(true);
-              }}
-              className={`w-full px-4 py-2 rounded cursor-pointer hover:bg-indigo-700 hover:text-white hover:scale-105 ${
-                selectedSection === key ? "bg-sky-300 text-white" : "bg-inherit"
-              }`}
-            >
-              {label}
-            </li>
-          ))}
-        </ul>
-        <button
-          onClick={() => logOut()}
-          className="w-full px-4 py-2 rounded shadow bg-red-200 cursor-pointer hover:bg-red-500"
-        >
-          Log Out
-        </button>
-      </aside>
-
-      <GiHamburgerMenu
-        className="absolute top-4 left-4 text-3xl cursor-pointer max-md:block hidden z-50"
-        onClick={() => setHideHamburger(false)}
+    <section className="w-full h-screen absolute bg-slate-100 opacity-90 flex">
+      <Sidebar
+        activeKey={selectedSection}
+        onSelect={setSelectedSection}
+        onLogout={logOut}
+        seller={sellerData}
       />
-
-      {!hideHamburger && (
-        <aside className="fixed top-0 left-0 w-[70%] max-w-xs h-full bg-indigo-400 p-4 flex flex-col gap-6 z-50 overflow-auto min-md:hidden">
-          <div className="flex justify-end">
-            <AiOutlineClose
-              className="text-white text-2xl cursor-pointer"
-              onClick={() => setHideHamburger(true)}
-            />
-          </div>
-          <h1 className="text-white text-2xl">{sellerData.username}</h1>
-          <ul className="flex flex-col gap-3 w-full">
-            {menuItems.map(({ key, label }) => (
-              <li
-                key={key}
-                onClick={() => {
-                  setSelectedSection(key);
-                  setHideHamburger(true);
-                }}
-                className={`w-full px-4 py-2 rounded cursor-pointer hover:bg-indigo-500 hover:text-white hover:scale-105 ${
-                  selectedSection === key
-                    ? "bg-sky-300 text-black"
-                    : "bg-inherit"
-                }`}
-              >
-                {label}
-              </li>
-            ))}
-          </ul>
-          <button
-            onClick={() => {
-              logOut();
-              setHideHamburger(true);
-            }}
-            className="w-full px-4 py-2 rounded shadow bg-red-400 cursor-pointer hover:bg-red-500 "
-          >
-            Log Out
-          </button>
-        </aside>
-      )}
-
-      <main className="w-[90%] h-full rounded-r-xl flex justify-center items-center relative">
-        {selectedSection === "sales" && <SalesDetails />}
+      <main className="w-full h-full flex justify-center items-center relative overflow-auto">
+        {selectedSection === "dashboard" && <Dashboard />}
         {selectedSection === "productdetails" && <div>Product details</div>}
         {selectedSection === "seller" && <div>Seller details</div>}
         {selectedSection === "viewproducts" && (
-          <SellerProducts seller={sellerData} />
+          <SellerProducts
+            seller={sellerData as Seller}
+            setProductData={setProductData}
+            onEdit={setSelectedSection}
+          />
         )}
         {selectedSection === "addProduct" && <AddProduct />}
         {selectedSection === "Orders" && <Orders />}
+        {selectedSection === "editProduct" && !productData && (
+          <div>No Product Selected for Editing</div>
+        )}
+        {selectedSection === "editProduct" && productData && (
+          <EditProduct
+            product={productData as Datum}
+            onCancel={() => setProductData(null)}
+          />
+        )}
+        {selectedSection === "manageProduct" && (
+          <ManageProduct sellerId={sellerData.id} />
+        )}
+        {selectedSection === "manageOrders" && <div>Manage Orders Content</div>}
+        {selectedSection === "trackOrder" && <div>Track Order Content</div>}
+        {selectedSection === "support" && <div>Support Content</div>}
+        {selectedSection === "message" && <div>Message Content</div>}
+        {selectedSection === "setting" && <div>Setting Content</div>}
       </main>
     </section>
   );

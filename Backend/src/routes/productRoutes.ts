@@ -4,7 +4,11 @@ import verifyRole from "../middlewares/verifyRole";
 import verifyToken from "../middlewares/verifyToken";
 import { container } from "tsyringe";
 import DataValidation from "../middlewares/validateData";
-import { hideSchema, idSchema } from "../validation/userSchema";
+import {
+  deleteProductSchema,
+  hideSchema,
+  idSchema,
+} from "../validation/userSchema";
 import {
   addSchema,
   modifySchema,
@@ -121,6 +125,15 @@ productRoutes.delete(
   dataValidation.validateBody(removeImageSchema),
   createAudit({ action: "delete product image" }),
   productController.removeImage
+);
+productRoutes.delete(
+  "/selected",
+  verifyToken.verify,
+  verifyRole.verify("Seller"),
+  dataValidation.validateTokenData(idSchema),
+  dataValidation.validateBody(deleteProductSchema),
+  createAudit({ action: "delete selected products" }),
+  productController.deleteSelected
 );
 productRoutes.delete(
   "/:productid",

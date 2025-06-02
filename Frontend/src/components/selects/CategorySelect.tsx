@@ -26,18 +26,18 @@ const CategorySelect: React.FC<CategoryProps> = ({
       <select
         name="Headline"
         id="Headline"
-        className="mt-0.5 w-[200px] p-4 rounded border-gray-300 shadow-sm sm:text-sm bg-amber-50"
+        className="mt-0.5 w-[80%] min-w-[180px] p-4 rounded border-gray-300 shadow-sm sm:text-sm bg-white/70 cursor-pointer"
         value={selectedId}
         onChange={handleChange}
       >
-        <option value="" className="bg-amber-100 text-red-600">
+        <option value="" className="bg-white/70 text-gray-500">
           Please select
         </option>
         {values.map((value) => (
           <option
             key={value.id}
             value={value.id}
-            className="bg-amber-100 text-red-600"
+            className="bg-white/70 text-gray-800"
           >
             {value.name}
           </option>

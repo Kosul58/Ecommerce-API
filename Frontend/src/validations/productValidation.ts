@@ -15,4 +15,5 @@ export const EditProductSchema = yup.object().shape({
     .typeError("Inventory must be a number"),
   category: yup.string().required("Category is required"),
   description: yup.string().max(1000).required("Description is required"),
+  discount: yup.number().max(99).min(0).required("Discount is required"),
 });

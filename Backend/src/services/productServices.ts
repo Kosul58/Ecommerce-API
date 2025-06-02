@@ -410,6 +410,53 @@ export default class ProductServices {
       throw err;
     }
   }
+
+  public async deleteSelected(sellerid: string, productids: string[]) {
+    try {
+      logger.info(`Deleting products for seller: ${sellerid}`);
+      const sellerProducts = await this.getSellerProducts(sellerid);
+      if (!sellerProducts || sellerProducts.length === 0) {
+        return null;
+      }
+      const products = sellerProducts.filter((p: any) =>
+        productids.includes(p.id)
+      );
+      const cloudImages = [];
+      for (const product of products) {
+        const deletedImages = product.images.map((image: string) => {
+          const match = image.match(/products\/.+/);
+          return match ? match[0] : "";
+        });
+
+        cloudImages.push(...deletedImages);
+      }
+      const deleteIds = products.map((p: any) => p.id);
+      const result = await this.productRepository.deleteProducts(deleteIds);
+      if (!result || result.deletedCount === 0) {
+        const error = new Error("Products deletion failed");
+        (error as any).statusCode = 500;
+        throw error;
+      }
+      logger.info(
+        `Successfully deleted ${result.deletedCount} products from the database for seller: ${sellerid}`
+      );
+      const cloudResult = await this.cloudService.deleteCloudFiles(
+        cloudImages,
+        "upload",
+        "image"
+      );
+      if (cloudResult.length === 0) {
+        logger.warn(
+          "Products deleted from database but products data could not be deleted from the cloud"
+        );
+      }
+      logger.info(`Products deleted successfully for seller: ${sellerid}`);
+      return "success";
+    } catch (err) {
+      logger.error("Error deleting products");
+      throw err;
+    }
+  }
   public async deleteProducts(id: string) {
     try {
       logger.info(`Deleting products for seller: ${id}`);
@@ -553,6 +600,7 @@ export default class ProductServices {
       category: string;
       inventory: number;
       images: string[];
+      timestamp: string;
     }
   >(product: T): ProductReturn {
     return {
@@ -564,6 +612,7 @@ export default class ProductServices {
       category: product.category,
       inventory: product.inventory,
       images: product.images,
+      timestamp: product.timestamp,
     };
   }
 
@@ -578,6 +627,7 @@ export default class ProductServices {
       inventory: number;
       active: boolean;
       images: string[];
+      timestamp: string;
     }
   >(product: T): SellerProductReturn {
     return {
@@ -590,6 +640,7 @@ export default class ProductServices {
       inventory: product.inventory,
       active: product.active,
       images: product.images,
+      timestamp: product.timestamp,
     };
   }
 }
