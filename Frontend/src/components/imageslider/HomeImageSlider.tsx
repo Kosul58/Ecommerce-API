@@ -44,7 +44,7 @@ const HomeImageSlider: React.FC<ImageSliderProps> = ({
 
   return (
     <div
-      className="relative w-full h-[88vh] min-h-[400px] flex items-center justify-center text-white"
+      className="relative w-full h-[100vh] min-h-[400px] flex items-center justify-center text-white"
       style={{
         backgroundImage: `url(${currentSlide.image})`,
         backgroundSize: "cover",

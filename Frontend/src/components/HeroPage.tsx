@@ -8,7 +8,6 @@ import shoes from "../assets/images/shoes.jpg";
 import furniture from "../assets/images/furniture.jpg";
 const HeroPage = () => {
   const navigate = useNavigate();
-
   const slides = [
     {
       image: clothes,

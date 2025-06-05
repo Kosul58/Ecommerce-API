@@ -274,7 +274,17 @@ export default class UserServices {
         (error as any).statusCode = 404;
         throw error;
       }
-      return this.returnData(result);
+      // console.log(result);
+      return {
+        id: result._id.toString(),
+        username: result.username,
+        email: result.email,
+        image: result.image,
+        firstname: result.firstname ?? "",
+        lastname: result.lastname ?? "",
+        phone: result.phone?.toString() ?? "",
+        address: result.address ?? "",
+      };
     } catch (err) {
       logger.error("Error fetching user data for userId:");
       throw err;
@@ -304,6 +314,26 @@ export default class UserServices {
         (error as any).statusCode = 401;
         throw error;
       }
+      const userData = await this.userRepository.findOne(userid);
+      if (userData.image && userData.image !== "userimage") {
+        const filePath = await this.cloudService.filterData([userData.image]);
+        if (!filePath) {
+          logger.warn("Failed to find file path stored in the database");
+          const error = new Error(
+            "Failed to find file path stored in the database"
+          );
+          (error as any).statusCode = 500;
+          throw error;
+        }
+        const deleteResult = await this.cloudService.deleteCloudFile(
+          filePath[0],
+          "upload",
+          "image"
+        );
+        if (!deleteResult) {
+          logger.warn("Failed to delete image data from the cloud");
+        }
+      }
       const data = await this.userRepository.deleteOne(userid);
       if (!data) {
         const error = new Error("User not found or already deleted");
@@ -312,7 +342,6 @@ export default class UserServices {
       }
       await this.cartService.deleteCart(userid);
       logger.info(`User deleted successfully. User cart also deleted`);
-
       return "success";
     } catch (err) {
       logger.error("Error deleting user with userId:");
@@ -320,14 +349,49 @@ export default class UserServices {
     }
   }
 
-  public async updateUserInfo(userid: string, update: UpdateUser) {
+  public async changePassword(
+    userid: string,
+    oldpassword: string,
+    newpassword: string
+  ) {
     try {
-      const updateFields = Object.fromEntries(
-        Object.entries(update).filter(([_, value]) => value !== undefined)
-      ) as Partial<UpdateUser>;
-      if (updateFields.username) {
+      const userData = await this.userRepository.findOne(userid);
+      if (!userData) {
+        logger.warn("No user found");
+        return "nouser";
+      }
+      const compareResult = await Utils.comparePassword(
+        oldpassword,
+        userData.password
+      );
+      if (!compareResult) {
+        logger.warn("Old password does not match");
+        return "nomatch";
+      }
+      const hashPassword = await Utils.encryptPassword(newpassword);
+      const updateResult = await this.userRepository.updatePassword(
+        userid,
+        hashPassword
+      );
+      if (!updateResult) {
+        logger.error("Failed to update new password in the database");
+        return null;
+      }
+      return "success";
+    } catch (err) {
+      logger.error("Failed to change user password");
+      throw err;
+    }
+  }
+  public async updateUserInfo(
+    userid: string,
+    update: UpdateUser,
+    file: Express.Multer.File
+  ) {
+    try {
+      if (update.username) {
         const usernameTaken = await this.userRepository.findUserName(
-          updateFields.username,
+          update.username,
           userid
         );
         if (usernameTaken) {
@@ -336,9 +400,9 @@ export default class UserServices {
           throw error;
         }
       }
-      if (updateFields.phone) {
+      if (update.phone) {
         const phoneTaken = await this.userRepository.findPhoneNumber(
-          updateFields.phone,
+          update.phone,
           userid
         );
         if (phoneTaken) {
@@ -347,12 +411,78 @@ export default class UserServices {
           throw error;
         }
       }
-      const result = await this.userRepository.updateOne(userid, updateFields);
+
+      if (update.email) {
+        const emailtaken = await this.userRepository.findEmail(
+          update.email,
+          userid
+        );
+        if (emailtaken) {
+          const error = new Error("Email is already in use");
+          (error as any).statusCode = 409;
+          throw error;
+        }
+      }
+      const userData = await this.userRepository.findOne(userid);
+      if (update.email && update.email !== userData.email) {
+        userData.emailVerified = false;
+        await this.otpServices.send(update.email);
+      }
+
+      if (update.image_removed === "true") {
+        if (userData.image && userData.image !== "userimage") {
+          const filePath = await this.cloudService.filterData([userData.image]);
+          if (!filePath) {
+            logger.warn("Failed to find file path stored in the database");
+            const error = new Error(
+              "Failed to find file path stored in the database"
+            );
+            (error as any).statusCode = 500;
+            throw error;
+          }
+          const deleteResult = await this.cloudService.deleteCloudFile(
+            filePath[0],
+            "upload",
+            "image"
+          );
+          if (!deleteResult) {
+            logger.warn("Failed to delete previous image data from the cloud");
+          }
+          update.image = "";
+        }
+      } else if (file) {
+        if (userData.image && userData.image !== "userimage") {
+          const filePath = await this.cloudService.filterData([userData.image]);
+          if (!filePath) {
+            logger.warn("Failed to find file path stored in the database");
+            const error = new Error(
+              "Failed to find file path stored in the database"
+            );
+            (error as any).statusCode = 500;
+            throw error;
+          }
+          const deleteResult = await this.cloudService.deleteCloudFile(
+            filePath[0],
+            "upload",
+            "image"
+          );
+          if (!deleteResult) {
+            logger.warn("Failed to delete previous image data from the cloud");
+          }
+        }
+        const uploadResult = await this.uploadImage(file, userid);
+        if (!uploadResult) {
+          const error = new Error("Image upload to cloud failed");
+          (error as any).statusCode = 500;
+          throw error;
+        }
+        update.image = uploadResult;
+      }
+      const result = await this.userRepository.updateOne(userid, update);
       if (!result) {
         logger.error("Failed to update user data for userId:", userid);
         return;
       }
-      // logger.info(`User ${result.username} updated successfully`);
       return this.returnData(result);
     } catch (err) {
       logger.error("Error updating user info for userId:");

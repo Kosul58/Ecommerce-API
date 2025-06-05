@@ -1,6 +1,12 @@
 import React from "react";
 
-type SortOption = "name-asc" | "name-desc" | "price-asc" | "price-desc";
+type SortOption =
+  | "name-asc"
+  | "name-desc"
+  | "price-asc"
+  | "price-desc"
+  | "date-asc"
+  | "date-desc";
 
 interface SortSelectProps {
   onSortChange: (sortBy: SortOption) => void;
@@ -31,6 +37,12 @@ const SortSelect: React.FC<SortSelectProps> = ({ onSortChange }) => {
           </option>
           <option value="price-desc" className="text-black">
             Price: High to Low
+          </option>
+          <option value="date-desc" className="text-black">
+            Date: Newest First
+          </option>
+          <option value="date-asc" className="text-black">
+            Price: Oldest First
           </option>
         </select>
         <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3 text-gray-400">

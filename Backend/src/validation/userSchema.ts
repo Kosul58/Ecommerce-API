@@ -27,12 +27,54 @@ export const signInSchema = Joi.object({
   password: Joi.string().min(2).required(),
 });
 
+export const updatePasswordSchema = Joi.object({
+  oldpassword: Joi.string().min(6).required().messages({
+    "string.base": "Old password must be a string",
+    "string.empty": "Old password is required",
+    "string.min": "Old password must be at least 6 characters",
+    "any.required": "Old password is required",
+  }),
+  newpassword: Joi.string().min(6).required().messages({
+    "string.base": "New password must be a string",
+    "string.empty": "New password is required",
+    "string.min": "New password must be at least 6 characters",
+    "any.required": "New password is required",
+  }),
+});
+
 export const updateSchema = Joi.object({
-  firstname: Joi.string().min(2),
-  lastname: Joi.string().min(2),
-  username: Joi.string().alphanum().min(3).max(30),
-  phone: Joi.number(),
-  address: Joi.string().min(2),
+  firstname: Joi.string()
+    .min(2)
+    .max(30)
+    .pattern(/^[A-Za-z\s]+$/)
+    .message("First name can only contain letters and spaces"),
+
+  lastname: Joi.string()
+    .min(2)
+    .max(30)
+    .pattern(/^[A-Za-z\s]+$/)
+    .message("Last name can only contain letters and spaces"),
+
+  username: Joi.string()
+    .alphanum()
+    .min(3)
+    .max(30)
+    .message("Username can only contain letters and numbers"),
+
+  phone: Joi.string()
+    .pattern(/^[0-9]{10}$/)
+    .message("Phone number must be 10 digits"),
+
+  address: Joi.string()
+    .min(5)
+    .max(100)
+    .message("Address must be between 5 and 100 characters"),
+
+  email: Joi.string().email().message("Invalid email format"),
+
+  image: Joi.string(),
+
+  image_removed: Joi.string(),
 });
 
 export const idSchema = Joi.object({

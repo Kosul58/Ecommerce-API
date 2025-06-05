@@ -128,6 +128,12 @@ export default class CartService {
       );
       if (productIndex >= 0) {
         cart.products[productIndex].quantity += quantity;
+        if (cart.products[productIndex].quantity > product.inventory) {
+          const error = new Error("Insufficient inventory");
+          logger.error(`Insufficient inventory: ${userid}`);
+          (error as any).statusCode = 404;
+          throw error;
+        }
       } else {
         const newProduct = this.generateCartProduct(product, quantity);
         cart.products.push(newProduct);

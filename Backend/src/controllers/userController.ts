@@ -141,11 +141,18 @@ export default class UserController {
   public updateUserInfo: RequestHandler = async (req, res, next) => {
     const userid = req.user.id;
     const update: UpdateUser = req.body;
+    const file = req.file as Express.Multer.File;
+    // console.log("file", file);
+    // console.log("update", update);
     try {
       logger.info(
         `Attempting to update information for user with id: ${userid}`
       );
-      const result = await this.userServices.updateUserInfo(userid, update);
+      const result = await this.userServices.updateUserInfo(
+        userid,
+        update,
+        file
+      );
       if (!result) {
         logger.warn(`User with id: ${userid} not found for update`);
         return this.responseHandler.notFound(res, "User not found");
@@ -158,6 +165,45 @@ export default class UserController {
       );
     } catch (err) {
       logger.error(`Failed to update user with id: ${userid}`, err);
+      return next(err);
+    }
+  };
+
+  public changePassword: RequestHandler = async (req, res, next) => {
+    const userid = req.user.id;
+    const { oldpassword, newpassword } = req.body;
+    try {
+      logger.info(`Attempting to change password for user with id: ${userid}`);
+      const result = await this.userServices.changePassword(
+        userid,
+        oldpassword,
+        newpassword
+      );
+      if (result == "nouser") {
+        return this.responseHandler.notFound(res, "User not found");
+      }
+      if (result == "nomatch") {
+        return this.responseHandler.error(res, "Password does not match");
+      }
+      logger.info(`Password changed for User with id: ${userid}`);
+
+      if (!result) {
+        return this.responseHandler.serverError(
+          res,
+          "Failed to change user password"
+        );
+      }
+
+      return this.responseHandler.success(
+        res,
+        "Password changed for the user",
+        result
+      );
+    } catch (err) {
+      logger.error(
+        `Failed to change password for user with id: ${userid}`,
+        err
+      );
       return next(err);
     }
   };

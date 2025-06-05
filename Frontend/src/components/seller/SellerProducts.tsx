@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import type { Datum, Seller } from "../../types/sellertypes";
 import SearchBar from "./SearchBar";
 import ViewProduct from "./ViewProduct";
-import ProductCard from "../cards/ProductCard";
+import ProductCard from "../cards/SellerProductCard";
 import { useProducts } from "../../api/seller";
 import ProductCategory from "./ProductCategory";
 import { IoSearchCircle } from "react-icons/io5";
@@ -116,7 +116,7 @@ const SellerProducts: React.FC<SellerData> = ({
         <SortSelect onSortChange={(option) => setSortOption(option)} />
       </div>
       {openFilter && (
-        <aside className="fixed top-1/2 left-1/2 w-[400px] h-[600px] rounded-lg bg-white p-6 shadow-xl z-30 transform -translate-x-1/2 -translate-y-1/2 flex flex-col gap-4 overflow-y-auto">
+        <aside className="fixed top-1/2 left-1/2 w-[400px] h-[600px] rounded-lg bg-white p-6 shadow-xl z-30 transform -translate-x-1/2 -translate-y-1/2 flex flex-col gap-4 overflow-y-auto max-sm:w-[90%]">
           <h2 className="text-xl font-bold mb-4">Filter Products</h2>
 
           <label className="flex flex-col">

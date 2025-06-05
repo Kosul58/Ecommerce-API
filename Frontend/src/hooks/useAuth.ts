@@ -210,6 +210,173 @@ export const useAllProducts = () => {
       const response = await axios.get<ProductsResponse>("/product");
       return response.data.data;
     },
+  });
+};
+
+export interface UserData {
+  id: string;
+  username: string;
+  email: string;
+  image?: string;
+  firstname?: string;
+  lastname?: string;
+  phone?: string;
+  address?: string;
+}
+
+interface UserDataResponse {
+  success: boolean;
+  message: string;
+  data: UserData;
+}
+
+export const useUserData = () => {
+  return useQuery<UserData, Error>({
+    queryKey: ["user"],
+    queryFn: async () => {
+      const response = await axios.get<UserDataResponse>("/user");
+      if (!response.data || !response.data.data) {
+        throw new Error("User data not found in response.");
+      }
+      return response.data.data;
+    },
+  });
+};
+
+interface CartProductData {
+  productid: string;
+  sellerid: string;
+  name: string;
+  quantity: number;
+}
+
+interface CartData {
+  _id: string;
+  userid: string;
+  products: CartProductData[];
+}
+
+interface CartDataResponse {
+  success: boolean;
+  message: string;
+  data: CartData;
+}
+
+export const useCartData = () => {
+  return useQuery<CartData, Error>({
+    queryKey: ["cart"],
+    queryFn: async () => {
+      const response = await axios.get<CartDataResponse>("/cart/user");
+      return response.data.data;
+    },
     staleTime: 5 * 60 * 1000,
+    retry: 1,
+  });
+};
+
+interface AddCartValues {
+  productid: string;
+  quantity: number;
+}
+interface ApiResponse {
+  success: boolean;
+  message: string;
+  data: string;
+}
+export const useAddCart = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation<ApiResponse, Error, AddCartValues>({
+    mutationFn: async (values: AddCartValues) => {
+      const response = await axios.post<ApiResponse>("/cart", values);
+      return response.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["cart"] });
+    },
+  });
+};
+
+interface CartRemoveValues {
+  products: string[];
+}
+interface ApiResponse {
+  success: boolean;
+  message: string;
+  data: string;
+}
+export const useRemoveCart = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation<ApiResponse, Error, CartRemoveValues>({
+    mutationFn: async ({ products }) => {
+      const response = await axios.delete<ApiResponse>("/cart", {
+        data: { products },
+      });
+      return response.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["cart"] });
+    },
+  });
+};
+
+export const useCartUpdate = () => {
+  const queryClient = useQueryClient();
+  return useMutation<ApiResponse, Error, AddCartValues>({
+    mutationFn: async (cartData) => {
+      const response = await axios.put("/cart", cartData);
+      return response.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["cart"] });
+    },
+  });
+};
+
+export const useUserUpdate = () => {
+  const queryClient = useQueryClient();
+  return useMutation<ApiResponse, Error, FormData>({
+    mutationFn: async (values) => {
+      const response = await axios.put("/user", values, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+      return response.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["user"] });
+    },
+  });
+};
+
+interface ChangePassword {
+  oldpassword: string;
+  newpassword: string;
+}
+
+export const useChangeUserPassword = () => {
+  return useMutation<ApiResponse, Error, ChangePassword>({
+    mutationFn: async (values) => {
+      const response = await axios.put("/user/changepassword", values);
+      return response.data;
+    },
+  });
+};
+
+interface DeleteUser {
+  userid: string;
+}
+export const useDeleteuser = () => {
+  const queryClient = useQueryClient();
+  return useMutation<ApiResponse, Error, DeleteUser>({
+    mutationFn: async (values) => {
+      const response = await axios.delete(`/user/${values.userid}`);
+      return response.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["user"] });
+    },
   });
 };

@@ -11,6 +11,9 @@ import User from "./pages/User";
 import LandingPage from "./pages/LandingPage";
 import Products from "./pages/Products";
 import ProductDetail from "./components/ProductDetail";
+import Cart from "./pages/Cart";
+import UserProfile from "./pages/UserProfile";
+import Order from "./pages/Order";
 const App = () => {
   const [sellerSigned, setSellerSigned] = useState(true);
   return (
@@ -34,6 +37,9 @@ const App = () => {
             <Route path="/user/verify" element={<VerifyUser />} />
             <Route path="/products" element={<Products />} />
             <Route path="/product/:pid" element={<ProductDetail />} />
+            <Route path="/cart" element={<Cart />} />
+            <Route path="/userprofile" element={<UserProfile />}></Route>
+            <Route path="/order" element={<Order />}></Route>
           </Routes>
         </Router>
       </QueryClientProvider>

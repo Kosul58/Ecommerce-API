@@ -99,6 +99,21 @@
             "date": 1748839437563,
             "name": "C:\\Users\\kosul\\Desktop\\Ecommerce\\Backend\\logs\\error-2025-06-02.log",
             "hash": "c5a05691d5ebfde46ed1559d1c7fb7835aa5372802e846e121f529bb533d2148"
+        },
+        {
+            "date": 1748925634419,
+            "name": "C:\\Users\\kosul\\Desktop\\Ecommerce\\Backend\\logs\\error-2025-06-03.log",
+            "hash": "1b27cbf175ca6984d876ccd64bc25b2b4793640f6e63dd1fcee34a96e74aa377"
+        },
+        {
+            "date": 1749018649924,
+            "name": "C:\\Users\\kosul\\Desktop\\Ecommerce\\Backend\\logs\\error-2025-06-04.log",
+            "hash": "7ea1431978cf4994740997a7fe44f5cdc76156565bf0065b4428286dcd28a406"
+        },
+        {
+            "date": 1749089179840,
+            "name": "C:\\Users\\kosul\\Desktop\\Ecommerce\\Backend\\logs\\error-2025-06-05.log",
+            "hash": "11ca38d7002e9bb79cf8510b9c05d74c5cad33af7cc906479b2d31bdbce4c899"
         }
     ],
     "hashType": "sha256"

@@ -40,10 +40,13 @@ export interface AddUser {
 }
 
 export interface UpdateUser {
-  firstname?: string;
-  lastname?: string;
-  username?: string;
-  phone?: number;
-  address?: string;
+  firstname: string;
+  lastname: string;
+  username: string;
+  phone: number;
+  address: string;
+  email: string;
   image?: string;
+  emailVerified?: boolean;
+  image_removed?: string;
 }

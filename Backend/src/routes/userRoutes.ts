@@ -8,9 +8,11 @@ import {
   idSchema,
   signInSchema,
   signUpSchema,
+  updatePasswordSchema,
   updateSchema,
 } from "../validation/userSchema";
 import { createAudit } from "../middlewares/auditMiddleware";
+import { upload } from "../middlewares/imageMiddleware";
 
 const userController = container.resolve(UserController);
 const dataValidation = container.resolve(DataValidation);
@@ -66,10 +68,21 @@ userRoutes.put(
   "/",
   verifyToken.verify,
   verifyRole.verify("User"),
+  upload.single("image"),
   dataValidation.validateTokenData(idSchema),
   dataValidation.validateBody(updateSchema),
   createAudit({ action: "update user" }),
   userController.updateUserInfo
+);
+
+userRoutes.put(
+  "/changepassword",
+  verifyToken.verify,
+  verifyRole.verify("User"),
+  dataValidation.validateTokenData(idSchema),
+  dataValidation.validateBody(updatePasswordSchema),
+  createAudit({ action: "update userpassword" }),
+  userController.changePassword
 );
 
 export default userRoutes;

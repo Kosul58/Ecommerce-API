@@ -18,7 +18,7 @@ const ImageSlider: React.FC<ImageSliderProps> = ({ images }) => {
     );
 
   return (
-    <div className="relative w-full h-full flex items-center justify-center">
+    <div className="relative w-full h-full flex items-center justify-center z-30">
       <img
         src={images[current]}
         alt={`Product ${current + 1}`}
@@ -27,13 +27,13 @@ const ImageSlider: React.FC<ImageSliderProps> = ({ images }) => {
 
       <button
         onClick={prev}
-        className="absolute left-2 md:left-4 bg-white/80 hover:bg-white p-2 rounded-full shadow transition"
+        className="absolute left-2 md:left-4 bg-white/80 hover:bg-white p-2 rounded-full shadow transition cursor-pointer"
       >
         <FaChevronLeft />
       </button>
       <button
         onClick={next}
-        className="absolute right-2 md:right-4 bg-white/80 hover:bg-white p-2 rounded-full shadow transition"
+        className="absolute right-2 md:right-4 bg-white/80 hover:bg-white p-2 rounded-full shadow transition cursor-pointer"
       >
         <FaChevronRight />
       </button>

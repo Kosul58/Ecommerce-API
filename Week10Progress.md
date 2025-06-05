@@ -37,3 +37,5 @@
 - continue working on the landing page
 - continue working on products page
 - start work on user features in the frontend
+
+- react-toast notification library
