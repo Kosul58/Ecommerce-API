@@ -279,7 +279,7 @@ const UserProfile = () => {
                 className={`px-5 py-2 rounded-lg transition duration-300 ease-in-out flex items-center gap-2 cursor-pointer
                   ${
                     !passwordChange
-                      ? "bg-indigo-400 text-white hover:bg-indigo-600 shadow-md"
+                      ? "bg-purple-400 text-white hover:bg-purple-600 shadow-md"
                       : "bg-gray-400 text-white hover:bg-gray-500 shadow-md"
                   }
                 `}
@@ -301,7 +301,7 @@ const UserProfile = () => {
               <button
                 className={`px-5 py-2 rounded-lg transition duration-300 ease-in-out flex items-center gap-2 cursor-pointer ${
                   !edit
-                    ? "bg-purple-600 text-white hover:bg-purple-700 shadow-md"
+                    ? "bg-purple-400 text-white hover:bg-purple-600 shadow-md"
                     : "bg-gray-400 text-white hover:bg-gray-500 shadow-md"
                 }`}
                 onClick={() => {
@@ -439,7 +439,7 @@ const UserProfile = () => {
                     </button>
                   </div>
                 ) : (
-                  <label className="cursor-pointer flex items-center gap-2 px-6 py-2 bg-purple-600 text-white rounded-full hover:bg-purple-700 transition shadow-md">
+                  <label className="cursor-pointer flex items-center gap-2 px-6 py-2 bg-purple-400 text-white rounded-full hover:bg-purple-600 transition shadow-md">
                     <FaCamera />
                     <span className="text-sm font-medium">
                       Upload Profile Picture

@@ -51,7 +51,7 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({
   }, [products]);
 
   return (
-    <aside className="w-full md:w-64 bg-white shadow-md p-6 space-y-8 sticky top-24 transition-all h-full">
+    <aside className="w-full md:w-64 bg-white shadow-md p-6 space-y-8 sticky top-24 transition-all min-h-[100%]">
       <section>
         <h3 className="text-lg font-semibold mb-3 border-b pb-2">Category</h3>
         <div className="space-y-2 max-h-40 overflow-y-auto pr-1">

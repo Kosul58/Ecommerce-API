@@ -13,8 +13,10 @@ export const orderSchema = Joi.object({
 });
 
 export const ordersSchema = Joi.object({
+  address: Joi.string().min(5).required(),
   products: Joi.array().items(Joi.string()).min(1).required(),
   paymentMethod: Joi.string().min(3).required(),
+  paymentStatus: Joi.boolean().required(),
 });
 
 export const orderParamsSchema = Joi.object({

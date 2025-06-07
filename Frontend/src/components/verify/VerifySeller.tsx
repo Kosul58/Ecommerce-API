@@ -42,7 +42,7 @@ const VerifySeller = () => {
       if (response.success) {
         alert("Email verified successfully!");
         sessionStorage.removeItem("sellerEmail");
-        navigate("/sellerdashboard");
+        navigate("/seller/dashboard");
       } else {
         alert(response.message || "Verification failed.");
       }

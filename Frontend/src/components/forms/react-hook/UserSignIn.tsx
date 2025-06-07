@@ -70,7 +70,7 @@ const UserSignIn: React.FC<SignInProps> = ({ toggleToSignUp }) => {
         showNotification("Sign In successful.", "success");
         reset();
         setTimeout(() => {
-          navigate("/userdashboard");
+          navigate("/");
         }, 1200);
       } else {
         showNotification("Failed to Sign In as a User", "error");

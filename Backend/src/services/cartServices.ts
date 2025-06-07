@@ -4,13 +4,15 @@ import ProductServices from "./productServices";
 import CartFactory from "../factories/cartRepositoryFactory";
 import { CartRepositoryInterface } from "../common/types/classInterfaces";
 import logger from "../utils/logger";
+import SellerServices from "./sellerServices";
 
 @injectable()
 export default class CartService {
   private cartRepository: CartRepositoryInterface;
   constructor(
     @inject(CartFactory) private cartFactory: CartFactory,
-    @inject(ProductServices) private productServices: ProductServices
+    @inject(ProductServices) private productServices: ProductServices,
+    @inject(SellerServices) private sellerServices: SellerServices
   ) {
     this.cartRepository =
       this.cartFactory.getRepository() as CartRepositoryInterface;
@@ -51,19 +53,88 @@ export default class CartService {
       throw err;
     }
   }
+  private async getValidatedCart(userid: string) {
+    const cart = await this.cartRepository.getCart(userid);
+    if (!cart || !cart.products || cart.products.length === 0) {
+      const error = new Error("No cart found");
+      logger.error(`No cart found for user: ${userid}`);
+      (error as any).statusCode = 404;
+      throw error;
+    }
+    return cart;
+  }
+
+  private async getRelatedDataMaps(
+    cart: any
+  ): Promise<[Map<string, any>, Map<string, string>]> {
+    const productids = cart.products.map((p: any) => p.productid);
+    const sellerids = cart.products.map((p: any) => p.sellerid);
+
+    const [products, sellers] = await Promise.all([
+      this.productServices.getProductByIds(productids),
+      this.sellerServices.getSellersByIds(sellerids),
+    ]);
+
+    if (!products || products.length === 0) {
+      const error = new Error("No product found in product database");
+      logger.error(`No products found in product database`);
+      (error as any).statusCode = 404;
+      throw error;
+    }
+
+    if (!sellers || sellers.length === 0) {
+      const error = new Error("No seller found in seller database");
+      logger.error(`No sellers found in seller database`);
+      (error as any).statusCode = 404;
+      throw error;
+    }
+
+    const productMap = new Map<string, any>();
+    for (const p of products) {
+      productMap.set(p.id, p);
+    }
+
+    const sellerMap = new Map<string, string>();
+    for (const s of sellers) {
+      sellerMap.set(s.id, s.shopname);
+    }
+
+    return [productMap, sellerMap];
+  }
+
+  private formatCartProducts(
+    cart: any,
+    productMap: Map<string, any>,
+    sellerMap: Map<string, string>
+  ) {
+    return cart.products.map((item: any) => {
+      const product = productMap.get(item.productid);
+      const shopname = sellerMap.get(item.sellerid) || "Unknown";
+
+      return {
+        productid: item.productid,
+        name: product?.name || item.name,
+        price: product?.price || 0,
+        discount: product?.discount || 0,
+        quantity: item.quantity,
+        sellerid: item.sellerid,
+        shopname,
+      };
+    });
+  }
 
   public async getCart(userid: string) {
     try {
-      const cart = await this.cartRepository.getCart(userid);
-      if (!cart || Object.keys(cart).length === 0) {
-        const error = new Error("No cart found");
-        logger.error(`No cart found for user: ${userid}`);
-        (error as any).statusCode = 404;
-        throw error;
-      }
-      return cart;
+      const cart = await this.getValidatedCart(userid);
+      const [productMap, sellerMap] = await this.getRelatedDataMaps(cart);
+      const formattedCart = this.formatCartProducts(
+        cart,
+        productMap,
+        sellerMap
+      );
+      return { products: formattedCart };
     } catch (err) {
-      logger.error(`Error in getCart`);
+      logger.error(`Error in getCart: ${err}`);
       throw err;
     }
   }
@@ -116,7 +187,7 @@ export default class CartService {
         (error as any).statusCode = 400;
         throw error;
       }
-      const cart = await this.getCart(userid);
+      const cart = await this.cartRepository.getCart(userid);
       if (!cart) {
         const error = new Error("No cart found");
         logger.error(`No cart found for user: ${userid}`);
@@ -154,7 +225,7 @@ export default class CartService {
 
   public async removeProduct(userid: string, productid: string) {
     try {
-      const cart = await this.getCart(userid);
+      const cart = await this.cartRepository.getCart(userid);
       if (!cart) {
         const error = new Error("No cart found");
         logger.error(`No cart found for user: ${userid}`);
@@ -187,7 +258,7 @@ export default class CartService {
 
   public async removeProducts(userid: string, products: string[]) {
     try {
-      const cart = await this.getCart(userid);
+      const cart = await this.cartRepository.getCart(userid);
       if (!cart) {
         const error = new Error("No cart found");
         logger.error(`No cart found for user: ${userid}`);
@@ -236,7 +307,7 @@ export default class CartService {
         (error as any).statusCode = 400;
         throw error;
       }
-      const cart = await this.getCart(uid);
+      const cart = await this.cartRepository.getCart(uid);
       if (!cart) {
         const error = new Error("No cart found");
         logger.error(`No cart found for user: ${uid}`);
@@ -269,7 +340,7 @@ export default class CartService {
     }
   }
 
-  public async cartTotal(userid: string) {
+  public async cartTotal(userid: string, selectedProducts: string[]) {
     try {
       const data = await this.cartRepository.getCart(userid);
       if (!data || Object.keys(data).length === 0) {
@@ -278,10 +349,15 @@ export default class CartService {
         (error as any).statusCode = 404;
         throw error;
       }
-      const myCart = data.products.map((p: any) => ({
-        productid: p.productid,
-        quantity: p.quantity,
-      }));
+      const myCart = data.products
+        .map((p: any) => ({
+          productid: p.productid,
+          quantity: p.quantity,
+        }))
+        .filter((p: { productid: string; quantity: number }) =>
+          selectedProducts.includes(p.productid)
+        );
+
       const products = await this.productServices.getProducts();
       if (!products) {
         const error = new Error("No product found in product database");
@@ -289,13 +365,21 @@ export default class CartService {
         (error as any).statusCode = 404;
         throw error;
       }
+
       const productMap: Map<string, number> = new Map(
         products.map((p: any) => [p.id, p.price])
       );
-      return myCart.reduce((sum: number, item: CartProduct) => {
+
+      const subtotal = myCart.reduce((sum: number, item: CartProduct) => {
         const price = productMap.get(item.productid) || 0;
         return sum + price * item.quantity;
       }, 0);
+
+      return {
+        subtotal: subtotal,
+        tax: subtotal * 0.13,
+        shippingfee: 130 * selectedProducts.length,
+      };
     } catch (err) {
       logger.error(`Error in cartTotal`);
       throw err;

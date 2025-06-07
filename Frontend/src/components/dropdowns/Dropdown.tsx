@@ -1,10 +1,14 @@
 import { useState, useRef, useEffect } from "react";
 import { FaUser, FaShoppingCart, FaBox, FaSignOutAlt } from "react-icons/fa";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+
+import { useUserSignOut } from "../../hooks/useAuth";
 interface userprops {
   username: string;
 }
 const UserDropdown: React.FC<userprops> = ({ username }) => {
+  const navigate = useNavigate();
+  const { mutateAsync: signOut, isPending } = useUserSignOut();
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
@@ -20,6 +24,16 @@ const UserDropdown: React.FC<userprops> = ({ username }) => {
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
+
+  const handleSignOut = async () => {
+    try {
+      await signOut();
+    } catch (err) {
+      console.log(err);
+    } finally {
+      navigate("/");
+    }
+  };
 
   return (
     <div className="relative inline-block text-left" ref={dropdownRef}>
@@ -67,12 +81,13 @@ const UserDropdown: React.FC<userprops> = ({ username }) => {
             >
               <FaBox /> Orders
             </Link>
-            <Link
-              to={"/"}
+            <button
+              disabled={isPending}
               className="w-full px-4 py-2 text-red-600 hover:bg-red-50 flex items-center gap-2"
+              onClick={() => handleSignOut()}
             >
-              <FaSignOutAlt /> Log Out
-            </Link>
+              <FaSignOutAlt /> Sign Out
+            </button>
           </div>
         </div>
       )}

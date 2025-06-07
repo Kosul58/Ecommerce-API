@@ -11,6 +11,7 @@ import {
   OrderProductStatus,
   PaymentMethod,
 } from "../common/types/orderType";
+import { boolean } from "joi";
 
 interface OrderDocument extends Document {
   userid: string;
@@ -20,7 +21,9 @@ interface OrderDocument extends Document {
   type: OrderType;
   status: DeliveryStatus | ReturnStatus;
   paymentMethod: PaymentMethod;
+  paymentStatus: boolean;
   deliveryTime?: string;
+  address: string;
   returnTime?: string;
 }
 
@@ -65,9 +68,17 @@ const OrderSchema = new Schema<OrderDocument>({
     enum: [...Object.values(DeliveryStatus), ...Object.values(ReturnStatus)],
     required: true,
   },
+  address: {
+    type: String,
+    required: true,
+  },
   paymentMethod: {
     type: String,
     enum: Object.values(PaymentMethod),
+    required: true,
+  },
+  paymentStatus: {
+    type: Boolean,
     required: true,
   },
   deliveryTime: { type: String },

@@ -6,16 +6,6 @@
     "auditLog": "C:\\Users\\kosul\\Desktop\\Ecommerce\\Backend\\logs\\.3203ae757bf7a66fe09d788df2dd753ec96409f8-audit.json",
     "files": [
         {
-            "date": 1746615598452,
-            "name": "C:\\Users\\kosul\\Desktop\\Ecommerce\\Backend\\logs\\error-2025-05-07.log",
-            "hash": "f3ae125c903a3b31a5af3ef3ec2fc80489d434d177441611a772770a40009f56"
-        },
-        {
-            "date": 1746672052189,
-            "name": "C:\\Users\\kosul\\Desktop\\Ecommerce\\Backend\\logs\\error-2025-05-08.log",
-            "hash": "49253134e58c3b9c15bf07a74e6cc76ff2f2d404ebf6876a8fee42365b06024a"
-        },
-        {
             "date": 1746771356563,
             "name": "C:\\Users\\kosul\\Desktop\\Ecommerce\\Backend\\logs\\error-2025-05-09.log",
             "hash": "c33c8abce9b05f6d825bdb996ee41f58de3867c97959c42becbe0a57f7d640de"
@@ -114,6 +104,16 @@
             "date": 1749089179840,
             "name": "C:\\Users\\kosul\\Desktop\\Ecommerce\\Backend\\logs\\error-2025-06-05.log",
             "hash": "11ca38d7002e9bb79cf8510b9c05d74c5cad33af7cc906479b2d31bdbce4c899"
+        },
+        {
+            "date": 1749176328791,
+            "name": "C:\\Users\\kosul\\Desktop\\Ecommerce\\Backend\\logs\\error-2025-06-06.log",
+            "hash": "125b6190dc21ae63b2443bb88023bf616276f04f1e1fd4a9da00a88957f4c717"
+        },
+        {
+            "date": 1749267931980,
+            "name": "C:\\Users\\kosul\\Desktop\\Ecommerce\\Backend\\logs\\error-2025-06-07.log",
+            "hash": "9a3813ec5ef8ac47e5c654012f057456890e6a746e05390d60897cd7cccc1c11"
         }
     ],
     "hashType": "sha256"

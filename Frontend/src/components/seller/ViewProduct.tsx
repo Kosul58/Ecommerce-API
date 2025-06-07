@@ -2,27 +2,21 @@ import React from "react";
 import { IoClose } from "react-icons/io5";
 import ImageSlider from "../imageslider/ImageSlider";
 import type { Datum } from "../../types/sellertypes";
-import type { Section } from "../../pages/SellerDashboard";
 
 interface ProductData {
   viewData: Datum;
   setViewProduct: React.Dispatch<React.SetStateAction<boolean>>;
-  onEdit: (key: Section) => void;
 }
 
-const ViewProduct: React.FC<ProductData> = ({
-  viewData,
-  setViewProduct,
-  onEdit,
-}) => {
+const ViewProduct: React.FC<ProductData> = ({ viewData, setViewProduct }) => {
   if (!viewData) return <div>No Product Data</div>;
 
   return (
     <>
-      <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[90vw] max-w-6xl h-[85vh] max-h-[85vh] max-md:min-h-[90vh] bg-white rounded-2xl shadow-2xl z-50 overflow-hidden">
+      <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[90vw] max-w-6xl h-[85vh] max-h-[85vh] max-md:min-h-[90vh] bg-white border border-gray-300 rounded-2xl shadow-2xl z-50 overflow-hidden">
         <div className="relative h-full flex flex-col md:flex-row">
           <IoClose
-            className="absolute top-4 right-4 size-8 rounded-full text-black bg-red-200 hover:bg-red-500 cursor-pointer z-10"
+            className="absolute top-4 right-4 size-8 rounded-full text-black bg-red-200 hover:bg-red-500 cursor-pointer z-50"
             onClick={() => setViewProduct(false)}
           />
 
@@ -60,15 +54,6 @@ const ViewProduct: React.FC<ProductData> = ({
                 {viewData.active ? "Active" : "Hidden"}
               </span>
             </p>
-            <button
-              className="mt-4 w-full py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition cursor-pointer"
-              onClick={() => {
-                onEdit("editProduct");
-                setViewProduct(false);
-              }}
-            >
-              Edit Product
-            </button>
           </div>
         </div>
       </div>

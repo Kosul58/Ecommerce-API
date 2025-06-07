@@ -36,7 +36,7 @@ const productSchema = new mongoose.Schema({
     default: true,
     required: true,
   },
-  discound: {
+  discount: {
     type: Number,
     default: 0,
     required: true,

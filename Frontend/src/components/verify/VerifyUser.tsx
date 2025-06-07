@@ -41,8 +41,8 @@ const VerifyUser = () => {
       const response = await verifyOtp({ email: storedEmail, otp });
       if (response.success) {
         alert("Email verified successfully!");
-        sessionStorage.removeItem("sellerEmail");
-        navigate("/userdashboard");
+        sessionStorage.removeItem("userEmail");
+        navigate("/");
       } else {
         alert(response.message || "Verification failed.");
       }
@@ -96,7 +96,7 @@ const VerifyUser = () => {
             type="text"
             value={otp}
             onChange={(e) => {
-              const numericValue = e.target.value.replace(/\D/g, ""); // Remove non-digits
+              const numericValue = e.target.value.replace(/\D/g, "");
               setOtp(numericValue);
             }}
             placeholder="Enter 6-digit OTP"
@@ -163,17 +163,6 @@ const VerifyUser = () => {
 
         <div className="mt-6 text-center text-sm text-gray-500">
           Didn't receive the code? Check your email once again or resend otp
-          {/* <button
-            onClick={handleResendOtp}
-            disabled={resendCooldown > 0}
-            className={`text-blue-400 hover:underline ${
-              resendCooldown > 0
-                ? "cursor-not-allowed opacity-50"
-                : "cursor-pointer"
-            }`}
-          >
-            request a new one
-          </button> */}
         </div>
       </div>
     </div>

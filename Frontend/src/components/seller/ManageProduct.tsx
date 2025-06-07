@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useProducts } from "../../api/seller";
-import SearchBar from "./SearchBar";
+import SearchBar from "../search/SearchBar";
 import { MdDeleteForever, MdVisibility, MdVisibilityOff } from "react-icons/md";
 import { FaEdit, FaBoxOpen } from "react-icons/fa";
 import { IoSearchCircle } from "react-icons/io5";

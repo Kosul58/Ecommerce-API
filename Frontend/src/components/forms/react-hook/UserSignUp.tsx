@@ -129,7 +129,7 @@ const UserSignUp: React.FC<SignUpProps> = ({ toggleToSignIn }) => {
       if (response.success) {
         showNotification("success", "Email verified successfully!");
         resetForm();
-        navigate("/userdashboard");
+        navigate("/");
       } else {
         showNotification(
           "error",

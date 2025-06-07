@@ -55,6 +55,13 @@ userRoutes.post(
   userController.signIn
 );
 
+userRoutes.post(
+  "/signout",
+  dataValidation.validateTokenData(idSchema),
+  createAudit({ action: "signout user" }),
+  userController.signOut
+);
+
 userRoutes.delete(
   "/:userid",
   verifyToken.verify,

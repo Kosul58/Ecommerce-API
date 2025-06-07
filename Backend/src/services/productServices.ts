@@ -114,6 +114,22 @@ export default class ProductServices {
     }
   }
 
+  public async getProductByIds(productids: string[]) {
+    try {
+      logger.info(`Fetching product by ID's`);
+      const products = await this.productRepository.findByIds(productids);
+      if (!products || products.length === 0) {
+        const error = new Error("No Products found");
+        (error as any).statusCode = 404;
+        throw error;
+      }
+      return products;
+    } catch (err) {
+      logger.error(`Error fetching product by ID's`);
+      throw err;
+    }
+  }
+
   private async uploadImages(
     files: Express.Multer.File[],
     productid: string
@@ -601,6 +617,8 @@ export default class ProductServices {
       inventory: number;
       images: string[];
       timestamp: string;
+      discount?: number;
+      discounttype?: string;
     }
   >(product: T): ProductReturn {
     return {
@@ -613,6 +631,8 @@ export default class ProductServices {
       inventory: product.inventory,
       images: product.images,
       timestamp: product.timestamp,
+      discount: product?.discount ?? 0,
+      discounttype: product?.discounttype ?? "",
     };
   }
 

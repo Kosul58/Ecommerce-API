@@ -109,6 +109,24 @@ export const useSellerSignUp = () => {
   });
 };
 
+export const useUserSignOut = () => {
+  return useMutation<ApiResponse, Error>({
+    mutationFn: async () => {
+      const response = await axios.post("/user/signout");
+      return response.data;
+    },
+  });
+};
+
+export const useSellerSignOut = () => {
+  return useMutation<ApiResponse, Error>({
+    mutationFn: async () => {
+      const response = await axios.post("/seller/signout");
+      return response.data;
+    },
+  });
+};
+
 interface VerificationValues {
   email: string;
   otp: string;
@@ -196,6 +214,7 @@ export interface Product {
   inventory: number;
   timestamp: string;
   images: string[];
+  discount?: number;
 }
 interface ProductsResponse {
   success: boolean;
@@ -243,20 +262,21 @@ export const useUserData = () => {
   });
 };
 
-interface CartProductData {
+export interface EnrichedCartProduct {
   productid: string;
-  sellerid: string;
   name: string;
+  price: number;
+  discount: number;
   quantity: number;
+  sellerid: string;
+  shopname: string;
 }
 
-interface CartData {
-  _id: string;
-  userid: string;
-  products: CartProductData[];
+export interface CartData {
+  products: EnrichedCartProduct[];
 }
 
-interface CartDataResponse {
+export interface CartDataResponse {
   success: boolean;
   message: string;
   data: CartData;
@@ -269,8 +289,6 @@ export const useCartData = () => {
       const response = await axios.get<CartDataResponse>("/cart/user");
       return response.data.data;
     },
-    staleTime: 5 * 60 * 1000,
-    retry: 1,
   });
 };
 
@@ -377,6 +395,33 @@ export const useDeleteuser = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["user"] });
+    },
+  });
+};
+
+interface CalculationResponse {
+  success: string;
+  message: string;
+  data: {
+    subtotal: number;
+    tax: number;
+    shippingfee: number;
+  };
+}
+
+interface CartTotal {
+  products: string[];
+}
+
+export const useCalcTotal = () => {
+  const queryClient = useQueryClient();
+  return useMutation<CalculationResponse, Error, CartTotal>({
+    mutationFn: async (values) => {
+      const response = await axios.post(`/cart/total`, values);
+      return response.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["cartTotal"] });
     },
   });
 };

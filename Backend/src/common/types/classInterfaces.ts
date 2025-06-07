@@ -13,6 +13,7 @@ export interface Repository {
   create(data: any): Promise<any>;
   save(data: any): Promise<any>;
   check(data: string): Promise<any>;
+  findByIds(ids: string[]): Promise<any>;
 }
 
 export interface CartRepositoryInterface extends Repository {

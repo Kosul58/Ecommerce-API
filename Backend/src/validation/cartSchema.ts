@@ -13,6 +13,10 @@ export const viewUserCartParamsSchema = Joi.object({
   userid: Joi.string().min(15).required(),
 });
 
+export const CalcTotalSchema = Joi.object({
+  products: Joi.array().items(Joi.string().required()).min(1).required(),
+});
+
 export const addCartSchema = Joi.object({
   productid: Joi.string().min(15).required(),
   quantity: Joi.number().positive().required(),

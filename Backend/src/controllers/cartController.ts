@@ -54,7 +54,7 @@ export default class CartController {
       if (!result || Object.keys(result).length === 0) {
         return this.responseHandler.notFound(res, "Cannot find cart");
       }
-      logger.info("Cart found for user", { result });
+      logger.info("Cart found for user");
       return this.responseHandler.success(res, "Cart found", result);
     } catch (err) {
       logger.error("Error fetching cart for user", err);
@@ -167,10 +167,7 @@ export default class CartController {
           quantity,
           userid,
         });
-        return this.responseHandler.notFound(
-          res,
-          "Product update unsuccessful"
-        );
+        return this.responseHandler.error(res, "Product update unsuccessful");
       }
       logger.info("Product updated in cart", { result });
       return this.responseHandler.success(
@@ -187,9 +184,10 @@ export default class CartController {
   // Calculate the total price of the cart
   public calcTotal: RequestHandler = async (req, res, next) => {
     const userid = req.user.id;
+    const products = req.body.products;
     try {
       logger.info("Calculating total of products in cart", { userid });
-      const result = await this.cartService.cartTotal(userid);
+      const result = await this.cartService.cartTotal(userid, products);
       logger.info("Total price calculated", { result });
       return this.responseHandler.success(
         res,

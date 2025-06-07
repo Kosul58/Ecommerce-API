@@ -1,4 +1,4 @@
-import { Model, Document, Schema } from "mongoose";
+import { Model, Document, Schema, Types } from "mongoose";
 import { Repository } from "../common/types/classInterfaces";
 
 export class BaseRepository implements Repository {
@@ -59,6 +59,16 @@ export class BaseRepository implements Repository {
       return exists ? true : false;
     } catch (err) {
       throw err;
+    }
+  }
+
+  public async findByIds(ids: string[]) {
+    try {
+      const objectIds = ids.map((id) => new Types.ObjectId(id));
+      const documents = await this.model.find({ _id: { $in: objectIds } });
+      return documents;
+    } catch (error) {
+      throw error;
     }
   }
 }

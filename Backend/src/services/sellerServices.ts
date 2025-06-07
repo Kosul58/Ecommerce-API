@@ -31,7 +31,7 @@ export default class SellerServices {
     try {
       const encryptedPassword = await Utils.encryptPassword(seller.password);
       return {
-        // shopname: seller.shopname,
+        shopname: seller.username,
         username: seller.username,
         email: seller.email,
         password: encryptedPassword,
@@ -50,6 +50,7 @@ export default class SellerServices {
   private returnData<
     T extends {
       _id: any;
+      shopname: string;
       username: string;
       email: string;
       phone: number;
@@ -59,6 +60,7 @@ export default class SellerServices {
   >(data: T): UserReturn {
     return {
       id: data._id.toString(),
+      shopname: data.shopname,
       username: data.username,
       email: data.email,
       phone: data.phone,
@@ -112,6 +114,21 @@ export default class SellerServices {
       return sellers.map((s: any) => this.returnData(s));
     } catch (err) {
       logger.error("Failed to fetch all sellers");
+      throw err;
+    }
+  }
+
+  public async getSellersByIds(ids: string[]) {
+    try {
+      const sellers = await this.sellerRepository.findByIds(ids);
+      if (!sellers || sellers.length === 0) {
+        const error = new Error("No sellers found");
+        (error as any).statusCode = 404;
+        throw error;
+      }
+      return sellers.map((s: any) => this.returnData(s));
+    } catch (err) {
+      logger.error("Failed to fetch seller data based on seller ids");
       throw err;
     }
   }

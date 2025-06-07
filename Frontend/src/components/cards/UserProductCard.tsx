@@ -1,6 +1,5 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { FaTag } from "react-icons/fa";
 
 interface Product {
   id: string;
@@ -11,6 +10,7 @@ interface Product {
   price: number;
   inventory: number;
   images: string[];
+  discount?: number; // Added discount property
 }
 
 interface Props {
@@ -19,10 +19,14 @@ interface Props {
 
 const ProductCard: React.FC<Props> = ({ product }) => {
   const isInStock = product.inventory > 0;
-  const productYear = new Date(product.timestamp).getFullYear().toString();
   const placeholder = `https://via.placeholder.com/400x300?text=${
     product.name ? product.name.replace(/\s/g, "+") : "Product"
   }+Image`;
+
+  const discountedPrice =
+    product.discount && product.discount > 0
+      ? product.price * (1 - product.discount / 100)
+      : product.price;
 
   return (
     <Link
@@ -45,13 +49,6 @@ const ProductCard: React.FC<Props> = ({ product }) => {
             </span>
           </div>
         )}
-        <div className="absolute top-3 left-3 bg-blue-600 text-white px-3 py-1 rounded-full text-xs font-semibold shadow-md">
-          <FaTag className="inline-block mr-1" />
-          {product.category}
-        </div>
-        <div className="absolute bottom-3 right-3 bg-black text-white px-3 py-1 rounded-full text-xs font-semibold opacity-90">
-          {productYear}
-        </div>
       </div>
 
       <div className="p-4 flex flex-col flex-grow">
@@ -65,8 +62,17 @@ const ProductCard: React.FC<Props> = ({ product }) => {
           {product.description}
         </p>
         <div className="flex justify-between items-center mt-auto">
-          <span className="text-blue-700 font-bold text-xl">
-            Rs. {product.price.toLocaleString()}
+          <span className="text-blue-700 font-bold text-xl flex  flex-col">
+            {product.discount && product.discount > 0 ? (
+              <>
+                <span className="line-through text-gray-600 text-xs mr-1">
+                  Rs. {product.price.toLocaleString()}
+                </span>
+                <span> Rs. {discountedPrice.toLocaleString()}</span>
+              </>
+            ) : (
+              `Rs. ${product.price.toLocaleString()}`
+            )}
           </span>
           <span
             className={`text-xs font-medium px-2 py-1 rounded ${

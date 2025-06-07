@@ -39,7 +39,8 @@ export default class OrderService {
   private generateOrder(
     userid: string,
     type: OrderType,
-    paymentMethod: PaymentMethod
+    paymentMethod: PaymentMethod,
+    paymentStatus: boolean
   ): DeliveryOrder | ReturnOrder {
     logger.info(`Generating order for ${userid}`);
     if (type === OrderType.DELIVERY) {
@@ -51,6 +52,8 @@ export default class OrderService {
         type: OrderType.DELIVERY,
         paymentMethod,
         deliveryTime: "",
+        address: "",
+        paymentStatus,
       };
     } else if (type === OrderType.REFUND) {
       return {
@@ -61,6 +64,8 @@ export default class OrderService {
         type: OrderType.REFUND,
         paymentMethod,
         returnTime: "",
+        address: "",
+        paymentStatus,
       };
     } else if (type === OrderType.REPLACE) {
       return {
@@ -71,6 +76,8 @@ export default class OrderService {
         type: OrderType.REPLACE,
         paymentMethod,
         returnTime: "",
+        address: "",
+        paymentStatus,
       };
     }
     const error = new Error("Invalid order type");
@@ -90,11 +97,18 @@ export default class OrderService {
       (error as any).statusCode = 404;
       throw error;
     }
+    const originalPrice = Number(searchProduct.price);
+    let finalPrice = originalPrice;
+    if (searchProduct.discount && typeof searchProduct.discount === "number") {
+      const discountPercent = searchProduct.discount;
+      finalPrice = originalPrice - (originalPrice * discountPercent) / 100;
+    }
+
     return {
       productid: product.productid,
       sellerid: product.sellerid,
       name: product.name,
-      price: Number(searchProduct?.price),
+      price: finalPrice,
       quantity: product.quantity,
       active: true,
       status: OrderProductStatus.REQUESTED,
@@ -102,8 +116,13 @@ export default class OrderService {
   }
 
   private calcTotal(items: OrderProduct[]): number {
-    const vat: number = 1.13;
-    return items.reduce((a, p) => a + p.price * p.quantity, 0) * vat;
+    const vat: number = 1.1;
+    const shippingFee = items.length < 50 ? items.length * 150 : 0;
+
+    const subtotal = items.reduce((a, p) => a + p.price * p.quantity, 0) * vat;
+    const total = Math.round(subtotal + shippingFee);
+
+    return total;
   }
 
   private async returnData(data: any) {
@@ -116,6 +135,8 @@ export default class OrderService {
         type: order.type,
         total: order.total,
         status: order.status,
+        paymentMethod: order.paymentMethod,
+        paymentStatus: order.paymentStatus,
       };
       orders.push(myOrder);
     }
@@ -176,8 +197,10 @@ export default class OrderService {
 
   public async addOrder(
     userid: string,
+    address: string,
     productid: string,
-    paymentMethod: PaymentMethod
+    paymentMethod: PaymentMethod,
+    paymentStatus: boolean
   ) {
     try {
       const cart = await this.cartService.getCart(userid);
@@ -197,7 +220,8 @@ export default class OrderService {
       const order = this.generateOrder(
         userid,
         OrderType.DELIVERY,
-        paymentMethod
+        paymentMethod,
+        paymentStatus
       );
       const productItem = await this.generateOrderProduct(
         product as CartProduct
@@ -209,7 +233,8 @@ export default class OrderService {
         throw error;
       }
       order.items.push(productItem);
-      order.total = parseFloat(this.calcTotal(order.items).toFixed(2));
+      order.total = this.calcTotal(order.items);
+      order.address = address;
       const data = await this.orderRepository.create(order);
       if (!data || Object.keys(data).length === 0) {
         const error = new Error("Failed to create order");
@@ -227,8 +252,10 @@ export default class OrderService {
 
   public async addOrders(
     userid: string,
+    address: string,
     products: string[],
-    paymentMethod: PaymentMethod
+    paymentMethod: PaymentMethod,
+    paymentStatus: boolean
   ) {
     try {
       const searchProducts = await this.cartService.getCart(userid);
@@ -267,9 +294,10 @@ export default class OrderService {
         const order = this.generateOrder(
           userid,
           OrderType.DELIVERY,
-          paymentMethod
+          paymentMethod,
+          paymentStatus
         );
-
+        order.address = address;
         for (const product of sellerProducts) {
           const productItem = await this.generateOrderProduct(product);
           if (productItem) order.items.push(productItem);
@@ -318,6 +346,8 @@ export default class OrderService {
             price: item.price,
             quantity: item.quantity,
             status: item.status,
+            paymentStatus: order.paymentStatus,
+            paymentMethod: order.paymentMethod,
           });
         }
       }

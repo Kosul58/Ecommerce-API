@@ -49,9 +49,9 @@ const PaginationComponent: React.FC<PaginationProps> = ({
   const pages = generatePageNumbers();
 
   return (
-    <div className="flex w-full justify-center items-center gap-2 px-6 py-4">
+    <div className="flex w-full justify-center items-center gap-2 px-6 py-4 ">
       <button
-        className="p-2 rounded bg-orange-100"
+        className="p-2 rounded bg-blue-100 cursor-pointer"
         onClick={() => onPageChange(Math.max(currentPage - 1, 1))}
         disabled={currentPage === 1}
       >
@@ -63,9 +63,9 @@ const PaginationComponent: React.FC<PaginationProps> = ({
           <button
             key={index}
             onClick={() => onPageChange(page)}
-            className={`px-3 py-1 text-sm rounded-md hover:bg-orange-100 ${
+            className={`px-3 py-1 text-sm rounded-md hover:bg-blue-100 cursor-pointer ${
               currentPage === page
-                ? "bg-orange-100 text-black font-semibold"
+                ? "bg-blue-100 text-black font-semibold"
                 : "text-gray-700"
             }`}
           >
@@ -79,7 +79,7 @@ const PaginationComponent: React.FC<PaginationProps> = ({
       )}
 
       <button
-        className="p-2 rounded bg-orange-100"
+        className="p-2 rounded bg-blue-100 cursor-pointer"
         onClick={() => onPageChange(Math.min(currentPage + 1, totalPages))}
         disabled={currentPage === totalPages}
       >

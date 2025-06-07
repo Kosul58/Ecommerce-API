@@ -71,7 +71,7 @@ const SellerSignIn: React.FC<SignInProps> = ({ toggleToSignUp }) => {
         showNotification("success", "Sign In successful.");
         reset();
         setTimeout(() => {
-          navigate("/sellerdashboard");
+          navigate("/seller/dashboard");
         }, 1200);
       } else {
         showNotification("error", "Failed to sign in as a seller.");

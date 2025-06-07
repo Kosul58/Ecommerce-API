@@ -14,6 +14,9 @@ import ProductDetail from "./components/ProductDetail";
 import Cart from "./pages/Cart";
 import UserProfile from "./pages/UserProfile";
 import Order from "./pages/Order";
+import Checkout from "./pages/Checkout";
+import AddProduct from "./components/seller/AddProduct";
+import EditProduct from "./components/seller/EditProduct";
 const App = () => {
   const [sellerSigned, setSellerSigned] = useState(true);
   return (
@@ -23,7 +26,7 @@ const App = () => {
           <Routes>
             <Route path="/" element={<LandingPage />}></Route>
             <Route
-              path="/sellerdashboard"
+              path="/seller/dashboard"
               element={
                 <ProtectedRoute isAuthenticated={sellerSigned}>
                   <SellerDashboard />
@@ -40,6 +43,9 @@ const App = () => {
             <Route path="/cart" element={<Cart />} />
             <Route path="/userprofile" element={<UserProfile />}></Route>
             <Route path="/order" element={<Order />}></Route>
+            <Route path="/checkout" element={<Checkout />} />
+            <Route path="/seller/addproduct" element={<AddProduct />} />
+            <Route path="/seller/editproduct" element={<EditProduct />} />
           </Routes>
         </Router>
       </QueryClientProvider>

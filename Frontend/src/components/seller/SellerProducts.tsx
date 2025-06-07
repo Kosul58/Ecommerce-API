@@ -1,203 +1,179 @@
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import type { Datum, Seller } from "../../types/sellertypes";
-import SearchBar from "./SearchBar";
+import SearchBar from "../search/SearchBar";
 import ViewProduct from "./ViewProduct";
-import ProductCard from "../cards/SellerProductCard";
 import { useProducts } from "../../api/seller";
-import ProductCategory from "./ProductCategory";
-import { IoSearchCircle } from "react-icons/io5";
-import SortSelect from "../selects/SortSelect";
-import type { Section } from "../../pages/SellerDashboard";
+import ProductTable from "../table/Table";
+import PaginationComponent from "../pagination/Pagination";
+import { CiCirclePlus } from "react-icons/ci";
+import { useNavigate } from "react-router-dom";
+
 interface SellerData {
   setProductData: React.Dispatch<React.SetStateAction<Datum | null>>;
   seller: Seller;
-  onEdit: (key: Section) => void;
 }
-const SellerProducts: React.FC<SellerData> = ({
-  seller,
-  setProductData,
-  onEdit,
-}) => {
+
+const SellerProducts: React.FC<SellerData> = ({ seller, setProductData }) => {
   console.log(seller);
-  const { data: productData, isLoading, isError, error } = useProducts();
+  const {
+    data: productData,
+    isLoading,
+    isError,
+    error,
+    refetch,
+  } = useProducts();
+  const navigate = useNavigate();
   const [viewProduct, setViewProduct] = useState(false);
   const [viewData, setViewData] = useState<Datum | null>(null);
-  const [openFilter, setOpenFilter] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
-  const [categoryFilter, setCategoryFilter] = useState("");
-  const [minPrice, setMinPrice] = useState("");
-  const [maxPrice, setMaxPrice] = useState("");
-  const [tempCategory, setTempCategory] = useState("");
-  const [tempMinPrice, setTempMinPrice] = useState("");
-  const [tempMaxPrice, setTempMaxPrice] = useState("");
-  const [searchShow, setSearchShow] = useState(false);
-  const [sortOption, setSortOption] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 7;
 
-  const filteredProducts = productData?.data
-    .filter((product: Datum) => {
+  const filteredProducts = useMemo(() => {
+    if (!productData?.data) return [];
+
+    const products = productData.data.filter((product: Datum) => {
       const matchesSearch =
         product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
         product.category.toLowerCase().includes(searchQuery.toLowerCase());
-      const matchesCategory =
-        categoryFilter === "" ||
-        product.category.toLowerCase().includes(categoryFilter.toLowerCase());
-
-      const price = product.price;
-      const matchesMinPrice = minPrice === "" || price >= parseFloat(minPrice);
-      const matchesMaxPrice = maxPrice === "" || price <= parseFloat(maxPrice);
-
-      return (
-        matchesSearch && matchesCategory && matchesMinPrice && matchesMaxPrice
-      );
-    })
-    ?.sort((a, b) => {
-      switch (sortOption) {
-        case "price-asc":
-          return a.price - b.price;
-        case "price-desc":
-          return b.price - a.price;
-        case "name-asc":
-          return a.name.localeCompare(b.name);
-        case "name-desc":
-          return b.name.localeCompare(a.name);
-        default:
-          return 0;
-      }
+      return matchesSearch;
     });
 
+    return products;
+  }, [productData, searchQuery]);
+
+  const totalPages = Math.ceil(filteredProducts.length / itemsPerPage);
+
+  const currentProducts = useMemo(() => {
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+    return filteredProducts.slice(startIndex, endIndex);
+  }, [currentPage, filteredProducts, itemsPerPage]);
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+  };
+
+  const handleViewProduct = (product: Datum) => {
+    setViewProduct(true);
+    setViewData(product);
+    setProductData(product);
+  };
+
+  const handleAddProduct = () => {
+    navigate("/seller/addproduct");
+  };
+
+  const handleToggleProductStatus = async (
+    productId: string,
+    newStatus: boolean
+  ) => {
+    console.log(`Toggling status for product ${productId} to ${newStatus}`);
+    await refetch();
+  };
+
+  const handleDeleteProduct = async (productId: string) => {
+    console.log(`Deleting product with ID: ${productId}`);
+    await refetch();
+  };
+
+  const handleEditProduct = async (product: Datum) => {
+    console.log(product);
+    navigate("/seller/editproduct", { state: { product } });
+    await refetch();
+  };
+
   if (isLoading) {
-    return <div>Loading products...</div>;
+    return (
+      <div className="flex justify-center items-center h-full text-lg text-gray-600">
+        Loading products...
+      </div>
+    );
   }
 
   if (isError) {
-    return <div>Error: {error?.message}</div>;
+    return (
+      <div className="flex justify-center items-center h-full text-lg text-red-600">
+        Error: {error?.message}
+      </div>
+    );
   }
 
   if (!productData || productData.data.length === 0) {
-    return <div>No products found</div>;
+    return (
+      <div className="flex justify-center items-center h-full text-lg text-gray-500">
+        No products found.
+      </div>
+    );
   }
 
   return (
-    <section className="w-full h-[100%] flex flex-col items-center overflow-y-auto relative">
-      <div className="w-full h-fit bg-gray-100 flex flex-row justify-between items-center py-2 max-md:justify-end">
-        <h2 className="px-4 text-2xl max-sm:hidden font-bold max-lg:text-lg max-lg:px-2">
-          Seller Products:
-        </h2>
-        <div>
-          {searchShow && (
-            <div className="min-md:hidden">
-              <SearchBar
-                onSearch={(query) => {
-                  setSearchQuery(query);
-                  setSearchShow(false);
-                }}
-              />
-            </div>
-          )}
-          {!searchShow && (
-            <IoSearchCircle
-              size={40}
-              className="cursor-pointer min-md:hidden"
-              onClick={() => setSearchShow(true)}
-            />
-          )}
+    <section className="w-full flex flex-col items-center bg-gray-100 h-screen max-h-screen">
+      <div className="px-4 py-2 w-full flex justify-between bg-white flex-shrink-0 border-b border-gray-200">
+        <div className="flex flex-col">
+          <h3 className="text-xs text-gray-500">Seller /</h3>
+          <h1 className="text-lg font-semibold text-gray-800">Products</h1>
         </div>
-        <div className="max-md:hidden min-w-[400px] w-[70%]">
+        <div className="flex flex-col items-end ">
+          <h3 className="text-xs text-gray-500">seller</h3>
+          <h1 className="text-lg font-semibold text-gray-800">
+            {seller.username}
+          </h1>
+        </div>
+      </div>
+
+      <div className="w-full flex justify-between px-6 py-2 bg-white border-b border-gray-200">
+        <div className="flex justify-center max-sm:items-center flex-col">
+          <h1 className="text-md max-sm:text-sm">Manage Your Products</h1>
+          <h2 className="text-xs text-gray-400 max-sm:hidden">
+            Add,edit or delete products to keep your catalog updated.
+          </h2>
+        </div>
+
+        <div>
+          <button
+            className="px-4 mr-2 py-2 bg-blue-400 hover:bg-blue-500 text-white rounded-md cursor-pointer flex justify-center  items-center gap-1 max-sm:rounded-full max-sm:p-2"
+            onClick={() => handleAddProduct()}
+          >
+            <CiCirclePlus className="size-5 max-sm:size-6" />
+            <h1 className="max-sm:hidden">Add Product</h1>
+          </button>
+        </div>
+      </div>
+
+      <div className="w-full flex flex-col md:flex-row justify-end items-center px-4 bg-white  border-b border-gray-200 ">
+        <div className="w-full max-w-sm">
           <SearchBar onSearch={(query) => setSearchQuery(query)} />
         </div>
       </div>
-      <div className="text-gray-400 w-full flex justify-start px-4 items-center bg-inherit">
-        <button
-          className="px-2 py-1 rounded-md bg-slate-200 cursor-pointer text-gray-500 hover:bg-slate-300"
-          onClick={() => setOpenFilter(!openFilter)}
-        >
-          Filter
-        </button>
-        <SortSelect onSortChange={(option) => setSortOption(option)} />
-      </div>
-      {openFilter && (
-        <aside className="fixed top-1/2 left-1/2 w-[400px] h-[600px] rounded-lg bg-white p-6 shadow-xl z-30 transform -translate-x-1/2 -translate-y-1/2 flex flex-col gap-4 overflow-y-auto max-sm:w-[90%]">
-          <h2 className="text-xl font-bold mb-4">Filter Products</h2>
 
-          <label className="flex flex-col">
-            Category:
-            <ProductCategory onCategorySelect={(cat) => setTempCategory(cat)} />
-          </label>
-          <label className="flex flex-col">
-            Min Price:
-            <input
-              type="number"
-              min={100}
-              placeholder="100"
-              value={tempMinPrice}
-              onChange={(e) => setTempMinPrice(e.target.value)}
-              className="border p-2 rounded"
-            />
-          </label>
-          <label className="flex flex-col">
-            Max Price:
-            <input
-              type="number"
-              min={1000}
-              value={tempMaxPrice}
-              onChange={(e) => setTempMaxPrice(e.target.value)}
-              className="border p-2 rounded"
-              placeholder="1000"
-            />
-          </label>
-
-          <div className="mt-auto flex gap-4">
-            <button
-              className="p-2 bg-green-500 text-white rounded w-full cursor-pointer"
-              onClick={() => {
-                setCategoryFilter(tempCategory);
-                setMinPrice(tempMinPrice);
-                setMaxPrice(tempMaxPrice);
-                setOpenFilter(false);
-              }}
-            >
-              Apply Filter
-            </button>
-            <button
-              className="p-2 bg-red-500 text-white rounded w-full cursor-pointer"
-              onClick={() => {
-                setOpenFilter(false);
-                setTempCategory("");
-                setTempMinPrice("");
-                setTempMaxPrice("");
-                setCategoryFilter("");
-                setMinPrice("");
-                setMaxPrice("");
-              }}
-            >
-              Clear Filters
-            </button>
-          </div>
-        </aside>
-      )}
-      <section className="w-full h-[85%] flex flex-wrap justify-center items-center gap-2 overflow-y-auto mt-1 bg-slate-300/70">
-        {filteredProducts && filteredProducts.length === 0 ? (
-          <p>No products match your search.</p>
+      {/* Product Table Section */}
+      <section className="w-full flex flex-col items-center bg-gray-50 shadow-lg p-2 justify-between flex-grow overflow-y-auto">
+        {filteredProducts.length === 0 ? (
+          <p className="py-8 text-lg text-gray-600">
+            No products match your search.
+          </p>
         ) : (
-          filteredProducts?.map((product: Datum) => (
-            <ProductCard
-              key={product.id}
-              product={product}
-              onClick={() => {
-                setViewProduct(true);
-                setViewData(product);
-                setProductData(product);
-              }}
+          <ProductTable
+            products={currentProducts}
+            onProductView={handleViewProduct}
+            onToggleStatus={handleToggleProductStatus}
+            onProductDelete={handleDeleteProduct}
+            onProductEdit={handleEditProduct}
+          />
+        )}
+        {filteredProducts.length > 0 && (
+          <div className="w-full flex justify-center flex-shrink-0 ">
+            <PaginationComponent
+              currentPage={currentPage}
+              totalPages={totalPages}
+              onPageChange={handlePageChange}
             />
-          ))
+          </div>
         )}
       </section>
       {viewProduct && viewData && (
-        <ViewProduct
-          viewData={viewData}
-          setViewProduct={setViewProduct}
-          onEdit={onEdit}
-        />
+        <ViewProduct viewData={viewData} setViewProduct={setViewProduct} />
       )}
     </section>
   );

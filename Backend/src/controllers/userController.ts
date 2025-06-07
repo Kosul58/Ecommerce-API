@@ -118,6 +118,25 @@ export default class UserController {
     }
   };
 
+  public signOut: RequestHandler = (req, res) => {
+    res
+      .clearCookie("token", {
+        httpOnly: true,
+        secure: false,
+        sameSite: "lax",
+        path: "/",
+      })
+      .clearCookie("refreshToken", {
+        httpOnly: true,
+        secure: false,
+        sameSite: "lax",
+        path: "/",
+      });
+
+    logger.info("User signed out successfully");
+    return this.responseHandler.success(res, "Signout successful");
+  };
+
   public deleteUser: RequestHandler = async (req, res, next) => {
     const { userid } = req.params;
     const { id, role } = req.user;

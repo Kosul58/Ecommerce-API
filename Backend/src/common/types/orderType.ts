@@ -69,6 +69,8 @@ export interface BaseOrder {
   total: number;
   timestamp?: Date;
   paymentMethod: PaymentMethod;
+  paymentStatus: boolean;
+  address: string;
 }
 
 export interface DeliveryOrder extends BaseOrder {

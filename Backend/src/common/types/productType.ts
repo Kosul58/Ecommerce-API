@@ -43,6 +43,8 @@ export interface ProductReturn {
   inventory: number;
   timestamp: string;
   images?: string[];
+  discount?: number;
+  discounttype?: string;
 }
 
 export interface SellerProductReturn extends ProductReturn {

@@ -51,6 +51,13 @@ sellerRoutes.post(
   sellerController.signIn
 );
 
+sellerRoutes.post(
+  "/signout",
+  dataValidation.validateTokenData(idSchema),
+  createAudit({ action: "signout user" }),
+  sellerController.signOut
+);
+
 sellerRoutes.put(
   "/",
   verifyToken.verify,

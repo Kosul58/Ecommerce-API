@@ -58,7 +58,9 @@ export default class OrderController {
   // Create a single order
   public createOrder: RequestHandler = async (req, res, next) => {
     const productid: string = req.body.productid;
+    const address: string = req.body.address;
     const paymentMethod: PaymentMethod = req.body.paymentMethod;
+    const paymentStatus: boolean = req.body.paymentStatus;
     const userid = req.user.id;
     logger.info(
       `Creating order for user ${userid} with product id: ${productid}`
@@ -66,8 +68,10 @@ export default class OrderController {
     try {
       const result = await this.orderService.addOrder(
         userid,
+        address,
         productid,
-        paymentMethod
+        paymentMethod,
+        paymentStatus
       );
       if (!result || Object.keys(result).length === 0) {
         logger.warn(
@@ -95,8 +99,10 @@ export default class OrderController {
   // Create order of multiple products
   public createOrders: RequestHandler = async (req, res, next) => {
     const products: string[] = req.body.products;
+    const address: string = req.body.address;
     const paymentMethod: PaymentMethod = req.body.paymentMethod;
     const userid = req.user.id;
+    const paymentStatus: boolean = req.body.paymentStatus;
     logger.info(
       `Creating order of multiple products for user ${userid} with products: ${JSON.stringify(
         products
@@ -105,8 +111,10 @@ export default class OrderController {
     try {
       const result = await this.orderService.addOrders(
         userid,
+        address,
         products,
-        paymentMethod
+        paymentMethod,
+        paymentStatus
       );
       if (!result || Object.keys(result).length === 0) {
         logger.warn(

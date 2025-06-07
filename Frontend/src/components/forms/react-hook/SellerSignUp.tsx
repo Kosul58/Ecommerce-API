@@ -120,7 +120,7 @@ const SellerSignUp: React.FC<SignUpProps> = ({ toggleToSignIn }) => {
       if (response.success) {
         showNotification("success", "Email verified successfully!");
         resetForm();
-        navigate("/sellerdashboard");
+        navigate("/seller/dashboard");
       } else {
         showNotification(
           "error",

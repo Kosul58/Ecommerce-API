@@ -151,6 +151,25 @@ export default class SellerController {
     }
   };
 
+  public signOut: RequestHandler = (req, res) => {
+    res
+      .clearCookie("token", {
+        httpOnly: true,
+        secure: false,
+        sameSite: "lax",
+        path: "/",
+      })
+      .clearCookie("refreshToken", {
+        httpOnly: true,
+        secure: false,
+        sameSite: "lax",
+        path: "/",
+      });
+
+    logger.info("Seller signed out successfully");
+    return this.responseHandler.success(res, "Signout successful");
+  };
+
   public updateSeller: RequestHandler = async (req, res, next) => {
     const sellerid = req.user.id;
     const update: SellerUpadte = req.body;

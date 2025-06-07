@@ -1,10 +1,11 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { LuMenu, LuX, LuShoppingCart, LuSearch } from "react-icons/lu";
+import { LuMenu, LuX, LuShoppingCart } from "react-icons/lu";
 import { FaUser, FaBox, FaSignOutAlt } from "react-icons/fa";
 import { PiSignInLight } from "react-icons/pi";
 import { useUserData } from "../../hooks/useAuth";
 import UserDropdown from "../dropdowns/Dropdown";
+import ProductSearch from "../search/ProductSearch";
 
 const NavBar = () => {
   const navigate = useNavigate();
@@ -29,6 +30,9 @@ const NavBar = () => {
     handleNavigate("/user");
   };
 
+  const handleSearch = (value: string) => {
+    navigate(`/products?search=${encodeURIComponent(value)}`);
+  };
   return (
     <nav
       className="bg-gradient-to-r from-gray-800 to-gray-900 text-white h-[12vh] min-h-[90px] z-50 max-h-[95px]
@@ -81,17 +85,7 @@ const NavBar = () => {
               Contact
             </Link>
 
-            <div className="relative">
-              <input
-                type="text"
-                placeholder="Search..."
-                className="pl-9 pr-3 py-1.5 rounded-full bg-gray-700 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-300 w-32 md:w-48 hover:w-48 md:hover:w-64 text-sm"
-              />
-              <LuSearch
-                className="absolute left-2.5 top-1/2 transform -translate-y-1/2 text-gray-400"
-                size={16}
-              />
-            </div>
+            <ProductSearch onSearch={(data) => handleSearch(data)} />
           </div>
 
           <div className="hidden md:flex items-center space-x-3 lg:space-x-4">
@@ -161,17 +155,12 @@ const NavBar = () => {
               Seller Portal
             </Link>
 
-            <div className="relative px-3 py-2">
-              <input
-                type="text"
-                placeholder="Search..."
-                className="w-full pl-10 pr-4 py-2 rounded-full bg-gray-700 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-300"
-              />
-              <LuSearch
-                className="absolute left-6 top-1/2 transform -translate-y-1/2 text-gray-400"
-                size={18}
-              />
-            </div>
+            <ProductSearch
+              onSearch={(data) => {
+                handleSearch(data);
+                setIsMobileMenuOpen(false);
+              }}
+            />
 
             <div className="pt-4 pb-3 border-t border-gray-700 space-y-4">
               {user ? (

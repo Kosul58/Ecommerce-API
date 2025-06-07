@@ -14,7 +14,7 @@ interface SortSelectProps {
 
 const SortSelect: React.FC<SortSelectProps> = ({ onSortChange }) => {
   return (
-    <div className="w-full max-w-[200px] p-2">
+    <div className="w-full max-w-[300px] py-2">
       <div className="relative">
         <select
           id="sort"

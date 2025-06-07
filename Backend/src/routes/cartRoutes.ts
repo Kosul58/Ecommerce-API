@@ -6,6 +6,7 @@ import DataValidation from "../middlewares/validateData";
 import { idSchema } from "../validation/userSchema";
 import {
   addCartSchema,
+  CalcTotalSchema,
   removeProductsSchema,
   updateSchema,
   viewCartParamsSchema,
@@ -28,10 +29,11 @@ cartRoutes.post(
 );
 
 // Calculate total cart price for a user
-cartRoutes.get(
+cartRoutes.post(
   "/total",
   verifyRole.verify("User"),
   dataValidation.validateTokenData(idSchema),
+  dataValidation.validateBody(CalcTotalSchema),
   cartController.calcTotal
 );
 

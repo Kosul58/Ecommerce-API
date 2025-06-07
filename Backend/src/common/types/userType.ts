@@ -27,6 +27,7 @@ export interface UserReturn {
   phone: number;
   address: string;
   image: string;
+  shopname?: string;
 }
 
 export interface AddUser {
@@ -40,12 +41,12 @@ export interface AddUser {
 }
 
 export interface UpdateUser {
-  firstname: string;
-  lastname: string;
-  username: string;
-  phone: number;
-  address: string;
-  email: string;
+  firstname?: string;
+  lastname?: string;
+  username?: string;
+  phone?: number;
+  address?: string;
+  email?: string;
   image?: string;
   emailVerified?: boolean;
   image_removed?: string;
