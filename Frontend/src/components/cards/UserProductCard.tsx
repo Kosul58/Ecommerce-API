@@ -10,7 +10,7 @@ interface Product {
   price: number;
   inventory: number;
   images: string[];
-  discount?: number; // Added discount property
+  discount?: number;
 }
 
 interface Props {
@@ -18,7 +18,6 @@ interface Props {
 }
 
 const ProductCard: React.FC<Props> = ({ product }) => {
-  const isInStock = product.inventory > 0;
   const placeholder = `https://via.placeholder.com/400x300?text=${
     product.name ? product.name.replace(/\s/g, "+") : "Product"
   }+Image`;
@@ -31,7 +30,7 @@ const ProductCard: React.FC<Props> = ({ product }) => {
   return (
     <Link
       to={`/product/${product.id}`}
-      className="group bg-white border border-gray-200 rounded-2xl hover:shadow-xl hover:-translate-y-1 transition duration-300 overflow-hidden flex flex-col"
+      className="group bg-white border border-gray-200 rounded-2xl hover:shadow-xl hover:-translate-y-1 transition duration-300 overflow-hidden flex flex-col max-w-[400px] h-fit"
       role="article"
       aria-label={`View details of ${product.name}`}
     >
@@ -42,13 +41,6 @@ const ProductCard: React.FC<Props> = ({ product }) => {
           className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
           loading="lazy"
         />
-        {!isInStock && (
-          <div className="absolute inset-0 bg-red-600 bg-opacity-75 flex items-center justify-center z-10">
-            <span className="text-white text-lg font-semibold animate-pulse">
-              Out of Stock
-            </span>
-          </div>
-        )}
       </div>
 
       <div className="p-4 flex flex-col flex-grow">
@@ -58,14 +50,14 @@ const ProductCard: React.FC<Props> = ({ product }) => {
         >
           {product.name}
         </h3>
-        <p className="text-gray-600 text-sm mt-1 line-clamp-3 mb-3 flex-grow">
-          {product.description}
-        </p>
+        <h3 className="text-md text-gray-600 truncate" title={product.category}>
+          {product.category}
+        </h3>
         <div className="flex justify-between items-center mt-auto">
-          <span className="text-blue-700 font-bold text-xl flex  flex-col">
+          <span className="text-gray-700 font-bold text-xl flex  flex-col">
             {product.discount && product.discount > 0 ? (
               <>
-                <span className="line-through text-gray-600 text-xs mr-1">
+                <span className="line-through text-gray-500 text-xs mr-1">
                   Rs. {product.price.toLocaleString()}
                 </span>
                 <span> Rs. {discountedPrice.toLocaleString()}</span>
@@ -73,15 +65,6 @@ const ProductCard: React.FC<Props> = ({ product }) => {
             ) : (
               `Rs. ${product.price.toLocaleString()}`
             )}
-          </span>
-          <span
-            className={`text-xs font-medium px-2 py-1 rounded ${
-              isInStock
-                ? "bg-green-100 text-green-800"
-                : "bg-red-100 text-red-800"
-            }`}
-          >
-            {isInStock ? `In Stock: ${product.inventory}` : "Out of Stock"}
           </span>
         </div>
       </div>

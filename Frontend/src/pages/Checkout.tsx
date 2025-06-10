@@ -7,6 +7,8 @@ import Notification from "../components/notifications/Notification";
 import { useUserData } from "../hooks/useAuth";
 import { useUserUpdate } from "../hooks/useAuth";
 import { useCreateOrders } from "../hooks/orders";
+import type { AxiosError } from "axios";
+import { MdOutlineShoppingCartCheckout } from "react-icons/md";
 
 const Checkout = () => {
   const location = useLocation();
@@ -61,14 +63,12 @@ const Checkout = () => {
       return;
     }
     const products = selectedProducts.map((p) => p.productid);
-
     const payload = {
       address: address,
       products: products,
       paymentMethod: paymentMethod,
       paymentStatus: paymentStatus,
     };
-
     try {
       await createOrders(payload);
       showNotification(
@@ -77,9 +77,25 @@ const Checkout = () => {
         } with Cash on Delivery!`,
         "success"
       );
-      navigate("/cart");
-    } catch (err) {
-      console.log(err);
+      navigate("/order");
+    } catch (error) {
+      const err = error as AxiosError;
+      if (err.response) {
+        const status = err.response.status;
+        const data = err.response.data;
+        if (typeof data === "object" && data !== null && "message" in data) {
+          const message = (data as { message: string }).message;
+          if (status === 400 || status === 404) {
+            showNotification(message, "error");
+          } else if (status === 500) {
+            showNotification("Server error. Please try again later.", "error");
+          }
+        } else {
+          showNotification("Unexpected error format.", "error");
+        }
+      } else {
+        showNotification("Network error or server is unreachable.", "error");
+      }
     }
   };
 
@@ -98,6 +114,7 @@ const Checkout = () => {
     }
     if (paymentMethod === "Cash On Delivery") {
       setPaymentStatus(false);
+      showNotification("Placing order for the user", "success");
       await placeOrder();
     } else {
       makeEsewaPayment();
@@ -109,14 +126,41 @@ const Checkout = () => {
       showNotification("Address cannot be empty.", "error");
       return;
     }
+
+    if (address === user?.address) {
+      showNotification(
+        "The selected address matches your saved address.",
+        "success"
+      );
+      return;
+    }
+
+    showNotification("Updating user address", "success");
+
     const formdata = new FormData();
     formdata.append("address", address);
     try {
       await updateUser(formdata);
       showNotification("Address updated successfully.", "success");
       setIsEditingAddress(false);
-    } catch {
-      showNotification("Failed to update address. Please try again.", "error");
+    } catch (error) {
+      const err = error as AxiosError;
+      if (err.response) {
+        const status = err.response.status;
+        const data = err.response.data;
+        if (typeof data === "object" && data !== null && "message" in data) {
+          const message = (data as { message: string }).message;
+          if (status === 400 || status === 404) {
+            showNotification(message, "error");
+          } else if (status === 500) {
+            showNotification("Server error. Please try again later.", "error");
+          }
+        } else {
+          showNotification("Unexpected error format.", "error");
+        }
+      } else {
+        showNotification("Network error or server is unreachable.", "error");
+      }
     }
   };
 
@@ -124,170 +168,174 @@ const Checkout = () => {
   if (error) return <div>Error loading user data.</div>;
 
   return (
-    <>
-      <div className="flex flex-col min-h-screen">
-        <header className="w-full bg-white shadow fixed top-0 z-50">
-          <NavBar />
-        </header>
+    <div className="flex flex-col min-h-screen">
+      <div className="sticky top-0 z-50 shadow-md">
+        <NavBar />
+      </div>
 
-        <main className="flex-grow pt-24 pb-20 px-4 max-w-6xl mx-auto w-full">
-          <h1 className="text-4xl font-extrabold mb-10 text-center text-purple-800">
-            Checkout
-          </h1>
+      <main className=" w-full">
+        <h1 className="w-full px-4 py-2 flex justify-start items-center gap-1 text-2xl font-bold  text-center text-gray-800 border-b border-gray-300">
+          <MdOutlineShoppingCartCheckout />
+          Checkout
+        </h1>
 
-          {selectedProducts.length === 0 ? (
-            <p className="text-center text-gray-500">No products selected.</p>
-          ) : (
-            <div className="grid md:grid-cols-2 gap-10">
-              <div className="space-y-6">
-                <h2 className="text-2xl font-semibold text-gray-700">
-                  Selected Products
-                </h2>
+        {selectedProducts.length === 0 ? (
+          <p className="text-center text-gray-500">No products selected.</p>
+        ) : (
+          <div className="grid md:grid-cols-2 gap-4 p-4 bg-gray-50">
+            <div className="space-y-6 p-4 border border-gray-300  bg-white rounded-md shadow-md">
+              <h2 className="text-2xl font-semibold text-gray-700">
+                Selected Products
+              </h2>
 
-                {selectedProducts.map((product, index) => {
-                  const discountedPrice = getDiscountedPrice(product);
-                  return (
-                    <div
-                      key={index}
-                      className="flex justify-between items-center border rounded-lg p-4 bg-gray-50 hover:bg-gray-100 transition"
-                    >
-                      <div className="flex gap-4 items-center">
-                        {/* <div className="w-16 h-16 bg-gray-200 rounded-md flex-shrink-0" /> */}
-                        <div>
-                          <h3 className="text-lg font-semibold text-gray-800">
-                            {product.name}
-                          </h3>
-                          <p className="text-sm text-gray-600">
-                            Quantity: {product.quantity}
-                          </p>
-                          {product.discount ? (
-                            <p className="text-sm text-green-600 font-medium">
-                              {product.discount}% off
-                            </p>
-                          ) : null}
-                        </div>
-                      </div>
-
-                      <div className="text-right">
+              {selectedProducts.map((product, index) => {
+                const discountedPrice = getDiscountedPrice(product);
+                return (
+                  <div
+                    key={index}
+                    className="flex justify-between items-center border rounded-lg p-4 bg-gray-50 hover:bg-gray-100 transition"
+                  >
+                    <div className="flex gap-4 items-center">
+                      <div>
+                        <h3 className="text-lg font-semibold text-gray-800">
+                          {product.name}
+                        </h3>
+                        <p className="text-sm text-gray-600">
+                          Quantity: {product.quantity}
+                        </p>
                         {product.discount ? (
-                          <>
-                            <p className="text-sm text-gray-500 line-through">
-                              Rs.{product.price.toFixed(2)}
-                            </p>
-                            <p className="text-gray-800 font-bold">
-                              Rs.{discountedPrice.toFixed(2)}
-                            </p>
-                          </>
-                        ) : (
-                          <p className="text-gray-700">
-                            Rs.{product.price.toFixed(2)}
+                          <p className="text-sm text-green-600 font-medium">
+                            {product.discount}% off
                           </p>
-                        )}
+                        ) : null}
                       </div>
                     </div>
-                  );
-                })}
+
+                    <div className="text-right">
+                      {product.discount ? (
+                        <>
+                          <p className="text-sm text-gray-500 line-through">
+                            Rs.{product.price.toFixed(2)}
+                          </p>
+                          <p className="text-gray-800 font-bold">
+                            Rs.{discountedPrice.toFixed(2)}
+                          </p>
+                        </>
+                      ) : (
+                        <p className="text-gray-700">
+                          Rs.{product.price.toFixed(2)}
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+
+            <div className="space-y-6 p-4 border rounded-md shadow-md border-gray-300 bg-white">
+              <div>
+                <label className="block text-lg font-medium text-gray-800 mb-2">
+                  Delivery Address
+                </label>
+
+                {isEditingAddress ? (
+                  <>
+                    <textarea
+                      className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
+                      rows={3}
+                      value={address}
+                      onChange={(e) => setAddress(e.target.value)}
+                      placeholder="Enter delivery address..."
+                    />
+                    <button
+                      onClick={handleSaveAddress}
+                      disabled={isUpdating}
+                      className={`mt-2 px-4 py-2 rounded-md text-white ${
+                        isUpdating
+                          ? "bg-purple-300 cursor-not-allowed"
+                          : "bg-purple-600 hover:bg-purple-700 transition"
+                      }`}
+                    >
+                      {isUpdating ? "Saving..." : "Save Address"}
+                    </button>
+                  </>
+                ) : (
+                  <>
+                    <div className="p-3 border border-gray-300 rounded-md bg-gray-50 min-h-[72px] whitespace-pre-wrap">
+                      {address || "No address provided"}
+                    </div>
+                    <button
+                      onClick={() => setIsEditingAddress(true)}
+                      className="mt-2 px-4 py-2 bg-purple-400 text-white rounded-md hover:bg-purple-600 transition cursor-pointer"
+                    >
+                      Edit Address
+                    </button>
+                  </>
+                )}
               </div>
 
-              <div className="space-y-6">
-                <div>
-                  <label className="block text-lg font-medium text-gray-800 mb-2">
-                    Delivery Address
-                  </label>
+              <div>
+                <label className="block text-lg font-medium text-gray-800 mb-2">
+                  Payment Method
+                </label>
+                <select
+                  className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
+                  value={paymentMethod}
+                  onChange={(e) => setPaymentMethod(e.target.value)}
+                >
+                  <option value="Cash On Delivery">Cash on Delivery</option>
+                  <option value="eSewa">eSewa</option>
+                </select>
+              </div>
 
-                  {isEditingAddress ? (
-                    <>
-                      <textarea
-                        className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
-                        rows={3}
-                        value={address}
-                        onChange={(e) => setAddress(e.target.value)}
-                        placeholder="Enter delivery address..."
-                      />
-                      <button
-                        onClick={handleSaveAddress}
-                        disabled={isUpdating}
-                        className={`mt-2 px-4 py-2 rounded-md text-white ${
-                          isUpdating
-                            ? "bg-purple-300 cursor-not-allowed"
-                            : "bg-purple-600 hover:bg-purple-700 transition"
-                        }`}
-                      >
-                        {isUpdating ? "Saving..." : "Save Address"}
-                      </button>
-                    </>
-                  ) : (
-                    <>
-                      <div className="p-3 border border-gray-300 rounded-md bg-gray-50 min-h-[72px] whitespace-pre-wrap">
-                        {address || "No address provided"}
-                      </div>
-                      <button
-                        onClick={() => setIsEditingAddress(true)}
-                        className="mt-2 px-4 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700 transition"
-                      >
-                        Edit Address
-                      </button>
-                    </>
-                  )}
-                </div>
+              <div className="border-t pt-4 space-y-4">
+                <h2 className="flex justify-between text-xl font-bold text-gray-600">
+                  <span>SubTotal:</span>
+                  <span>Rs.{subtotal.toFixed(2)}</span>
+                </h2>
+                <h2 className="flex justify-between text-xl font-bold text-gray-600">
+                  <span>Tax:</span>
+                  <span>Rs.{tax.toFixed(2)}</span>
+                </h2>
+                <h2 className="flex justify-between text-xl font-bold text-gray-600">
+                  <span>DeliveryCharge:</span>
+                  <span>Rs.{shippingFee}</span>
+                </h2>
+                <h2 className="flex justify-between text-xl font-bold text-gray-600">
+                  <span>Total:</span>
+                  <span>Rs.{Math.round(totalAmount)}</span>
+                </h2>
 
-                <div>
-                  <label className="block text-lg font-medium text-gray-800 mb-2">
-                    Payment Method
-                  </label>
-                  <select
-                    className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
-                    value={paymentMethod}
-                    onChange={(e) => setPaymentMethod(e.target.value)}
-                  >
-                    <option value="Cash On Delivery">Cash on Delivery</option>
-                    <option value="eSewa">eSewa</option>
-                  </select>
-                </div>
-
-                <div className="border-t pt-4 space-y-4">
-                  <h2 className="flex justify-between text-xl font-bold text-purple-600">
-                    <span>SubTotal:</span>
-                    <span>Rs.{subtotal.toFixed(2)}</span>
-                  </h2>
-                  <h2 className="flex justify-between text-xl font-bold text-purple-600">
-                    <span>Tax:</span>
-                    <span>Rs.{tax.toFixed(2)}</span>
-                  </h2>
-                  <h2 className="flex justify-between text-xl font-bold text-purple-600">
-                    <span>DeliveryCharge:</span>
-                    <span>Rs.{shippingFee}</span>
-                  </h2>
-                  <h2 className="flex justify-between text-xl font-bold text-purple-600">
-                    <span>Total:</span>
-                    <span>Rs.{Math.round(totalAmount)}</span>
-                  </h2>
-
-                  <button
-                    onClick={handleCheckout}
-                    disabled={isOrdering}
-                    className="w-full bg-purple-400 text-white py-3 rounded-md font-semibold hover:bg-purple-600 transition "
-                  >
-                    {paymentMethod === "eSewa"
-                      ? "Pay with eSewa"
-                      : "Place Order"}
-                  </button>
-                  <button
-                    className="w-full bg-red-400 text-white py-3 rounded-md font-semibold hover:bg-red-600 transition"
-                    onClick={() => navigate("/cart")}
-                  >
-                    Back to Cart
-                  </button>
-                </div>
+                <button
+                  onClick={handleCheckout}
+                  disabled={isOrdering}
+                  className={`w-full bg-purple-400 text-white py-3 rounded-md font-semibold hover:bg-purple-600 transition ${
+                    isOrdering
+                      ? "cursor-not-allowed bg-purple-300"
+                      : "cursor-pointer"
+                  }`}
+                >
+                  {paymentMethod === "eSewa"
+                    ? "Pay with eSewa"
+                    : isOrdering
+                    ? "Placing Order..."
+                    : "Place Order"}
+                </button>
+                <button
+                  className="w-full bg-red-400 text-white py-3 rounded-md font-semibold hover:bg-red-600 transition cursor-pointer"
+                  onClick={() => navigate("/cart")}
+                >
+                  Back to Cart
+                </button>
               </div>
             </div>
-          )}
-        </main>
+          </div>
+        )}
+      </main>
 
-        <footer className="w-full bg-white shadow">
-          <Footer />
-        </footer>
-      </div>
+      <footer className="w-full bg-white shadow">
+        <Footer />
+      </footer>
 
       {notification && (
         <Notification
@@ -296,7 +344,7 @@ const Checkout = () => {
           onClose={() => setNotification(null)}
         />
       )}
-    </>
+    </div>
   );
 };
 

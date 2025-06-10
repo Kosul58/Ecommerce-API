@@ -34,9 +34,13 @@ export default class OrderRepository
     }
   }
 
-  public async cancelDeliveryOrder(order: OrderDocumnet, productIndex: number) {
+  public async cancelDeliveryOrder(order: OrderDocumnet, productids: string[]) {
     try {
-      order.items[productIndex].active = false;
+      order.items.forEach((item) => {
+        if (productids.includes(item.productid) && item.active !== false) {
+          item.active = false;
+        }
+      });
       order.markModified("items");
       return await order.save();
     } catch (err) {

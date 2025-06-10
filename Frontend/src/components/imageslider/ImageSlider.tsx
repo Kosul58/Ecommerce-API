@@ -43,7 +43,7 @@ const ImageSlider: React.FC<ImageSliderProps> = ({ images }) => {
           <div
             key={index}
             className={`w-2.5 h-2.5 rounded-full ${
-              index === current ? "bg-blue-600" : "bg-gray-300"
+              index === current ? "bg-white border border-black" : "bg-gray-300"
             } transition`}
             onClick={() => setCurrent(index)}
           />

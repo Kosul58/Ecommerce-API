@@ -34,7 +34,7 @@ export interface OrderRepositoryInterface extends Repository {
   orderSave(order: OrderDocumnet): Promise<any>;
   getSellerOrders(): Promise<any>;
   getUserOrders(userid: string): Promise<any>;
-  cancelDeliveryOrder(order: OrderDocumnet, productIndex: number): Promise<any>;
+  cancelDeliveryOrder(order: OrderDocumnet, productids: string[]): Promise<any>;
   returnOrder(
     orderid: string,
     userid: string,

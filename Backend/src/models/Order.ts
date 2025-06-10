@@ -5,12 +5,11 @@ import {
   DeliveryStatus,
   ReturnStatus,
   OrderProduct,
-  BaseOrder,
-  DeliveryOrder,
-  ReturnOrder,
+  OrderTrack,
   OrderProductStatus,
   PaymentMethod,
 } from "../common/types/orderType";
+
 import { boolean } from "joi";
 
 interface OrderDocument extends Document {
@@ -25,7 +24,15 @@ interface OrderDocument extends Document {
   deliveryTime?: string;
   address: string;
   returnTime?: string;
+  orderTrack: OrderTrack[];
 }
+const OrderTrackSchema = new Schema(
+  {
+    status: { type: String, required: true },
+    time: { type: String, required: true },
+  },
+  { _id: false }
+);
 
 const OrderProductSchema = new Schema<OrderProduct>(
   {
@@ -43,6 +50,7 @@ const OrderProductSchema = new Schema<OrderProduct>(
       enum: Object.values(OrderProductStatus),
       required: true,
     },
+    productTrack: { type: [OrderTrackSchema] },
   },
   {
     _id: false,
@@ -83,9 +91,9 @@ const OrderSchema = new Schema<OrderDocument>({
   },
   deliveryTime: { type: String },
   returnTime: { type: String },
+  orderTrack: { type: [OrderTrackSchema] },
 });
 
-// Create and export the model
 const OrderModel = model<OrderDocument>("Order", OrderSchema);
 
 export default OrderModel;

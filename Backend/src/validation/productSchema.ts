@@ -6,7 +6,8 @@ export const addSchema = Joi.object({
   description: Joi.string().max(1000).required().invalid(""),
   category: Joi.string().required().invalid(""),
   image: Joi.string().optional(),
-  discount: Joi.string().required(),
+  discount: Joi.string().optional(),
+  discountType: Joi.string().optional(),
 });
 export const updateSchema = Joi.object({
   name: Joi.string().min(1).max(100).optional(),
@@ -16,6 +17,7 @@ export const updateSchema = Joi.object({
   category: Joi.string().optional(),
   sellerid: Joi.string().min(15).optional(),
   discount: Joi.string().min(0).max(99).optional(),
+  discountType: Joi.string().optional(),
 });
 export const productParamsSchema = Joi.object({
   productid: Joi.string().min(15).required(),

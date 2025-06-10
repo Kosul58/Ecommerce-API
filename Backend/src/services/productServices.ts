@@ -35,8 +35,15 @@ export default class ProductServices {
     productData: AddProduct,
     sellerid: string
   ): Promise<Product> {
-    const { name, price, inventory, description, category, discount } =
-      productData;
+    const {
+      name,
+      price,
+      inventory,
+      description,
+      category,
+      discount,
+      discountType,
+    } = productData;
     logger.info(`Creating product with name: ${name}`);
     return {
       name,
@@ -45,6 +52,7 @@ export default class ProductServices {
       inventory: Number(inventory),
       description,
       discount: Number(discount),
+      discountType: discountType ?? "",
       category,
       images: [],
     };
@@ -632,7 +640,7 @@ export default class ProductServices {
       images: product.images,
       timestamp: product.timestamp,
       discount: product?.discount ?? 0,
-      discounttype: product?.discounttype ?? "",
+      discountType: product?.discounttype ?? "",
     };
   }
 
@@ -648,6 +656,8 @@ export default class ProductServices {
       active: boolean;
       images: string[];
       timestamp: string;
+      discount?: number;
+      discountType?: string;
     }
   >(product: T): SellerProductReturn {
     return {
@@ -661,6 +671,8 @@ export default class ProductServices {
       active: product.active,
       images: product.images,
       timestamp: product.timestamp,
+      discount: product.discount,
+      discountType: product.discountType,
     };
   }
 }

@@ -7,7 +7,7 @@ const VerifyUser = () => {
   const [resendCooldown, setResendCooldown] = useState(60); // cooldown starts at 60s
   const navigate = useNavigate();
 
-  const storedEmail = sessionStorage.getItem("useremail") || "";
+  const storedEmail = sessionStorage.getItem("userEmail") || "";
   console.log(storedEmail);
   const { mutateAsync: verifyOtp, isPending: otpPending } =
     useUserVerification();
@@ -33,7 +33,7 @@ const VerifyUser = () => {
     }
     if (!storedEmail) {
       alert("Email not found. Please sign in again.");
-      navigate("/seller");
+      navigate("/user");
       return;
     }
 

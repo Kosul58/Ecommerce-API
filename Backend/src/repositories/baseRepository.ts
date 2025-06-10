@@ -61,7 +61,6 @@ export class BaseRepository implements Repository {
       throw err;
     }
   }
-
   public async findByIds(ids: string[]) {
     try {
       const objectIds = ids.map((id) => new Types.ObjectId(id));

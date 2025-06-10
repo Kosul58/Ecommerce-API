@@ -9,6 +9,7 @@ export interface Product {
   createdAt?: string;
   updatedAt?: string;
   discount?: number;
+  discountType?: string;
   timestamp?: Date;
   images?: string[];
 }
@@ -21,6 +22,7 @@ export interface AddProduct {
   description: string;
   category: string;
   discount?: number;
+  discountType?: string;
 }
 
 export interface UpdateProdcut {
@@ -44,7 +46,7 @@ export interface ProductReturn {
   timestamp: string;
   images?: string[];
   discount?: number;
-  discounttype?: string;
+  discountType?: string;
 }
 
 export interface SellerProductReturn extends ProductReturn {

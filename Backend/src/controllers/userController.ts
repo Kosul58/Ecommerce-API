@@ -14,13 +14,9 @@ export default class UserController {
 
   public signUp: RequestHandler = async (req, res, next) => {
     const user: AddUser = req.body;
-    // const file = req.file as Express.Multer.File;
     try {
       logger.info(`Attempting to register user: ${user.username}`);
-      const data = await this.userServices.signUp(
-        user
-        // file
-      );
+      const data = await this.userServices.signUp(user);
       const result = data;
       if (!result) {
         logger.error("Failed to sign up User", { user });
@@ -48,7 +44,7 @@ export default class UserController {
 
       if (data === "otpexpired" || data === "otpinvalid" || !data) {
         logger.error("Failed to sign up user");
-        return this.responseHandler.error(res, "Failed to sign up user");
+        return this.responseHandler.error(res, "Failed to verify user");
       }
       const { result, token, refreshToken } = data;
       logger.info(`User created successfully: ${result.username}`);
@@ -67,12 +63,12 @@ export default class UserController {
           maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days bro
           path: "/",
         });
-      return this.responseHandler.created(res, "Usercreated successfully", {
+      return this.responseHandler.created(res, "User verified successfully", {
         result,
         token,
       });
     } catch (err) {
-      logger.error("Error during User signup", err);
+      logger.error("Error during User Verification", err);
       return next(err);
     }
   };
@@ -83,16 +79,18 @@ export default class UserController {
       logger.info(`User attempting to sign in: ${email}`);
       const { result, token, refreshToken } = await this.userServices.signIn(
         email,
-        password
+        password,
+        "User"
       );
       logger.info(`${email} signed in successfully`);
-      if (!result) {
+      if (!result || result === "adminnotverified") {
         logger.warn(`No user found for credentials: ${email}`);
-        return this.responseHandler.notFound(res, "No seller found");
+        return this.responseHandler.notFound(res, "No user found");
       }
-      if (result === "notverified") {
+      if (result === "usernotverified") {
         return this.responseHandler.success(res, "User email is not verified");
       }
+
       res
         .cookie("token", token, {
           httpOnly: true,

@@ -11,7 +11,6 @@ export default class CartController {
     @inject(ResponseHandler) private responseHandler: ResponseHandler
   ) {}
 
-  // View all cart products
   public viewCartProducts: RequestHandler = async (req, res, next) => {
     try {
       logger.info("Fetching all cart products");
@@ -27,7 +26,6 @@ export default class CartController {
     }
   };
 
-  // View a specific cart product
   public viewCartProduct: RequestHandler = async (req, res, next) => {
     const { productid } = req.params;
     const userid = req.user.id;
@@ -45,12 +43,17 @@ export default class CartController {
     }
   };
 
-  // View cart for a user
   public viewCart: RequestHandler = async (req, res, next) => {
     const userid = req.user.id;
     try {
       logger.info("Fetching cart for user", { userid });
       const result = await this.cartService.getCart(userid);
+
+      if (result === "noproducts") {
+        return this.responseHandler.success(res, "No Products in the cart", {
+          products: [],
+        });
+      }
       if (!result || Object.keys(result).length === 0) {
         return this.responseHandler.notFound(res, "Cannot find cart");
       }

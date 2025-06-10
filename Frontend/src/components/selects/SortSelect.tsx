@@ -20,7 +20,7 @@ const SortSelect: React.FC<SortSelectProps> = ({ onSortChange }) => {
           id="sort"
           name="sort"
           defaultValue=""
-          className="block w-full appearance-none rounded-md border border-gray-300 bg-white px-4 py-2 pr-10 text-sm shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 cursor-pointer"
+          className="block w-full appearance-none rounded-md border border-gray-300 bg-white px-4 py-2.5 pr-10 text-sm shadow-sm focus:border-purple-500 focus:outline-none focus:ring-1 focus:ring-purple-500 cursor-pointer"
           onChange={(e) => onSortChange(e.target.value as SortOption)}
         >
           <option value="" disabled>

@@ -30,6 +30,7 @@ export enum OrderProductStatus {
   REJECTED = "Rejected",
   ACCEPTED = "Accepted",
   READY = "Ready",
+  CANCELED = "Canceled",
 }
 
 export enum DeliveryStatus {
@@ -61,8 +62,13 @@ export interface OrderProduct {
   quantity: number;
   active: boolean;
   status: OrderProductStatus;
+  productTrack: OrderTrack[];
 }
 
+export interface OrderTrack {
+  status: string;
+  time: string;
+}
 export interface BaseOrder {
   userid: string;
   items: OrderProduct[];
@@ -71,6 +77,7 @@ export interface BaseOrder {
   paymentMethod: PaymentMethod;
   paymentStatus: boolean;
   address: string;
+  orderTrack: OrderTrack[];
 }
 
 export interface DeliveryOrder extends BaseOrder {

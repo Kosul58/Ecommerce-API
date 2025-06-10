@@ -6,33 +6,12 @@ interface OrderCreationResponse {
   message: string;
   data: string;
 }
-
-// interface SingleOrderPayload {
-//   address: string;
-//   productid: string;
-//   paymentMethod: string;
-//   paymentStatus: boolean;
-// }
-
 interface MultiOrderPayload {
   address: string;
   products: string[];
   paymentMethod: string;
   paymentStatus: boolean;
 }
-
-// export const useCreateOrder = () => {
-//   const queryClient = useQueryClient();
-//   return useMutation<OrderCreationResponse, Error, SingleOrderPayload>({
-//     mutationFn: async (payload: SingleOrderPayload) => {
-//       const response = await axios.post("/order/", payload);
-//       return response.data;
-//     },
-//     onSuccess: () => {
-//       queryClient.invalidateQueries({ queryKey: ["orders"] });
-//     },
-//   });
-// };
 
 export const useCreateOrders = () => {
   const queryClient = useQueryClient();
@@ -55,6 +34,7 @@ export interface OrderItem {
   quantity: number;
   active: boolean;
   status: string;
+  productTrack: OrderTrack[];
 }
 
 export interface Order {
@@ -66,6 +46,10 @@ export interface Order {
   status: string;
   paymentMethod: string;
   paymentStatus: boolean;
+  orderTrack: OrderTrack[];
+  address: string;
+  timestamp: string;
+  deliverytime?: string;
 }
 
 export interface OrderResponse {
@@ -75,15 +59,19 @@ export interface OrderResponse {
 }
 
 export const useUserOrders = () => {
-  return useQuery<OrderResponse, Error>({
+  return useQuery<Order[], Error>({
     queryKey: ["orders"],
     queryFn: async () => {
       const response = await axios.get("/order/user");
-      return response.data;
+      return response.data.data;
     },
   });
 };
 
+export interface OrderTrack {
+  status: string;
+  time: string;
+}
 export interface SellerOrder {
   orderid: string;
   userid: string;
@@ -91,9 +79,12 @@ export interface SellerOrder {
   name: string;
   price: number;
   quantity: number;
-  status: string;
+  productstatus: string;
+  orderstatus: string;
   paymentStatus: boolean;
   paymentMethod: string;
+  orderTrack: OrderTrack[];
+  productTrack: OrderTrack[];
 }
 
 interface SellerOrdersResponse {
@@ -108,6 +99,72 @@ export const useSellerOrders = () => {
     queryFn: async () => {
       const response = await axios.get("/order");
       return response.data;
+    },
+  });
+};
+
+export interface ProductStatusSeller {
+  productid: string;
+  orderid: string;
+  status: string;
+}
+
+export interface ProductStatusResponse {
+  success: string;
+  message: string;
+  data: string;
+}
+
+export const useUpdateProductStatus = () => {
+  const queryClient = useQueryClient();
+  return useMutation<ProductStatusResponse, Error, ProductStatusSeller>({
+    mutationFn: async (payload) => {
+      const response = await axios.put("/order/orderdata", payload);
+      return response.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["sellerOrders"] });
+    },
+    onError: (error) => {
+      console.error("Failed to update order status:", error.message);
+    },
+  });
+};
+
+export interface CancelSingleOrder {
+  orderid: string;
+  productids: string[];
+}
+
+export interface CancelWholeOrder {
+  orderid: string;
+}
+export const useCancelSelectedOrder = () => {
+  const queryClient = useQueryClient();
+  return useMutation<ProductStatusResponse, Error, CancelSingleOrder>({
+    mutationFn: async (payload) => {
+      const response = await axios.delete("/order/cancelSelected", {
+        data: payload,
+      });
+      return response.data.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["orders"] });
+    },
+  });
+};
+
+export const useCancelWholeOrder = () => {
+  const queryClient = useQueryClient();
+  return useMutation<ProductStatusResponse, Error, CancelWholeOrder>({
+    mutationFn: async (payload) => {
+      const response = await axios.delete("/order/cancelWhole", {
+        data: payload,
+      });
+      return response.data.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["orders"] });
     },
   });
 };

@@ -1,15 +1,13 @@
 import { useState } from "react";
 import SellerProducts from "../components/seller/SellerProducts";
 import AddProduct from "../components/seller/AddProduct";
-// import { useNavigate } from "react-router-dom";
 import { useSellerData } from "../api/seller";
-import Sidebar from "../components/seller/SellerSidebar";
-import SellerSideOverlay from "../components/seller/SellerSideOverlay";
+import Sidebar from "../components/sidebar/SellerSidebar";
+import SellerSideOverlay from "../components/sidebar/SellerSideOverlay";
 import type { Datum, Seller } from "../types/sellertypes";
-import EditProduct from "../components/seller/EditProduct";
 import ManageProduct from "../components/seller/ManageProduct";
 import Orders from "../components/seller/Orders";
-import { FaBars } from "react-icons/fa"; // Import FaBars for the mobile menu icon
+import { FaBars } from "react-icons/fa";
 
 export type Section =
   | "dashboard"
@@ -25,6 +23,7 @@ export type Section =
   | "trackOrder"
   | "support"
   | "message"
+  | "profile"
   | "setting";
 
 const Dashboard = () => (
@@ -32,15 +31,15 @@ const Dashboard = () => (
 );
 
 const SellerDashboard = () => {
-  // const navigate = useNavigate();
   const [selectedSection, setSelectedSection] = useState<Section>("dashboard");
   const [productData, setProductData] = useState<Datum | null>(null);
-  const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false); // State to manage overlay
+  const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
   const {
     data: sellerData,
     isLoading: isSellerLoading,
     isError: isSellerError,
   } = useSellerData();
+  console.log(sellerData);
 
   if (isSellerError) {
     console.error("Error fetching seller data from the server:", isSellerError);
@@ -51,11 +50,11 @@ const SellerDashboard = () => {
     );
   }
 
-  if (isSellerLoading || !sellerData) {
+  if (isSellerLoading) {
     return <p className="text-lg text-gray-700 p-4">Loading seller data...</p>;
   }
 
-  if (Object.keys(sellerData).length === 0) {
+  if (!sellerData || Object.keys(sellerData).length === 0) {
     return (
       <p className="text-red-400 p-4">No Seller Found. Please log in again.</p>
     );
@@ -107,20 +106,14 @@ const SellerDashboard = () => {
             <SellerProducts
               seller={sellerData as Seller}
               setProductData={setProductData}
-              onEdit={setSelectedSection}
             />
           )}
           {selectedSection === "addProduct" && <AddProduct />}
-          {selectedSection === "Orders" && <Orders />}
+          {selectedSection === "Orders" && <Orders seller={sellerData} />}
           {selectedSection === "editProduct" && !productData && (
             <div>No Product Selected for Editing</div>
           )}
-          {selectedSection === "editProduct" && productData && (
-            <EditProduct
-              product={productData as Datum}
-              onCancel={() => setProductData(null)}
-            />
-          )}
+
           {selectedSection === "manageProduct" && (
             <ManageProduct sellerId={sellerData.id} />
           )}

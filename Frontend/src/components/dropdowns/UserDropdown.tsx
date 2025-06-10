@@ -3,6 +3,7 @@ import { FaUser, FaShoppingCart, FaBox, FaSignOutAlt } from "react-icons/fa";
 import { Link, useNavigate } from "react-router-dom";
 
 import { useUserSignOut } from "../../hooks/useAuth";
+import Button from "../buttons/Buttons";
 interface userprops {
   username: string;
 }
@@ -28,6 +29,7 @@ const UserDropdown: React.FC<userprops> = ({ username }) => {
   const handleSignOut = async () => {
     try {
       await signOut();
+      alert("Sigout successfull");
     } catch (err) {
       console.log(err);
     } finally {
@@ -37,10 +39,7 @@ const UserDropdown: React.FC<userprops> = ({ username }) => {
 
   return (
     <div className="relative inline-block text-left" ref={dropdownRef}>
-      <button
-        onClick={() => setIsOpen(!isOpen)}
-        className="inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-purple-600 rounded-md hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 cursor-pointer"
-      >
+      <Button onClick={() => setIsOpen(!isOpen)}>
         {username}
         <svg
           className={`ml-2 h-4 w-4 transition-transform ${
@@ -58,7 +57,7 @@ const UserDropdown: React.FC<userprops> = ({ username }) => {
             d="M7 7l3-3 3 3m0 6l-3 3-3-3"
           />
         </svg>
-      </button>
+      </Button>
 
       {isOpen && (
         <div className="absolute right-0 mt-2 w-48 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black/10 focus:outline-none z-50">

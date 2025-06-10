@@ -6,7 +6,7 @@ import { useProducts } from "../../api/seller";
 import ProductCategory from "./ProductCategory";
 import SortSelect from "../selects/SortSelect";
 import type { Section } from "../../pages/SellerDashboard";
-import ProductTable from "../table/Table";
+import ProductTable from "../table/SellerProducts";
 import PaginationComponent from "../pagination/Pagination";
 import { CiCirclePlus } from "react-icons/ci";
 

@@ -1,135 +1,103 @@
-import React from "react";
+import React, { useState } from "react";
 import NavBar from "../components/navbar/Navbar";
 import Footer from "../components/footer/Footer";
-import { useUserOrders } from "../hooks/orders";
+import { useUserOrders, type Order } from "../hooks/orders";
+import { FaSpinner, FaBox, FaTimesCircle } from "react-icons/fa";
+import UserViewOrder from "../components/modals/UserViewOrder";
+import UserTrackOrder from "../components/modals/UserTrackOrder";
+import UserOrderTable from "../components/table/UserOrder";
+import PaginationComponent from "../components/pagination/Pagination";
+import { useNavigate } from "react-router-dom";
 
-const Order = () => {
-  const { data: orders, isLoading: orderLoading, isError } = useUserOrders();
+const UserOrder = () => {
+  const navigate = useNavigate();
+  const { data: orders, isLoading, isError } = useUserOrders();
+  console.log(orders);
+  const [selectedOrderForView, setSelectedOrderForView] =
+    useState<Order | null>(null);
+  const [selectedOrderForTrack, setSelectedOrderForTrack] =
+    useState<Order | null>(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const ordersPerPage = 6;
 
-  const handleTrackOrder = (orderId: string) => {
-    // Implement tracking logic or redirect
-    alert(`Tracking order: ${orderId}`);
+  const isReturning = false;
+
+  const handleCancelOrder = (order: Order) => {
+    navigate("/cancelorder", { state: { order } });
   };
 
-  const handleCancelOrder = (orderId: string) => {
-    // Replace with actual cancellation logic
-    const confirmCancel = window.confirm(
-      "Are you sure you want to cancel this order?"
-    );
-    if (confirmCancel) {
-      alert(`Cancelled order: ${orderId}`);
+  const handleReturnOrder = (order: Order) => {
+    if (
+      window.confirm(
+        "Are you sure you want to return this order? Our transport management will be in contact with you soon."
+      )
+    ) {
+      alert(`Returned order: ${order.orderid}`);
     }
   };
 
+  const totalPages = orders ? Math.ceil(orders.length / ordersPerPage) : 1;
+  const paginatedOrders = orders?.slice(
+    (currentPage - 1) * ordersPerPage,
+    currentPage * ordersPerPage
+  );
+
   return (
-    <div className="flex flex-col h-fit">
-      <header className="sticky top-0 z-50 bg-white shadow-sm">
+    <div className="flex flex-col min-h-screen bg-gray-50">
+      <header className="sticky top-0 z-50 bg-white shadow-md">
         <NavBar />
       </header>
 
-      <main className="flex-grow px-4 py-10 max-w-6xl mx-auto w-full min-h-screen">
-        <h1 className="text-3xl font-bold text-center text-purple-800 mb-6">
-          My Orders
+      <main className="flex-grow w-full">
+        <h1 className="w-full text-2xl font-bold text-gray-800 px-4 py-2 border-b border-gray-300 flex justify-start gap-1 items-center">
+          <FaBox className="text-xl" /> Orders
         </h1>
 
-        {orderLoading ? (
-          <p className="text-center text-gray-500">Loading orders...</p>
+        {isLoading ? (
+          <div className="text-center py-20">
+            <FaSpinner className="animate-spin text-3xl text-purple-600 mx-auto mb-4" />
+            <p className="text-gray-600 text-lg">Fetching your orders...</p>
+          </div>
         ) : isError ? (
-          <p className="text-center text-red-500">Failed to load orders</p>
-        ) : orders?.data?.length === 0 ? (
-          <p className="text-center text-gray-600">No orders found</p>
+          <div className="text-center py-20 text-red-600">
+            <FaTimesCircle className="text-3xl mx-auto mb-4" />
+            <p className="text-lg">Failed to load orders. Try again later.</p>
+          </div>
         ) : (
-          <div className="space-y-6">
-            {orders?.data.map((order) => (
-              <div
-                key={order.orderid}
-                className="border rounded-lg p-4 shadow-sm bg-white"
-              >
-                <div className="flex justify-between items-center mb-2">
-                  <h2 className="text-lg font-semibold text-gray-800">
-                    Order ID:{" "}
-                    <span className="text-purple-600">{order.orderid}</span>
-                  </h2>
-                  <span className="text-sm text-white bg-purple-600 px-2 py-1 rounded">
-                    {order.status}
-                  </span>
-                </div>
-
-                <div className="text-sm text-gray-600 mb-2 space-y-1">
-                  <p>
-                    <strong>Type:</strong> {order.type}
-                  </p>
-                  <p>
-                    <strong>Total:</strong> Rs. {order.total}
-                  </p>
-                  <p>
-                    <strong>Payment Method:</strong> {order.paymentMethod}
-                  </p>
-                  <div className="flex">
-                    <strong>Payment Status:</strong>
-                    {order.paymentStatus === true ? (
-                      <p className="text-green-400">True</p>
-                    ) : (
-                      <p className="text-red-400">False</p>
-                    )}
-                  </div>
-                </div>
-
-                <div className="border-t pt-3">
-                  {order.items.map((item) => (
-                    <div
-                      key={item.productid}
-                      className="mb-3 border-b pb-2 last:border-none"
-                    >
-                      <div className="font-medium text-gray-800">
-                        {item.name}
-                      </div>
-                      <div className="text-sm text-gray-600">
-                        Price: Rs. {item.price} × {item.quantity}
-                      </div>
-                      <div className="text-sm text-gray-500">
-                        Status: {item.status}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-
-                <div className="flex gap-3 mt-4">
-                  <button
-                    onClick={() => alert(`Viewing order: ${order.orderid}`)}
-                    className="px-3 py-1 text-sm bg-blue-600 text-white rounded hover:bg-blue-700"
-                  >
-                    View Order
-                  </button>
-                  <button
-                    onClick={() => handleTrackOrder(order.orderid)}
-                    className="px-3 py-1 text-sm bg-green-600 text-white rounded hover:bg-green-700"
-                  >
-                    Track Order
-                  </button>
-                  <button
-                    onClick={() => handleCancelOrder(order.orderid)}
-                    disabled={order.status !== "Placed"}
-                    className={`px-3 py-1 text-sm rounded ${
-                      order.status !== "Placed"
-                        ? "bg-gray-400 cursor-not-allowed text-white"
-                        : "bg-red-600 text-white hover:bg-red-700"
-                    }`}
-                  >
-                    Cancel Order
-                  </button>
-                </div>
-              </div>
-            ))}
+          <div className="w-full min-h-[70Vh] flex flex-col items-center mt-4">
+            <UserOrderTable
+              orders={paginatedOrders || []}
+              onViewOrder={setSelectedOrderForView}
+              onTrackOrder={setSelectedOrderForTrack}
+              onCancelOrder={handleCancelOrder}
+              onReturnOrder={handleReturnOrder}
+              isReturning={isReturning}
+            />
+            {orders && orders.length > ordersPerPage && (
+              <PaginationComponent
+                currentPage={currentPage}
+                totalPages={totalPages}
+                onPageChange={setCurrentPage}
+              />
+            )}
           </div>
         )}
       </main>
 
-      <footer className="bg-white shadow-sm">
+      <footer className="bg-white shadow-inner mt-12">
         <Footer />
       </footer>
+
+      <UserViewOrder
+        order={selectedOrderForView}
+        onClose={() => setSelectedOrderForView(null)}
+      />
+      <UserTrackOrder
+        order={selectedOrderForTrack}
+        onClose={() => setSelectedOrderForTrack(null)}
+      />
     </div>
   );
 };
 
-export default Order;
+export default UserOrder;

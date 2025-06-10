@@ -3,14 +3,28 @@ import { Link, useNavigate } from "react-router-dom";
 import { LuMenu, LuX, LuShoppingCart } from "react-icons/lu";
 import { FaUser, FaBox, FaSignOutAlt } from "react-icons/fa";
 import { PiSignInLight } from "react-icons/pi";
-import { useUserData } from "../../hooks/useAuth";
-import UserDropdown from "../dropdowns/Dropdown";
+import { useUserData, useUserSignOut } from "../../hooks/useAuth";
+import UserDropdown from "../dropdowns/UserDropdown";
 import ProductSearch from "../search/ProductSearch";
+import Button from "../buttons/Buttons";
 
 const NavBar = () => {
   const navigate = useNavigate();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const { mutateAsync: signOut, isPending } = useUserSignOut();
 
+  const handleSignOut = async () => {
+    try {
+      await signOut();
+      alert("User Signed Out successfully");
+    } catch (err) {
+      console.log(err);
+    } finally {
+      setTimeout(() => {
+        navigate("/");
+      }, 1000);
+    }
+  };
   const { data: user } = useUserData();
 
   const toggleMobileMenu = () => {
@@ -18,14 +32,17 @@ const NavBar = () => {
   };
 
   const handleNavigate = (path: string) => {
-    navigate(path);
     setIsMobileMenuOpen(false);
+    navigate(path);
   };
 
   const sellerSignIn = () => {
     handleNavigate("/seller");
   };
 
+  const adminSignIn = () => {
+    handleNavigate("/admin");
+  };
   const userSignIn = () => {
     handleNavigate("/user");
   };
@@ -35,10 +52,16 @@ const NavBar = () => {
   };
   return (
     <nav
-      className="bg-gradient-to-r from-gray-800 to-gray-900 text-white h-[12vh] min-h-[90px] z-50 max-h-[95px]
+      className="bg-gradient-to-r from-gray-800 to-gray-900 text-white h-[12vh] min-h-[90px]  z-50 max-h-[95px] max-sm:min-h-[60px] max-sm:max-h-[65px]
      "
     >
-      <div className="hidden md:flex w-full justify-end items-center px-4 py-1 bg-gray-800/80 text-sm">
+      <div className="hidden md:flex w-full justify-end items-center px-4 py-1 bg-gray-800/80 text-sm gap-4">
+        <p
+          className="cursor-pointer hover:underline transition duration-150 text-gray-300 hover:text-white  flex justify-center items-center gap-2"
+          onClick={adminSignIn}
+        >
+          Admin Portal
+        </p>
         <p
           className="cursor-pointer hover:underline transition duration-150 text-gray-300 hover:text-white  flex justify-center items-center gap-2"
           onClick={sellerSignIn}
@@ -52,10 +75,10 @@ const NavBar = () => {
           <div className="flex-shrink-0">
             <Link
               to="/"
-              className="max-lg:text-lg lg:text-2xl font-bold text-purple-400 hover:text-purple-300  transition-colors duration-300"
+              className="max-lg:text-lg lg:text-2xl font-bold text-white   transition-colors duration-300"
               onClick={() => setIsMobileMenuOpen(false)}
             >
-              Ecommerce
+              Hamro Bajar
             </Link>
           </div>
 
@@ -94,29 +117,27 @@ const NavBar = () => {
                 <UserDropdown username={user.username} />
               </div>
             ) : (
-              <button
-                onClick={userSignIn}
-                className="flex items-center px-2 py-1.5 bg-purple-600 hover:bg-purple-700 text-white font-semibold rounded-md transition-all duration-300 transform hover:scale-105 shadow-md text-sm cursor-pointer gap-1"
-              >
+              <Button onClick={userSignIn} variant="primary" size="medium">
                 <PiSignInLight />
                 Sign In
-              </button>
+              </Button>
             )}
           </div>
 
           <div className="md:hidden flex items-center">
-            <button
+            <Button
               onClick={toggleMobileMenu}
-              className="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-white hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white"
+              variant="outline"
+              className="bg-none"
             >
               {isMobileMenuOpen ? <LuX size={24} /> : <LuMenu size={24} />}
-            </button>
+            </Button>
           </div>
         </div>
       </div>
 
       {isMobileMenuOpen && (
-        <div className="md:hidden bg-gray-800 pb-4">
+        <div className="md:hidden bg-gray-800 pb-4 min-h-screen overflow-auto">
           <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
             <Link
               to="/"
@@ -154,6 +175,13 @@ const NavBar = () => {
             >
               Seller Portal
             </Link>
+            <Link
+              to="/admin"
+              onClick={() => setIsMobileMenuOpen(false)}
+              className="block px-3 py-2 rounded-md text-base font-medium text-white hover:bg-gray-700 hover:underline transition-colors duration-300"
+            >
+              Admin Portal
+            </Link>
 
             <ProductSearch
               onSearch={(data) => {
@@ -163,46 +191,50 @@ const NavBar = () => {
             />
 
             <div className="pt-4 pb-3 border-t border-gray-700 space-y-4">
-              {user ? (
-                <div className="w-full px-4 py-2 text-center text-white font-semibold">
-                  <span className="text-purple-400">{user.username}</span>
+              {!user ? (
+                <div className="w-full flex justify-center items-center">
+                  <Button
+                    onClick={userSignIn}
+                    variant="primary"
+                    size="medium"
+                    className="w-full"
+                  >
+                    User Sign In
+                  </Button>
                 </div>
               ) : (
-                <button
-                  onClick={userSignIn}
-                  className="w-full flex items-center justify-center px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white font-semibold rounded-md transition-all duration-300 shadow-md max-lg:text:lg max-lg:px-2 max-lg:py-1 cursor-pointer"
-                >
-                  User Sign In
-                </button>
+                <>
+                  <div className="w-full px-4 py-2 text-center text-white font-semibold">
+                    <span className="text-purple-400">{user.username}</span>
+                  </div>
+                  <div
+                    onClick={() => handleNavigate("/cart")}
+                    className="w-full flex items-center justify-center px-4 py-1 bg-gray-700 hover:bg-gray-600 text-white font-semibold rounded-md transition-colors duration-300"
+                  >
+                    <LuShoppingCart className="mr-2" size={20} /> Cart
+                  </div>
+                  <div
+                    onClick={() => handleNavigate("/order")}
+                    className="w-full flex items-center justify-center px-4 py-2.5 bg-gray-700 hover:bg-gray-600 text-white font-semibold rounded-md transition-colors duration-300"
+                  >
+                    <FaBox className="mr-2" size={20} /> Order
+                  </div>
+                  <div
+                    onClick={() => handleNavigate("/userprofile")}
+                    className="w-full flex items-center justify-center px-4 py-2.5 bg-gray-700 hover:bg-gray-600 text-white font-semibold rounded-md transition-colors duration-300"
+                  >
+                    <FaUser className="mr-2" size={20} /> User Profile
+                  </div>
+                  <div
+                    onClick={() => handleSignOut()}
+                    className={`w-full flex items-center justify-center px-4 py-2.5 bg-gray-700 hover:bg-gray-600 text-white font-semibold rounded-md transition-colors duration-300 ${
+                      isPending ? "cursor-not-allowed" : "cursor-pointer"
+                    }`}
+                  >
+                    <FaSignOutAlt className="mr-2" size={20} /> Sign Out
+                  </div>
+                </>
               )}
-              <Link
-                to={`/cart}`}
-                onClick={() => setIsMobileMenuOpen(false)}
-                className="w-full flex items-center justify-center px-4 py-4 bg-gray-700 hover:bg-gray-600 text-white font-semibold rounded-md transition-colors duration-300"
-              >
-                <LuShoppingCart className="mr-2" size={20} /> Cart
-              </Link>
-              <Link
-                to={`/order}`}
-                onClick={() => setIsMobileMenuOpen(false)}
-                className="w-full flex items-center justify-center px-4 py-4 bg-gray-700 hover:bg-gray-600 text-white font-semibold rounded-md transition-colors duration-300"
-              >
-                <FaBox className="mr-2" size={20} /> Order
-              </Link>
-              <Link
-                to={`/userprofile}`}
-                onClick={() => setIsMobileMenuOpen(false)}
-                className="w-full flex items-center justify-center px-4 py-4 bg-gray-700 hover:bg-gray-600 text-white font-semibold rounded-md transition-colors duration-300"
-              >
-                <FaUser className="mr-2" size={20} /> User Profile
-              </Link>
-              <Link
-                to={`/userprofile}`}
-                onClick={() => setIsMobileMenuOpen(false)}
-                className="w-full flex items-center justify-center px-4 py-4 bg-gray-700 hover:bg-gray-600 text-white font-semibold rounded-md transition-colors duration-300"
-              >
-                <FaSignOutAlt className="mr-2" size={20} /> Sign Out
-              </Link>
             </div>
           </div>
         </div>

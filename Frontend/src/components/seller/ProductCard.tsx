@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { FaDollarSign, FaBoxes } from "react-icons/fa";
 import { MdDescription } from "react-icons/md";
 import { BiCategory } from "react-icons/bi";
+import Button from "../buttons/Buttons";
 
 interface ProductCardProps {
   name: string;
@@ -35,8 +36,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
   const discountedPrice = price - (price * discount) / 100;
 
   return (
-    <div className="w-full max-w-sm bg-white rounded-2xl shadow-md border border-gray-200 overflow-hidden hover:shadow-lg transition-all duration-300">
-      {/* Image Area */}
+    <div className="w-full min-h-[450px] h-fit max-w-sm bg-white rounded-2xl shadow-md border border-gray-200 overflow-hidden hover:shadow-lg transition-all duration-300">
       <div className="relative h-52 bg-gray-100">
         {displayImageUrl ? (
           <img
@@ -83,8 +83,6 @@ const ProductCard: React.FC<ProductCardProps> = ({
             {description || "No description provided."}
           </p>
         </div>
-
-        {/* Price + CTA */}
         <div className="mt-4 flex items-center justify-between border-t pt-3">
           <div className="flex items-baseline space-x-1">
             <FaDollarSign className="text-gray-700 text-sm" />
@@ -103,10 +101,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
               </span>
             )}
           </div>
-
-          <button className="px-4 py-2 bg-indigo-600 text-white text-sm font-medium rounded-full hover:bg-indigo-700 transition">
-            View Product
-          </button>
+          <Button variant="primary">View Product</Button>
         </div>
       </div>
     </div>

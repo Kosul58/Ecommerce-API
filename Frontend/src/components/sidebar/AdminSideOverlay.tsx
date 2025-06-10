@@ -8,32 +8,32 @@ import {
 import { BiSolidDashboard } from "react-icons/bi";
 import { MdOutlineSupportAgent } from "react-icons/md";
 import { LuMessageSquareMore } from "react-icons/lu";
-import { type Section } from "../../pages/SellerDashboard";
-import { type Seller } from "../../types/sellertypes";
-import { useSellerSignOut } from "../../hooks/useAuth";
+import { type Section } from "../../pages/AdminDashboard";
+import { useAdminSignOut, type Admin } from "../../hooks/useAuth";
 import { useNavigate } from "react-router-dom";
 
-interface SellerSideOverlayProps {
+interface AdminSideOverlayProps {
   isOpen: boolean;
   onClose: () => void;
   activeKey: Section;
   onSelect: (key: Section) => void;
-  seller: Seller;
+  admin: Admin;
 }
 
-const SellerSideOverlay: React.FC<SellerSideOverlayProps> = ({
+const SellerSideOverlay: React.FC<AdminSideOverlayProps> = ({
   isOpen,
   onClose,
   activeKey,
   onSelect,
-  seller,
+  admin,
 }) => {
   const navigate = useNavigate();
-  const { mutateAsync: signOut, isPending } = useSellerSignOut();
+  const { mutateAsync: signOut, isPending } = useAdminSignOut();
 
   const handleSignOut = async () => {
     try {
       await signOut();
+      alert("Admin Signout successfull");
     } catch (err) {
       console.log(err);
     } finally {
@@ -43,18 +43,18 @@ const SellerSideOverlay: React.FC<SellerSideOverlayProps> = ({
 
   const handleMenuItemSelect = (key: Section) => {
     onSelect(key);
-    onClose(); // close overlay after navigation
+    onClose();
   };
 
   const isActive = (key: Section) => key === activeKey;
 
   const navItemClass = (key: Section) =>
     `w-full flex items-center gap-3 p-3 rounded-lg transition-all duration-200 ease-in-out cursor-pointer
-      ${
-        isActive(key)
-          ? "bg-indigo-600 text-white shadow-md font-semibold"
-          : "text-gray-700 hover:bg-gray-100 hover:text-indigo-700"
-      }`;
+     ${
+       isActive(key)
+         ? "bg-gradient-to-r from-indigo-500 to-purple-500 text-white shadow-md font-semibold"
+         : "text-gray-700 hover:bg-gray-100 hover:text-indigo-700"
+     }`;
 
   return (
     <>
@@ -71,7 +71,7 @@ const SellerSideOverlay: React.FC<SellerSideOverlayProps> = ({
       >
         <div className="p-4 flex items-center justify-between border-b border-gray-200">
           <div className="text-lg font-bold text-indigo-800 truncate">
-            {seller?.username || "Seller"}
+            {admin?.username || "Seller"}
           </div>
         </div>
 
@@ -85,8 +85,8 @@ const SellerSideOverlay: React.FC<SellerSideOverlayProps> = ({
           </button>
 
           <button
-            onClick={() => handleMenuItemSelect("viewproducts")}
-            className={navItemClass("viewproducts")}
+            onClick={() => handleMenuItemSelect("products")}
+            className={navItemClass("products")}
           >
             <FaBoxOpen className="text-xl" />
             <span>Products</span>
@@ -128,10 +128,10 @@ const SellerSideOverlay: React.FC<SellerSideOverlayProps> = ({
           <button
             onClick={handleSignOut}
             disabled={isPending}
-            className="w-full flex items-center gap-3 p-3 rounded-lg text-red-600 hover:bg-red-50 transition-colors duration-200"
+            className="w-full flex items-center gap-3 p-3 rounded-lg text-red-400 font-semibold"
           >
             <FaSignOutAlt className="text-xl" />
-            <span>Sign Out</span>
+            <span>{isPending ? "Signing out..." : "Sign Out"}</span>
           </button>
         </div>
       </aside>

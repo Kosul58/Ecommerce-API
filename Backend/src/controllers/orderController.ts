@@ -18,6 +18,9 @@ export default class OrderController {
     logger.info(`Fetching orders for user with id: ${userid}`);
     try {
       const result = await this.orderService.getUserOrders(userid);
+      if (result === "noorder") {
+        return this.responseHandler.success(res, "No order found", []);
+      }
       if (!result) {
         logger.warn(`No orders found for user with id: ${userid}`);
         return this.responseHandler.notFound(res, "No order found");
@@ -201,37 +204,35 @@ export default class OrderController {
     }
   };
 
-  // Cancel a single product in an order
-  public cancelSingleOrder: RequestHandler = async (req, res, next) => {
-    const { orderid, productid } = req.body;
-    logger.info(
-      `Canceling product with id: ${productid} in order id: ${orderid}`
-    );
+  // Cancel selected products in an order
+  public cancelSelectedOrder: RequestHandler = async (req, res, next) => {
+    const { orderid, productids } = req.body;
+    logger.info(`Canceling selected products in order id: ${orderid}`);
     try {
       const result = await this.orderService.cancelDeliveryOrder(
         orderid,
-        productid
+        productids
       );
       if (!result || Object.keys(result).length === 0) {
         logger.warn(
-          `Product cancellation failed for product id: ${productid} in order id: ${orderid}`
+          `Product cancellation failed for selected products in order id: ${orderid}`
         );
         return this.responseHandler.error(
           res,
-          "Cancellation of a product order unsuccessful"
+          "Cancellation of selected products in a order unsuccessful"
         );
       }
       logger.info(
-        `Product with id: ${productid} canceled successfully in order id: ${orderid}`
+        `Selected Producta canceled successfully in order id: ${orderid}`
       );
       return this.responseHandler.success(
         res,
-        "Order of a product canceled successfully",
+        "Selected products in a order canceled successfully",
         result
       );
     } catch (err) {
       logger.error(
-        `Error canceling product with id: ${productid} in order id: ${orderid}`,
+        `Error canceling selected products in order id: ${orderid}`,
         err
       );
       return next(err);

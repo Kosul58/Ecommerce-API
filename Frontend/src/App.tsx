@@ -17,6 +17,10 @@ import Order from "./pages/Order";
 import Checkout from "./pages/Checkout";
 import AddProduct from "./components/seller/AddProduct";
 import EditProduct from "./components/seller/EditProduct";
+import CancelOrder from "./pages/CancelOrder";
+import Admin from "./pages/Admin";
+import VerifyAdmin from "./components/verify/VerifyAdmin";
+import AdminDashboard from "./pages/AdminDashboard";
 const App = () => {
   const [sellerSigned, setSellerSigned] = useState(true);
   return (
@@ -38,6 +42,7 @@ const App = () => {
             <Route path="/seller/verify" element={<VerifySeller />} />
             <Route path="/user" element={<User />} />
             <Route path="/user/verify" element={<VerifyUser />} />
+            <Route path="/admin/verify" element={<VerifyAdmin />} />
             <Route path="/products" element={<Products />} />
             <Route path="/product/:pid" element={<ProductDetail />} />
             <Route path="/cart" element={<Cart />} />
@@ -46,6 +51,9 @@ const App = () => {
             <Route path="/checkout" element={<Checkout />} />
             <Route path="/seller/addproduct" element={<AddProduct />} />
             <Route path="/seller/editproduct" element={<EditProduct />} />
+            <Route path="/cancelorder" element={<CancelOrder />} />
+            <Route path="/admin" element={<Admin />} />
+            <Route path="/admin/dashboard" element={<AdminDashboard />} />
           </Routes>
         </Router>
       </QueryClientProvider>

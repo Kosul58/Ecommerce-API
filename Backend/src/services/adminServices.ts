@@ -17,6 +17,14 @@ export default class AdminServices {
     @inject(AuthServices) private authService: AuthServices
   ) {}
 
+  public async getAdmin(userid: string) {
+    try {
+      return await this.userServices.getUser(userid);
+    } catch (err) {
+      logger.error("Error fetching user data for userId:");
+      throw err;
+    }
+  }
   public async accessToken(refreshToken: string) {
     try {
       const verifyToken = this.authService.verifyRefreshToken(refreshToken);
@@ -53,7 +61,17 @@ export default class AdminServices {
 
   public async signIn(email: string, password: string) {
     try {
-      const result = await this.userServices.signIn(email, password);
+      const result = await this.userServices.signIn(email, password, "Admin");
+      return result;
+    } catch (err) {
+      logger.error("Error during sign-in process");
+      throw err;
+    }
+  }
+
+  public async verifyAdmin(email: string, otp: string) {
+    try {
+      const result = await this.userServices.verifyUser(email, otp);
       return result;
     } catch (err) {
       logger.error("Error during sign-in process");

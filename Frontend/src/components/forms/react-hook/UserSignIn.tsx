@@ -51,7 +51,7 @@ const UserSignIn: React.FC<SignInProps> = ({ toggleToSignUp }) => {
       const result = await signIn(values);
       if (result.success === true) {
         if (result.message === "User email is not verified") {
-          sessionStorage.setItem("useremail", values.email);
+          sessionStorage.setItem("userEmail", values.email);
           try {
             await resendOtp({ email: values.email });
             showNotification(

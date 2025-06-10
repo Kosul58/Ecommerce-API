@@ -76,6 +76,8 @@ interface UpdatePayload {
   category: string;
   description: string;
   url: string;
+  discount?: number;
+  discountType?: string;
 }
 interface UpdateProduct {
   success: boolean;

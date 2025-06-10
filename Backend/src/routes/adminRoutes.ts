@@ -1,9 +1,11 @@
 import express from "express";
 import { container } from "tsyringe";
 import DataValidation from "../middlewares/validateData";
-import { signInSchema, signUpSchema } from "../validation/userSchema";
+import { idSchema, signInSchema, signUpSchema } from "../validation/userSchema";
 import AdminController from "../controllers/adminController";
 import { createAudit } from "../middlewares/auditMiddleware";
+import verifyToken from "../middlewares/verifyToken";
+import verifyRole from "../middlewares/verifyRole";
 
 const adminController = container.resolve(AdminController);
 const dataValidation = container.resolve(DataValidation);
@@ -26,8 +28,29 @@ adminRoutes.post(
   adminController.signIn
 );
 
+adminRoutes.post(
+  "/verifyadmin",
+  createAudit({ action: "verify admin" }),
+  adminController.verifyAdmin
+);
+
+adminRoutes.post(
+  "/signout",
+  dataValidation.validateTokenData(idSchema),
+  createAudit({ action: "signout admin" }),
+  adminController.signOut
+);
+
 // genereate new access token
 adminRoutes.post("/refreshtoken", adminController.refreshToken);
+
+adminRoutes.get(
+  "/",
+  verifyToken.verify,
+  verifyRole.verify("Admin"),
+  dataValidation.validateTokenData(idSchema),
+  adminController.getAdmin
+);
 
 // Get one cloud file
 adminRoutes.get(

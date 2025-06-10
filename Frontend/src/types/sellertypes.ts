@@ -83,6 +83,7 @@ export interface Datum {
   inventory: number;
   active: boolean;
   discount?: number;
+  discountType?: string;
   images: string[];
 }
 

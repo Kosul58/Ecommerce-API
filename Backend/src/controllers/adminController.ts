@@ -44,18 +44,102 @@ export default class AdminController {
         user
         // file
       );
-      logger.info("Admin registered successfully");
-      const { result, token } = data;
+      const result = data;
+      if (!result) {
+        logger.error("Failed to sign up Admin", { user });
+        return this.responseHandler.error(res, "Failed to sign up Admin");
+      }
+      logger.info(`${user.username} signed up successfully`);
       return this.responseHandler.created(
         res,
         "Admin registered successfully",
         {
           result,
-          token,
         }
       );
     } catch (err) {
       logger.error("Failed to register admin", err);
+      return next(err);
+    }
+  };
+  public signOut: RequestHandler = (req, res) => {
+    res
+      .clearCookie("token", {
+        httpOnly: true,
+        secure: false,
+        sameSite: "lax",
+        path: "/",
+      })
+      .clearCookie("refreshToken", {
+        httpOnly: true,
+        secure: false,
+        sameSite: "lax",
+        path: "/",
+      });
+
+    logger.info("Admin signed out successfully");
+    return this.responseHandler.success(res, "Signout successful");
+  };
+  public verifyAdmin: RequestHandler = async (req, res, next) => {
+    const { email, otp } = req.body;
+    try {
+      logger.info(`Attempting to verify Admin`);
+      const data = await this.adminServices.verifyAdmin(
+        email,
+        otp
+        //  file
+      );
+
+      if (data === "otpexpired" || data === "otpinvalid" || !data) {
+        logger.error("Failed to sign up user");
+        return this.responseHandler.error(res, "Failed to verify admin");
+      }
+      const { result, token, refreshToken } = data;
+      logger.info(`Admin created successfully: ${result.username}`);
+      res
+        .cookie("token", token, {
+          httpOnly: true,
+          secure: false,
+          sameSite: "lax",
+          maxAge: 1000 * 60 * 15, // 15 min bro
+          path: "/",
+        })
+        .cookie("refreshToken", refreshToken, {
+          httpOnly: true,
+          secure: false,
+          sameSite: "lax",
+          maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days bro
+          path: "/",
+        });
+      return this.responseHandler.created(res, "Admin verified successfully", {
+        result,
+        token,
+      });
+    } catch (err) {
+      logger.error("Error during Admin Verification", err);
+      return next(err);
+    }
+  };
+
+  public getAdmin: RequestHandler = async (req, res, next) => {
+    const userid = req.user.id;
+    try {
+      logger.info(`Fetching admin data with id: ${userid}`);
+      const result = await this.adminServices.getAdmin(userid);
+      if (!result) {
+        logger.warn(`Admin with id: ${userid} not found`);
+        return this.responseHandler.notFound(res, "Admin not found");
+      }
+      logger.info(`Admin with id: ${userid} found`);
+      return this.responseHandler.success(
+        res,
+        "Admin data fetched successfully",
+        result
+      );
+    } catch (err) {
+      logger.error(`Failed to retrieve admin data with id: ${userid}`, {
+        error: err,
+      });
       return next(err);
     }
   };
@@ -64,11 +148,36 @@ export default class AdminController {
     const { email, password } = req.body;
     try {
       logger.info(`Admin attempting to sign in: ${email}`);
-      const { result, token } = await this.adminServices.signIn(
+      const { result, token, refreshToken } = await this.adminServices.signIn(
         email,
         password
       );
-      logger.info(`Admin ${result.username} signed in successfully`);
+
+      if (!result || result === "usernotverified") {
+        logger.warn(`No admin found for credentials: ${email}`);
+        return this.responseHandler.notFound(res, "No admin found");
+      }
+
+      if (result === "adminnotverified") {
+        return this.responseHandler.success(res, "Admin email is not verified");
+      }
+
+      logger.info(`${email} signed in successfully`);
+      res
+        .cookie("token", token, {
+          httpOnly: true,
+          secure: false,
+          sameSite: "lax",
+          maxAge: 1000 * 60 * 1, // 15 min bro
+          path: "/",
+        })
+        .cookie("refreshToken", refreshToken, {
+          httpOnly: true,
+          secure: false,
+          sameSite: "lax",
+          maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days bro
+          path: "/",
+        });
       return this.responseHandler.success(res, "Signin successful", {
         result,
         token,

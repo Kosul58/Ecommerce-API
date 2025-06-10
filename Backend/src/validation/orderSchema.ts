@@ -43,9 +43,9 @@ export const cancelWholeSchema = Joi.object({
   orderid: Joi.string().min(15).required(),
 });
 
-export const cancelSingleSchema = Joi.object({
+export const cancelSelectedSchema = Joi.object({
   orderid: Joi.string().min(15).required(),
-  productid: Joi.string().min(15).required(),
+  productids: Joi.array().items(Joi.string().min(15)).min(1).required(),
 });
 
 export const returnSchema = Joi.object({

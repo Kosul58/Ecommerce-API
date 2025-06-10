@@ -51,7 +51,7 @@ const SellerSignIn: React.FC<SignInProps> = ({ toggleToSignUp }) => {
       const result = await signIn(values);
       if (result.success === true) {
         if (result.message === "Seller email is not verified") {
-          sessionStorage.setItem("selleremail", values.email);
+          sessionStorage.setItem("sellerEmail", values.email);
           try {
             showNotification(
               "error",

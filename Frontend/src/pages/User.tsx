@@ -3,8 +3,7 @@ import UserSignIn from "../components/forms/react-hook/UserSignIn";
 import UserSignUp from "../components/forms/react-hook/UserSignUp";
 
 const User = () => {
-  const [isSignIn, setIsSignIn] = useState(true); // default is Sign In
-
+  const [isSignIn, setIsSignIn] = useState(true);
   const toggleForm = () => {
     setIsSignIn((prev) => !prev);
   };

@@ -21,7 +21,7 @@ const userRoutes = express.Router();
 userRoutes.get(
   "/",
   verifyToken.verify,
-  verifyRole.verify("Admin", "User"),
+  verifyRole.verify("User"),
   dataValidation.validateTokenData(idSchema),
   userController.getUser
 );
@@ -44,7 +44,7 @@ userRoutes.post(
 
 userRoutes.post(
   "/verifyuser",
-  createAudit({ action: "verify seller" }),
+  createAudit({ action: "verify user" }),
   userController.verifyUser
 );
 

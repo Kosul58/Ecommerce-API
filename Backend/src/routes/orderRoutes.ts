@@ -5,7 +5,7 @@ import { container } from "tsyringe";
 import DataValidation from "../middlewares/validateData";
 import { idSchema } from "../validation/userSchema";
 import {
-  cancelSingleSchema,
+  cancelSelectedSchema,
   cancelWholeSchema,
   orderParamsSchema,
   orderSchema,
@@ -91,11 +91,11 @@ orderRoutes.delete(
 );
 
 orderRoutes.delete(
-  "/cancelSingle",
+  "/cancelSelected",
   verifyRole.verify("User"),
-  dataValidation.validateBody(cancelSingleSchema),
+  dataValidation.validateBody(cancelSelectedSchema),
   createAudit({ action: "cancel single item in order" }),
-  orderController.cancelSingleOrder
+  orderController.cancelSelectedOrder
 );
 
 export default orderRoutes;

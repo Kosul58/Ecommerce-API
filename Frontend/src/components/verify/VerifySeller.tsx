@@ -7,7 +7,7 @@ const VerifySeller = () => {
   const [resendCooldown, setResendCooldown] = useState(60); // cooldown starts at 60s
   const navigate = useNavigate();
 
-  const storedEmail = sessionStorage.getItem("selleremail") || "";
+  const storedEmail = sessionStorage.getItem("sellerEmail") || "";
   console.log(storedEmail);
   const { mutateAsync: verifyOtp, isPending: otpPending } =
     useSellerVerification();

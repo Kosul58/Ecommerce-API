@@ -26,14 +26,14 @@ const ProductSearch: React.FC<SearchProps> = ({ onSearch }) => {
   };
 
   return (
-    <div className="relative">
+    <div className="relative w-full max-sm:mb-4">
       <input
         type="text"
         placeholder="Search..."
         value={searchTerm}
         onChange={(e) => setSearchTerm(e.target.value)}
         onKeyDown={handleKeyDown}
-        className="pl-9 pr-3 py-1.5 rounded-full bg-gray-700 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-300 w-32 md:w-48 hover:w-48 md:hover:w-64 text-sm"
+        className="pl-9 pr-3 py-1.5 rounded-full bg-gray-700 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-300 w-32 md:w-48 hover:w-48 md:hover:w-64 text-sm max-sm:w-full"
       />
       <LuSearch
         onClick={handleSearch}

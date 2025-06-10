@@ -10,7 +10,10 @@ interface ProductData {
 
 const ViewProduct: React.FC<ProductData> = ({ viewData, setViewProduct }) => {
   if (!viewData) return <div>No Product Data</div>;
-
+  const discountPrice =
+    viewData.discount && viewData.discount > 0
+      ? viewData.price - (viewData.price * viewData.discount) / 100
+      : viewData.price;
   return (
     <>
       <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[90vw] max-w-6xl h-[85vh] max-h-[85vh] max-md:min-h-[90vh] bg-white border border-gray-300 rounded-2xl shadow-2xl z-50 overflow-hidden">
@@ -35,8 +38,25 @@ const ViewProduct: React.FC<ProductData> = ({ viewData, setViewProduct }) => {
             <p className="text-gray-700 mb-1">
               <strong>Category:</strong> {viewData.category}
             </p>
-            <p className="text-gray-700 mb-1">
-              <strong>Price:</strong> Rs. {viewData.price}
+            <p className="text-base text-gray-700 sm:text-lg flex justify-start  items-center gap-1 sm:gap-2">
+              <strong className="font-semibold text-gray-800">Price:</strong>
+              {viewData.discount && viewData.discount > 0 ? (
+                <>
+                  <span className="line-through text-gray-500 text-sm sm:text-base max-sm:text-sm">
+                    Rs. {viewData.price.toFixed(2)}
+                  </span>
+                  <h3 className="text-green-600 font-bold text-lg  max-sm:text-sm">
+                    Rs. {discountPrice.toFixed(2)}
+                  </h3>
+                  <span className="text-xs bg-green-100 text-green-700 px-1.5 py-0.5 rounded-full max-sm:text-sm">
+                    {viewData.discount}% Off
+                  </span>
+                </>
+              ) : (
+                <h3 className="text-green-600 font-semibold text-lg  max-sm:text-ms">
+                  Rs. {viewData.price.toFixed(2)}
+                </h3>
+              )}
             </p>
             <p className="text-gray-700 mb-1">
               <strong>Inventory:</strong> {viewData.inventory}

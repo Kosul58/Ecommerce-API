@@ -64,7 +64,7 @@ const ChangePassword: React.FC<changeprops> = ({ close }) => {
   };
 
   return (
-    <div className="max-w-md mx-auto mt-10 p-6 bg-white shadow rounded">
+    <div className="w-[400px] h-[400px] p-6 bg-white shadow-md rounded-md border border-gray-100">
       <h2 className="text-2xl font-bold mb-4">Change Password</h2>
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
         <div>
@@ -108,7 +108,7 @@ const ChangePassword: React.FC<changeprops> = ({ close }) => {
         <button
           type="submit"
           disabled={isPending}
-          className={`w-full bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 ${
+          className={`w-full bg-purple-400 text-white px-4 py-2 rounded hover:bg-purple-600 ${
             isPending ? "opacity-50 cursor-not-allowed" : "cursor-pointer"
           }`}
         >

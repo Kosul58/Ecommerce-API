@@ -5,6 +5,7 @@ import type { Product } from "../hooks/useAuth";
 import { IoIosAddCircleOutline } from "react-icons/io";
 import ImageSlider from "./imageslider/ImageSlider";
 import NavBar from "./navbar/Navbar";
+import Button from "./buttons/Buttons";
 
 const ProductDetail = () => {
   const { pid } = useParams();
@@ -40,12 +41,9 @@ const ProductDetail = () => {
     return (
       <div className="text-center text-gray-600 mt-10">
         <p className="text-2xl font-semibold mb-4">Product not found.</p>
-        <button
-          onClick={() => navigate(-1)}
-          className="px-6 py-3 bg-purple-600 text-white rounded-md hover:bg-purple-700 transition"
-        >
+        <Button onClick={() => navigate(-1)} variant="primary" size="medium">
           ← Go Back
-        </button>
+        </Button>
       </div>
     );
   }
@@ -80,18 +78,18 @@ const ProductDetail = () => {
         <NavBar />
       </div>
 
-      <div className="w-full bg-gray-50 min-h-screen">
-        <section className="p-6 sm:p-12 max-w-7xl mx-auto bg-white rounded-xl shadow-lg overflow-hidden flex flex-col md:flex-row gap-8 mt-8">
-          <div className="md:w-1/2 relative rounded-lg overflow-hidden z-30 flex items-center justify-center bg-gray-100">
+      <div className="w-full min-h-screen">
+        <section className="p-8 bg-white overflow-hidden flex flex-col lg:flex-row gap-8 border-b border-gray-200 min-h-[80vh] justify-between">
+          <div className="lg:w-3/5 relative rounded-lg overflow-hidden z-30 flex items-center justify-center bg-gray-100">
             <ImageSlider images={images} />
           </div>
-          <div className="md:w-1/2 flex flex-col justify-between py-4">
+          <div className="lg:w-2/5 flex flex-col justify-between py-4">
             <div>
-              <h1 className="text-4xl font-extrabold text-gray-900 mb-4 leading-tight">
+              <h1 className="text-3xl max-md:text-2xl font-extrabold text-gray-900 mb-4 leading-tight">
                 {product.name}
               </h1>
 
-              <p className="text-gray-700 text-lg leading-relaxed mb-6 whitespace-pre-line">
+              <p className="text-gray-700 text-lg max-sm:text-md leading-relaxed mb-6 whitespace-pre-line">
                 {product.description}
               </p>
 
@@ -101,7 +99,7 @@ const ProductDetail = () => {
                     <span className="text-gray-500 line-through text-2xl font-semibold">
                       Rs. {product.price.toLocaleString()}
                     </span>
-                    <span className="text-purple-700 font-extrabold text-4xl">
+                    <span className="text-gray-700 font-extrabold text-3xl">
                       Rs. {discountedPrice.toLocaleString()}
                     </span>
                     <span className="bg-green-500 text-white text-sm font-bold px-3 py-1 rounded-full">
@@ -109,34 +107,8 @@ const ProductDetail = () => {
                     </span>
                   </>
                 ) : (
-                  <span className="text-purple-700 font-extrabold text-4xl">
+                  <span className="text-gray-700 font-extrabold text-3xl max-sm:text-xl">
                     Rs. {product.price.toLocaleString()}
-                  </span>
-                )}
-              </div>
-
-              <div className="text-lg mb-6 flex items-center gap-2">
-                {product.inventory > 0 ? (
-                  <span className="text-green-600 font-semibold">
-                    In Stock: {product.inventory}
-                  </span>
-                ) : (
-                  <span className="text-red-600 font-semibold flex items-center gap-2">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      className="h-6 w-6"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                      strokeWidth={2}
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        d="M6 18L18 6M6 6l12 12"
-                      />
-                    </svg>
-                    Out of Stock
                   </span>
                 )}
               </div>
@@ -173,33 +145,30 @@ const ProductDetail = () => {
             </div>
 
             <div className="flex flex-wrap gap-5 items-center mt-6 pt-4 border-t border-gray-200">
-              <button
+              <Button
                 onClick={() => navigate(-1)}
-                className="px-8 py-3 bg-gray-100 text-gray-800 rounded-lg hover:bg-gray-200 transition font-medium shadow-md flex items-center gap-2"
+                variant="secondary"
+                size="medium"
+                className="flex items-center gap-2"
               >
                 ← Back to Products
-              </button>
+              </Button>
 
-              <button
+              <Button
                 onClick={handleAddToCart}
                 disabled={product.inventory <= 0 || isPending}
-                className={`px-8 py-3 rounded-lg transition font-semibold shadow-md flex items-center gap-2 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500
-                  ${
-                    product.inventory > 0
-                      ? "bg-purple-600 text-white hover:bg-purple-700 cursor-pointer"
-                      : "bg-gray-400 text-white cursor-not-allowed"
-                  }`}
+                variant="primary"
+                size="medium"
+                className="flex items-center gap-2"
               >
                 {isPending ? "Adding..." : "Add to Cart"}
                 {!isPending && <IoIosAddCircleOutline size={20} />}
-              </button>
+              </Button>
             </div>
           </div>
         </section>
-
-        {/* Reviews Section */}
-        <section className="p-6 sm:p-12 max-w-7xl mx-auto bg-white rounded-xl shadow-lg mt-8">
-          <h2 className="text-3xl font-bold text-gray-900 mb-6">
+        <section className="p-6 w-full mx-auto bg-white border-b border-gray-300 mt-8">
+          <h2 className="text-3xl w-full border-b border-gray-300 font-bold text-gray-900 mb-6 py-4">
             Customer Reviews
           </h2>
           <div className="space-y-6">
@@ -243,14 +212,12 @@ const ProductDetail = () => {
               </p>
             </div>
           </div>
-          <button className="mt-8 px-6 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition font-semibold shadow-md">
+          <Button className="mt-8" variant="primary" size="medium">
             Write a Review
-          </button>
+          </Button>
         </section>
-
-        {/* Message to Seller Section */}
-        <section className="p-6 sm:p-12 max-w-7xl mx-auto bg-white rounded-xl shadow-lg mt-8 mb-8">
-          <h2 className="text-3xl font-bold text-gray-900 mb-6">
+        <section className="p-6 w-full mx-auto bg-white rounded-xl shadow-lg mt-8 mb-8">
+          <h2 className="text-3xl font-bold text-gray-900 mb-6 py-4 border-b border-gray-300">
             Message Seller
           </h2>
           <form className="space-y-4">
@@ -282,12 +249,9 @@ const ProductDetail = () => {
                 placeholder="Type your message here..."
               ></textarea>
             </div>
-            <button
-              type="submit"
-              className="px-8 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition font-semibold shadow-md"
-            >
+            <Button type="submit" variant="primary" size="medium">
               Send Message
-            </button>
+            </Button>
           </form>
         </section>
       </div>

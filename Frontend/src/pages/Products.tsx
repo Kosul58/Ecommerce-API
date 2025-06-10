@@ -8,6 +8,7 @@ import { FaFilter, FaTimes } from "react-icons/fa";
 import PaginationComponent from "../components/pagination/Pagination";
 import { useSearchParams } from "react-router-dom";
 import Footer from "../components/footer/Footer";
+import Button from "../components/buttons/Buttons"; // Your custom Button component
 
 interface ProductsProps {
   productsPerPage?: number;
@@ -33,7 +34,6 @@ const Products: React.FC<ProductsProps> = ({
   const [priceRange, setPriceRange] = useState<[number, number]>([0, 9999999]);
   const [sortBy, setSortBy] = useState<SortOption | "">("");
   const [isFilterOpen, setIsFilterOpen] = useState(false);
-  console.log(products);
   const [searchParams] = useSearchParams();
   const searchQuery = searchParams.get("search");
 
@@ -149,7 +149,7 @@ const Products: React.FC<ProductsProps> = ({
       </header>
 
       <div className="flex-1 flex overflow-hidden relative">
-        <div className="hidden md:block  bg-white shadow-md min-h-[100%]">
+        <div className="hidden md:block bg-white shadow-md min-h-[100%]">
           <FilterSidebar
             products={products}
             selectedCategory={selectedCategory}
@@ -171,10 +171,10 @@ const Products: React.FC<ProductsProps> = ({
             <div className="bg-white rounded-lg max-w-sm w-full p-6 overflow-auto max-h-[80vh] relative shadow-lg">
               <button
                 onClick={() => setIsFilterOpen(false)}
-                className="absolute top-4 right-4 size-8 z-50 flex justify-center items-center text-white bg-red-500 rounded-full hover:bg-red-600 transition"
+                className="absolute top-4 right-4 size-8 z-50 flex justify-center items-center rounded-full border"
                 aria-label="Close filters"
               >
-                <FaTimes size={20} />
+                <FaTimes size={20} className="text-red-600" />
               </button>
               <FilterSidebar
                 products={products}
@@ -193,15 +193,17 @@ const Products: React.FC<ProductsProps> = ({
           </div>
         )}
         <div className="flex-1 flex flex-col w-full ">
-          <div className="w-full flex justify-between items-center px-4 py-2 bg-white shadow-sm md:shadow-none">
-            <button
-              className="md:hidden flex items-center gap-2 px-4 py-2 bg-purple-600 text-white rounded-md shadow hover:bg-purple-700 transition"
+          <div className="w-full flex justify-between items-center px-4 py-2 bg-white border-b border-gray-200 gap-2">
+            <Button
+              className="md:hidden flex items-center gap-2"
               onClick={() => setIsFilterOpen(true)}
               aria-label="Open filters"
+              variant="primary"
+              size="medium"
             >
               <FaFilter />
               Filters
-            </button>
+            </Button>
             <SortSelect onSortChange={setSortBy} />
           </div>
           <main className="flex-1 overflow-y-auto p-4 md:p-6 flex flex-col justify-between min-h-[calc(100vh-<headerHeight>)]">
@@ -219,7 +221,7 @@ const Products: React.FC<ProductsProps> = ({
                   </div>
                 </div>
               ) : productsToDisplay.length > 0 ? (
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 min-h-[600px] w-fit mx-auto">
                   {productsToDisplay.map((product) => (
                     <ProductCard key={product.id} product={product} />
                   ))}

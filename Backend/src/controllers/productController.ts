@@ -35,7 +35,7 @@ export default class ProductController {
       const result = await this.productService.getSellerProducts(sellerid);
       if (!result) {
         logger.warn(`No products found for seller with id: ${sellerid}`);
-        return this.responseHandler.notFound(res, "No products found");
+        return this.responseHandler.success(res, "No products found", []);
       }
       logger.info(`Products found for seller with id: ${sellerid}`);
       return this.responseHandler.success(res, "Products found", result);

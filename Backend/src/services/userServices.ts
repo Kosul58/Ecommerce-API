@@ -227,7 +227,7 @@ export default class UserServices {
     }
   }
 
-  public async signIn(email: string, password: string) {
+  public async signIn(email: string, password: string, role: string) {
     try {
       const result = await this.userRepository.signIn(email);
       if (!result || Object.keys(result).length === 0) {
@@ -235,10 +235,32 @@ export default class UserServices {
         (error as any).statusCode = 404;
         throw error;
       }
-      if (result.emailVerified === false) {
-        logger.warn("User email is not verified");
-        return { result: "notverified" };
+      if (role === "Admin") {
+        if (result.emailVerified === false) {
+          if (result.role === role) {
+            logger.warn("Admin email is not verified");
+            return { result: "adminnotverified" };
+          } else {
+            return { result: "usernotverified" };
+          }
+        }
       }
+      if (role === "User") {
+        if (result.emailVerified === false) {
+          if (result.role === role) {
+            logger.warn("User email is not verified");
+            return { result: "usernotverified" };
+          } else {
+            return { result: "adminnotverified" };
+          }
+        }
+      }
+
+      if (role !== result.role) {
+        logger.warn("User email is not verified");
+        return { result: "usernotverified" };
+      }
+
       const check = await Utils.comparePassword(password, result.password);
       if (!check) {
         const error = new Error("Signin failed. Incorrect password");

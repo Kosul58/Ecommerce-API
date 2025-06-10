@@ -3,10 +3,14 @@ import type { Datum, Seller } from "../../types/sellertypes";
 import SearchBar from "../search/SearchBar";
 import ViewProduct from "./ViewProduct";
 import { useProducts } from "../../api/seller";
-import ProductTable from "../table/Table";
+import ProductTable from "../table/SellerProducts";
 import PaginationComponent from "../pagination/Pagination";
 import { CiCirclePlus } from "react-icons/ci";
 import { useNavigate } from "react-router-dom";
+import { useDeleteProducts, useChangeVisibility } from "../../hooks/useAuth";
+import Notification from "../notifications/Notification";
+import type { AxiosError } from "axios";
+import Button from "../buttons/Buttons";
 
 interface SellerData {
   setProductData: React.Dispatch<React.SetStateAction<Datum | null>>;
@@ -14,7 +18,20 @@ interface SellerData {
 }
 
 const SellerProducts: React.FC<SellerData> = ({ seller, setProductData }) => {
-  console.log(seller);
+  const [notification, setNotification] = useState<{
+    message: string;
+    type: "success" | "error";
+  } | null>(null);
+
+  const [showConfirmDialog, setShowConfirmDialog] = useState(false);
+  const [productIdToDelete, setProductIdToDelete] = useState<string | null>(
+    null
+  );
+
+  const showNotification = (message: string, type: "success" | "error") => {
+    setNotification({ message, type });
+  };
+
   const {
     data: productData,
     isLoading,
@@ -22,12 +39,18 @@ const SellerProducts: React.FC<SellerData> = ({ seller, setProductData }) => {
     error,
     refetch,
   } = useProducts();
+  console.log(productData);
+  const { mutateAsync: deleteProduct, isPending: deletePending } =
+    useDeleteProducts();
+  const { mutateAsync: changeStatus, isPending: statusPending } =
+    useChangeVisibility();
+
   const navigate = useNavigate();
   const [viewProduct, setViewProduct] = useState(false);
   const [viewData, setViewData] = useState<Datum | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 7;
+  const itemsPerPage = 9;
 
   const filteredProducts = useMemo(() => {
     if (!productData?.data) return [];
@@ -68,19 +91,67 @@ const SellerProducts: React.FC<SellerData> = ({ seller, setProductData }) => {
     productId: string,
     newStatus: boolean
   ) => {
-    console.log(`Toggling status for product ${productId} to ${newStatus}`);
-    await refetch();
+    if (statusPending) {
+      return;
+    }
+    try {
+      showNotification("Changing Product Status", "success");
+      await changeStatus({ productids: [productId], status: newStatus });
+      showNotification("Product status changed.", "success");
+    } catch (error) {
+      const err = error as AxiosError;
+      if (err.response) {
+        const data = err.response.data;
+        if (typeof data === "object" && data !== null && "message" in data) {
+          const message = (data as { message: string }).message;
+          showNotification(message, "error");
+        } else {
+          showNotification("Unexpected error format.", "error");
+        }
+      } else {
+        showNotification("Network error or server is unreachable.", "error");
+      }
+    } finally {
+      await refetch();
+    }
   };
 
-  const handleDeleteProduct = async (productId: string) => {
-    console.log(`Deleting product with ID: ${productId}`);
-    await refetch();
+  const handleConfirmDeleteClick = (productId: string) => {
+    setProductIdToDelete(productId);
+    setShowConfirmDialog(true);
+  };
+
+  const executeDeleteProduct = async () => {
+    if (!productIdToDelete) return;
+    setShowConfirmDialog(false);
+    if (deletePending) {
+      return;
+    }
+    try {
+      showNotification("Deleting Product", "success");
+      await deleteProduct({ productids: [productIdToDelete] });
+      showNotification("Product deleted.", "success");
+      setProductIdToDelete(null);
+    } catch (error) {
+      const err = error as AxiosError;
+      if (err.response) {
+        const data = err.response.data;
+        if (typeof data === "object" && data !== null && "message" in data) {
+          const message = (data as { message: string }).message;
+          showNotification(message, "error");
+        } else {
+          showNotification("Unexpected error format.", "error");
+        }
+      } else {
+        showNotification("Network error or server is unreachable.", "error");
+      }
+    } finally {
+      await refetch();
+    }
   };
 
   const handleEditProduct = async (product: Datum) => {
-    console.log(product);
     navigate("/seller/editproduct", { state: { product } });
-    await refetch();
   };
 
   if (isLoading) {
@@ -95,14 +166,6 @@ const SellerProducts: React.FC<SellerData> = ({ seller, setProductData }) => {
     return (
       <div className="flex justify-center items-center h-full text-lg text-red-600">
         Error: {error?.message}
-      </div>
-    );
-  }
-
-  if (!productData || productData.data.length === 0) {
-    return (
-      <div className="flex justify-center items-center h-full text-lg text-gray-500">
-        No products found.
       </div>
     );
   }
@@ -125,19 +188,16 @@ const SellerProducts: React.FC<SellerData> = ({ seller, setProductData }) => {
       <div className="w-full flex justify-between px-6 py-2 bg-white border-b border-gray-200">
         <div className="flex justify-center max-sm:items-center flex-col">
           <h1 className="text-md max-sm:text-sm">Manage Your Products</h1>
-          <h2 className="text-xs text-gray-400 max-sm:hidden">
-            Add,edit or delete products to keep your catalog updated.
+          <h2 className="text-xs text-gray-400 max-[780px]:hidden">
+            Add, edit, or delete products to keep your catalog updated.
           </h2>
         </div>
 
         <div>
-          <button
-            className="px-4 mr-2 py-2 bg-blue-400 hover:bg-blue-500 text-white rounded-md cursor-pointer flex justify-center  items-center gap-1 max-sm:rounded-full max-sm:p-2"
-            onClick={() => handleAddProduct()}
-          >
+          <Button onClick={() => handleAddProduct()}>
             <CiCirclePlus className="size-5 max-sm:size-6" />
             <h1 className="max-sm:hidden">Add Product</h1>
-          </button>
+          </Button>
         </div>
       </div>
 
@@ -158,7 +218,7 @@ const SellerProducts: React.FC<SellerData> = ({ seller, setProductData }) => {
             products={currentProducts}
             onProductView={handleViewProduct}
             onToggleStatus={handleToggleProductStatus}
-            onProductDelete={handleDeleteProduct}
+            onProductDelete={handleConfirmDeleteClick}
             onProductEdit={handleEditProduct}
           />
         )}
@@ -174,6 +234,41 @@ const SellerProducts: React.FC<SellerData> = ({ seller, setProductData }) => {
       </section>
       {viewProduct && viewData && (
         <ViewProduct viewData={viewData} setViewProduct={setViewProduct} />
+      )}
+      {notification && (
+        <Notification
+          message={notification.message}
+          type={notification.type}
+          onClose={() => setNotification(null)}
+        />
+      )}
+
+      {showConfirmDialog && (
+        <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
+          <div className="bg-white p-6 rounded-lg shadow-lg max-w-sm w-full mx-4">
+            <p className="text-lg font-semibold mb-4 text-gray-800">
+              Are you sure you want to delete this product? This action cannot
+              be undone.
+            </p>
+            <div className="flex justify-end space-x-3">
+              <button
+                onClick={() => {
+                  setShowConfirmDialog(false);
+                  setProductIdToDelete(null); // Clear ID if canceled
+                }}
+                className="px-4 py-2 bg-gray-300 text-gray-800 rounded-md hover:bg-gray-400 transition duration-200 ease-in-out"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={executeDeleteProduct} // Call the function to proceed with deletion
+                className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition duration-200 ease-in-out"
+              >
+                Delete
+              </button>
+            </div>
+          </div>
+        </div>
       )}
     </section>
   );

@@ -59,7 +59,7 @@ export const useAdminSignUp = () => {
       return response.data;
     },
     onSuccess: (data) => {
-      queryClient.setQueryData(["admin"], data);
+      queryClient.setQueryData(["admin"], data.data.result);
     },
   });
 };
@@ -75,7 +75,7 @@ export const useAdminSignIn = () => {
       return response.data;
     },
     onSuccess: (data) => {
-      queryClient.setQueryData(["admin"], data);
+      queryClient.setQueryData(["admin"], data.data.result);
     },
   });
 };
@@ -91,7 +91,7 @@ export const useSellerSignIn = () => {
       return response.data;
     },
     onSuccess: (data) => {
-      queryClient.setQueryData(["seller"], data.data);
+      queryClient.setQueryData(["seller"], data.data.result);
     },
   });
 };
@@ -127,6 +127,15 @@ export const useSellerSignOut = () => {
   });
 };
 
+export const useAdminSignOut = () => {
+  return useMutation<ApiResponse, Error>({
+    mutationFn: async () => {
+      const response = await axios.post("/admin/signout");
+      return response.data;
+    },
+  });
+};
+
 interface VerificationValues {
   email: string;
   otp: string;
@@ -157,6 +166,18 @@ export const useUserVerification = () => {
   });
 };
 
+export const useAdminVerification = () => {
+  const queryClient = useQueryClient();
+  return useMutation<SignInResponse, Error, VerificationValues>({
+    mutationFn: async (values: VerificationValues) => {
+      const response = await axios.post("/admin/verifyadmin", values);
+      return response.data;
+    },
+    onSuccess: (data) => {
+      queryClient.setQueryData(["admin"], data.data.result);
+    },
+  });
+};
 interface ResendValues {
   email: string;
 }
@@ -423,5 +444,28 @@ export const useCalcTotal = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["cartTotal"] });
     },
+  });
+};
+
+export interface Admin {
+  id: string;
+  username: string;
+  email: string;
+  image: string;
+  firstname: string;
+  lastname: string;
+  phone: string;
+  address: string;
+}
+
+export const useAdminData = () => {
+  return useQuery<Admin>({
+    queryFn: async () => {
+      const response = await axios.get("/admin");
+      return response.data.data;
+    },
+    staleTime: 60 * 60 * 1000,
+    queryKey: ["admin"],
+    retry: false,
   });
 };

@@ -55,11 +55,14 @@ export default class CartService {
   }
   private async getValidatedCart(userid: string) {
     const cart = await this.cartRepository.getCart(userid);
-    if (!cart || !cart.products || cart.products.length === 0) {
+    if (!cart || !cart.products) {
       const error = new Error("No cart found");
       logger.error(`No cart found for user: ${userid}`);
       (error as any).statusCode = 404;
       throw error;
+    }
+    if (cart.products.length === 0) {
+      return "noproducts";
     }
     return cart;
   }
@@ -76,17 +79,11 @@ export default class CartService {
     ]);
 
     if (!products || products.length === 0) {
-      const error = new Error("No product found in product database");
-      logger.error(`No products found in product database`);
-      (error as any).statusCode = 404;
-      throw error;
+      logger.warn(`No matching products found in product database`);
     }
 
     if (!sellers || sellers.length === 0) {
-      const error = new Error("No seller found in seller database");
-      logger.error(`No sellers found in seller database`);
-      (error as any).statusCode = 404;
-      throw error;
+      logger.warn(`No matching sellers found in seller database`);
     }
 
     const productMap = new Map<string, any>();
@@ -126,6 +123,9 @@ export default class CartService {
   public async getCart(userid: string) {
     try {
       const cart = await this.getValidatedCart(userid);
+      if (cart === "noproducts") {
+        return "noproducts";
+      }
       const [productMap, sellerMap] = await this.getRelatedDataMaps(cart);
       const formattedCart = this.formatCartProducts(
         cart,

@@ -10,6 +10,7 @@ import sellerRoutes from "./sellerRoutes";
 import adminRoutes from "./adminRoutes";
 import mailRoutes from "./mailRoutes";
 import otpRoutes from "./otpRoutes";
+import discountRoutes from "./discountRotes";
 const router = express.Router();
 
 router.use("/order", verifyToken.verify, orderRoutes);
@@ -21,5 +22,6 @@ router.use("/seller", sellerRoutes);
 router.use("/admin", adminRoutes);
 router.use("/mail", mailRoutes);
 router.use("/otp", otpRoutes);
+router.use("/discount", discountRoutes);
 
 export default router;

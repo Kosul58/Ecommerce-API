@@ -36,7 +36,7 @@ const ProductTable: React.FC<ProductTableProps> = ({
   >;
 
   return (
-    <div className="w-full overflow-x-auto rounded-md shadow-md border border-gray-300">
+    <div className="w-full overflow-x-auto rounded-md shadow-md border border-gray-300 min-h-[88%]">
       <table className="min-w-full divide-y divide-gray-200 border-b border-gray-200">
         <thead className="bg-blue-50">
           <tr>
@@ -47,7 +47,7 @@ const ProductTable: React.FC<ProductTableProps> = ({
                   ${key === "images" ? "w-16" : ""}
                   ${key === "name" ? "min-w-[150px] max-w-[150px]" : ""}
                   ${key === "category" ? "min-w-[100px]" : ""}
-                  ${key === "price" ? "w-24" : ""}
+                  ${key === "price" ? "w-32" : ""} 
                   ${key === "inventory" ? "w-20" : ""}
                   ${key === "active" ? "w-24" : ""}
                   ${key === "discount" ? "w-24" : ""}
@@ -65,7 +65,7 @@ const ProductTable: React.FC<ProductTableProps> = ({
               {headerKeys.map((key) => (
                 <td
                   key={key}
-                  className="px-4 py-4 text-left text-gray-800 whitespace-nowrap"
+                  className="px-4 py-2 text-left text-gray-800 whitespace-nowrap"
                 >
                   {key === "images" ? (
                     product.images?.[0] ? (
@@ -88,7 +88,7 @@ const ProductTable: React.FC<ProductTableProps> = ({
                         onToggleStatus(product.id, !product.active)
                       }
                       className={`${
-                        product.active ? "bg-blue-400" : "bg-gray-300"
+                        product.active ? "bg-purple-400" : "bg-gray-300"
                       } relative inline-flex h-6 w-11 items-center rounded-full cursor-pointer transition-colors`}
                     >
                       <span
@@ -98,7 +98,7 @@ const ProductTable: React.FC<ProductTableProps> = ({
                       />
                     </Switch>
                   ) : key === "actions" ? (
-                    <div className="flex gap-1 items-center">
+                    <div className="flex gap-1 items-center justify-center">
                       <button
                         className="text-gray-600 hover:text-blue-500"
                         onClick={() => onProductView(product)}
@@ -107,9 +107,9 @@ const ProductTable: React.FC<ProductTableProps> = ({
                         <FaRegEye className="w-5 h-5 cursor-pointer" />
                       </button>
                       <button
-                        className="text-gray-600 hover:text-blue-500"
+                        className="text-gray-600 hover:text-green-500"
                         onClick={() => onProductEdit(product)}
-                        title="View Product"
+                        title="Edit Product"
                       >
                         <FaRegEdit className="w-5 h-5 cursor-pointer" />
                       </button>
@@ -122,12 +122,26 @@ const ProductTable: React.FC<ProductTableProps> = ({
                       </button>
                     </div>
                   ) : key === "price" ? (
-                    `₹${product.price.toFixed(2)}`
+                    <>
+                      {product.discount && product.discount > 0 ? (
+                        <div className="flex flex-col">
+                          <span className="">
+                            Rs.
+                            {(
+                              product.price *
+                              (1 - product.discount / 100)
+                            ).toFixed(2)}
+                          </span>
+                        </div>
+                      ) : (
+                        `Rs.${product.price.toFixed(2)}`
+                      )}
+                    </>
                   ) : key === "discount" ? (
                     product.discount && product.discount > 0 ? (
                       `${product.discount}%`
                     ) : (
-                      "0"
+                      "0%"
                     )
                   ) : (
                     product[

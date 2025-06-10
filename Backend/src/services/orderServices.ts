@@ -54,6 +54,9 @@ export default class OrderService {
         deliveryTime: "",
         address: "",
         paymentStatus,
+        orderTrack: [
+          { status: DeliveryStatus.PLACED, time: new Date().toISOString() },
+        ],
       };
     } else if (type === OrderType.REFUND) {
       return {
@@ -66,6 +69,9 @@ export default class OrderService {
         returnTime: "",
         address: "",
         paymentStatus,
+        orderTrack: [
+          { status: ReturnStatus.REQUESTED, time: new Date().toISOString() },
+        ],
       };
     } else if (type === OrderType.REPLACE) {
       return {
@@ -78,6 +84,9 @@ export default class OrderService {
         returnTime: "",
         address: "",
         paymentStatus,
+        orderTrack: [
+          { status: ReturnStatus.REQUESTED, time: new Date().toString() },
+        ],
       };
     }
     const error = new Error("Invalid order type");
@@ -112,6 +121,9 @@ export default class OrderService {
       quantity: product.quantity,
       active: true,
       status: OrderProductStatus.REQUESTED,
+      productTrack: [
+        { status: ReturnStatus.REQUESTED, time: new Date().toString() },
+      ],
     };
   }
 
@@ -129,14 +141,18 @@ export default class OrderService {
     const orders = [];
     for (let order of data) {
       const myOrder = {
-        orderid: order._id?.toString(),
+        orderid: order._id.toString(),
         userid: order.userid,
         items: order.items,
         type: order.type,
         total: order.total,
         status: order.status,
+        orderTrack: order.orderTrack,
         paymentMethod: order.paymentMethod,
         paymentStatus: order.paymentStatus,
+        address: order.address,
+        timestamp: order.timestamp,
+        deliverytime: order.deliveryTime,
       };
       orders.push(myOrder);
     }
@@ -147,9 +163,8 @@ export default class OrderService {
     try {
       const userOrders = await this.orderRepository.getUserOrders(userid);
       if (!userOrders || userOrders.length === 0) {
-        const error = new Error("No order found");
-        (error as any).statusCode = 404;
-        throw error;
+        logger.warn("No orders found for the user");
+        return "noorder";
       }
       return this.returnData(userOrders);
     } catch (err) {
@@ -204,7 +219,7 @@ export default class OrderService {
   ) {
     try {
       const cart = await this.cartService.getCart(userid);
-      if (!cart) {
+      if (!cart || cart === "noproducts") {
         const error = new Error("No Cart found");
         logger.error("No cart found");
         (error as any).statusCode = 404;
@@ -261,6 +276,7 @@ export default class OrderService {
       const searchProducts = await this.cartService.getCart(userid);
       if (
         !searchProducts ||
+        searchProducts === "noproducts" ||
         (Array.isArray(searchProducts.products) &&
           searchProducts.products.length < 1)
       ) {
@@ -323,7 +339,6 @@ export default class OrderService {
     }
   }
 
-  //to find the products of a seller that are being ordered
   public async orderedProducts(id: string) {
     try {
       const orders = await this.orderRepository.findAll();
@@ -345,9 +360,12 @@ export default class OrderService {
             name: item.name,
             price: item.price,
             quantity: item.quantity,
-            status: item.status,
+            orderstatus: order.status,
+            productstatus: item.status,
             paymentStatus: order.paymentStatus,
             paymentMethod: order.paymentMethod,
+            orderTrack: order.orderTrack,
+            productTrack: item.productTrack,
           });
         }
       }
@@ -389,6 +407,14 @@ export default class OrderService {
       }
       const newStatus = status as DeliveryStatus | ReturnStatus;
       order.status = newStatus;
+
+      const newTrack = {
+        status: newStatus,
+        time: new Date().toString(),
+      };
+      order.orderTrack.push(newTrack);
+
+      if (newStatus === "Delivered") order.deliveryTime = Date.now().toString();
       const result = await this.orderRepository.orderSave(order);
       if (!result || Object.keys(result).length === 0) {
         const error = new Error("Failed to update order status");
@@ -454,6 +480,10 @@ export default class OrderService {
         throw error;
       }
       const newStatus = status as OrderProductStatus;
+      const newTrack = {
+        status: newStatus,
+        time: new Date().toString(),
+      };
       const order = await this.orderRepository.findOne(orderid);
       if (!order || !order.items || order.items.length === 0) {
         const error = new Error("No order found");
@@ -468,7 +498,6 @@ export default class OrderService {
         (error as any).statusCode = 404;
         throw error;
       }
-      // if (status === product.status) return "success";
       if (
         (product.status === "Rejected" && status === "Accepted") ||
         (product.status === "Accepted" && status === "Rejected")
@@ -478,8 +507,8 @@ export default class OrderService {
         (error as any).statusCode = 403;
         throw error;
       }
-
-      if (product) product.status = newStatus;
+      product.status = newStatus;
+      product.productTrack.push(newTrack);
       const updatedOrder = await this.orderRepository.orderSave(order);
       if (!updatedOrder || Object.keys(updatedOrder).length === 0) {
         const error = new Error("Failed to update status of a product");
@@ -528,14 +557,32 @@ export default class OrderService {
   public async cancelDeliveryOrders(orderid: string) {
     try {
       const order = await this.orderRepository.findOne(orderid);
-      if (!order || Object.keys(order).length === 0) {
+
+      if (!order || !order.items || order.items.length === 0) {
         const error = new Error("No order found");
         (error as any).statusCode = 404;
         throw error;
       }
-      order.items.forEach((p: any) => (p.active = false));
+
+      const newTrack = {
+        status: "Canceled",
+        time: new Date().toString(),
+      };
+      order.items.forEach((item: any) => {
+        item.active = false;
+        item.status = "Canceled";
+
+        const alreadyCanceled = item.productTrack?.some(
+          (track: any) => track.status === "Canceled"
+        );
+
+        if (!alreadyCanceled) {
+          item.productTrack.push(newTrack);
+        }
+      });
       const data = await this.orderRepository.orderSave(order);
-      if (!data || Object.keys(data).length === 0) {
+
+      if (!data || !data.items || data.items.length === 0) {
         const error = new Error("Failed to cancel order of products");
         (error as any).statusCode = 500;
         throw error;
@@ -544,51 +591,69 @@ export default class OrderService {
       await this.updateOrderStatus(orderid, "Canceled");
       return "success";
     } catch (err) {
+      logger.error("Failed to cancel entire order:", err);
       throw err;
     }
   }
 
-  public async cancelDeliveryOrder(orderid: string, productid: string) {
+  public async cancelDeliveryOrder(orderid: string, productids: string[]) {
     try {
       const order = await this.orderRepository.findOne(orderid);
-      if (!order || Object.keys(order).length === 0) {
+      if (!order || !order.items || order.items.length === 0) {
         const error = new Error("No order found");
         (error as any).statusCode = 404;
         throw error;
       }
-      const productIndex = order.items.findIndex(
-        (p: any) => p.productid === productid
+
+      const matchedProducts = order.items.filter((item: any) =>
+        productids.includes(item.productid)
       );
-      if (productIndex < 0) {
-        const error = new Error("No such product in the order");
+
+      if (matchedProducts.length === 0) {
+        const error = new Error("No matching products found in the order");
         (error as any).statusCode = 404;
         throw error;
       }
-      const result = await this.orderRepository.cancelDeliveryOrder(
-        order,
-        productIndex
-      );
+
+      const newTrack = {
+        status: "Canceled",
+        time: new Date().toString(),
+      };
+
+      order.items.forEach((item: any) => {
+        if (productids.includes(item.productid)) {
+          item.active = false;
+          item.status = "Canceled";
+          item.productTrack.push(newTrack);
+        }
+      });
+      const result = await this.orderRepository.orderSave(order);
 
       if (!result || Object.keys(result).length === 0) {
-        const error = new Error("Failed to cancel order of a product");
+        const error = new Error("Failed to cancel one or more products");
         (error as any).statusCode = 500;
         throw error;
       }
-      const removed = result.items.find(
-        (item: any) => item.productid === productid
+
+      const canceledItems = result.items.filter((item: any) =>
+        productids.includes(item.productid)
       );
 
-      if (removed) {
-        await this.manageInventory([removed], "increase");
+      if (canceledItems.length > 0) {
+        await this.manageInventory(canceledItems, "increase");
       }
-      const remainingItems = result.items.filter((p: any) => p.active === true);
+
+      const remainingItems = result.items.filter(
+        (item: any) => item.active === true
+      );
+
       if (remainingItems.length === 0) {
         await this.updateOrderStatus(orderid, "Canceled");
       }
 
       return "success";
     } catch (err) {
-      logger.error("failed ot cancel a order");
+      logger.error("Failed to cancel order items:", err);
       throw err;
     }
   }

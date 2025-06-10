@@ -28,6 +28,9 @@ import AuditService from "../services/auditService";
 import OtpController from "../controllers/otpController";
 import OtpServices from "../services/otpService";
 import OtpRepository from "../repositories/otpRepository";
+import DiscountController from "../controllers/discountController";
+import DiscountServices from "../services/discountServices";
+import DiscountRepository from "../repositories/discountRepository";
 // import FactoryService from "../services/factoryService";
 
 container.register(CategoryController, { useClass: CategoryController });
@@ -59,6 +62,9 @@ container.register(AuditService, { useClass: AuditService });
 container.register(OtpController, { useClass: OtpController });
 container.register(OtpServices, { useClass: OtpServices });
 container.register(OtpRepository, { useClass: OtpRepository });
+container.register(DiscountController, { useClass: DiscountController });
+container.register(DiscountServices, { useClass: DiscountServices });
+container.register(DiscountRepository, { useClass: DiscountRepository });
 // container.register(FactoryService, {
 //   useClass: FactoryService,
 // });

@@ -4,6 +4,7 @@ import {
   FaBoxOpen,
   FaClipboardList,
   FaCog,
+  FaUser,
   FaChevronCircleLeft,
 } from "react-icons/fa";
 import { BiSolidDashboard } from "react-icons/bi";
@@ -29,6 +30,7 @@ const Sidebar: React.FC<SidebarProps> = ({ activeKey, onSelect, seller }) => {
   const handleSignOut = async () => {
     try {
       await signOut();
+      alert("Seller Signed out successfully");
     } catch (err) {
       console.log(err);
     } finally {
@@ -49,7 +51,7 @@ const Sidebar: React.FC<SidebarProps> = ({ activeKey, onSelect, seller }) => {
     `w-full flex items-center gap-3 p-3 rounded-lg transition-all duration-200 ease-in-out cursor-pointer
       ${
         isActive(key)
-          ? "bg-indigo-600 text-white shadow-md font-semibold"
+          ? "bg-gradient-to-r from-indigo-500 to-purple-500 text-white shadow-md font-semibold hover:from-indigo-600 hover:to-purple-700 focus:ring-purple-500"
           : "text-gray-700 hover:bg-gray-100 hover:text-indigo-700"
       }
       ${collapsed ? "justify-center" : ""}`;
@@ -75,7 +77,7 @@ const Sidebar: React.FC<SidebarProps> = ({ activeKey, onSelect, seller }) => {
           onClick={() => {
             setCollapsed(!collapsed);
           }}
-          className="p-2 rounded-full bg-gray-100 hover:bg-gray-200 text-gray-600 transition-all duration-200 cursor-pointer"
+          className="p-2 rounded-full bg-gray-100 hover:bg-gray-200 text-gray-600 transition-all duration-200 cursor-pointer focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2"
           aria-label="Toggle sidebar"
         >
           <FaChevronCircleLeft
@@ -134,6 +136,14 @@ const Sidebar: React.FC<SidebarProps> = ({ activeKey, onSelect, seller }) => {
           </button>
 
           <button
+            onClick={() => handleMenuItemSelect("profile")}
+            className={navItemClass("profile")}
+            title={collapsed ? "Profile" : ""}
+          >
+            <FaUser className="text-xl" />
+            {!collapsed && <span>Profile</span>}
+          </button>
+          <button
             onClick={() => handleMenuItemSelect("setting")}
             className={navItemClass("setting")}
             title={collapsed ? "Setting" : ""}
@@ -146,13 +156,17 @@ const Sidebar: React.FC<SidebarProps> = ({ activeKey, onSelect, seller }) => {
 
       <div className="p-4 border-t border-gray-200">
         <button
-          onClick={handleSignOut} // Corrected: removed extra arrow function
+          onClick={handleSignOut}
           disabled={isPending}
-          className={`w-full flex items-center gap-3 p-3 rounded-lg text-red-600 hover:bg-red-50 transition-colors duration-200 cursor-pointer
+          className={`w-full flex items-center gap-3 p-3 rounded-lg text-red-400 hover:bg-red-100 font-semibold
+          
+            transition-all duration-200 cursor-pointer
             ${collapsed ? "justify-center" : "justify-start"}`}
         >
           <FaSignOutAlt className="text-xl" />
-          {!collapsed && <span>Sign Out</span>}
+          {!collapsed && (
+            <span>{isPending ? "Signing out..." : "Sign Out"}</span>
+          )}
         </button>
       </div>
     </aside>
